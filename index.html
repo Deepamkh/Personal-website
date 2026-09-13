@@ -6,7 +6,7 @@
 <title>Deepam Khirwar - Product &amp; Technical Program Manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#0f0d0c;
@@ -29,7 +29,7 @@
     margin:0;
     background:var(--paper);
     color:var(--ink);
-    font-family:'Public Sans', sans-serif;
+    font-family:'Raleway', sans-serif;
     font-size:16px;
     line-height:1.65;
     -webkit-font-smoothing:antialiased;
@@ -90,7 +90,7 @@
   }
 
   h1,h2,h3{
-    font-family:'Newsreader', serif;
+    font-family:'Merriweather', serif;
     font-weight:400;
     margin:0;
     color:var(--ink);
@@ -141,7 +141,7 @@
     border-radius:10px;
     background:#000;
     color:var(--sage);
-    font-family:'Newsreader', serif;
+    font-family:'Merriweather', serif;
     font-weight:700;
     font-size:1.05rem;
     letter-spacing:0.02em;
@@ -226,39 +226,11 @@
     z-index:0;
     pointer-events:none;
   }
-  .hero-figure-wrap{
-    position:absolute;
-    right:50px;
-    top:50%;
-    width:min(280px, 22vw);
-    opacity:0;
-    transform:translateY(-50%) translateX(24px);
-    animation:figure-in 0.8s ease-out 1.5s forwards;
-    z-index:1;
-    pointer-events:none;
-  }
-  @keyframes figure-in{
-    to{ opacity:1; transform:translateY(-50%) translateX(0); }
-  }
-  .hero-figure{
-    animation:figure-float 4.5s ease-in-out infinite;
-  }
-  @keyframes figure-float{
-    0%, 100%{ transform:translateY(0); }
-    50%{ transform:translateY(-12px); }
-  }
-  @media (max-width:960px){
-    .hero-figure-wrap{ display:none; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .hero-figure-wrap{ animation:none; opacity:1; transform:translateY(-50%) translateX(0); }
-    .hero-figure{ animation:none; }
-  }
 
-  .hero-inner{ position:relative; z-index:1; }
+  .hero-inner{ position:relative; z-index:1; text-align:center; }
 
   .hero-name{
-    font-family:'Public Sans', sans-serif;
+    font-family:'Raleway', sans-serif;
     font-weight:700;
     text-transform:uppercase;
     letter-spacing:0.03em;
@@ -273,6 +245,7 @@
     display:flex;
     gap:12px;
     flex-wrap:wrap;
+    justify-content:center;
     margin-bottom:26px;
     opacity:0;
     animation:fade-up 0.6s ease-out 0.25s forwards;
@@ -307,6 +280,7 @@
     font-size:clamp(2.2rem, 5vw, 3.4rem);
     line-height:1.22;
     max-width:16ch;
+    margin:0 auto;
   }
   .hero h1 .word{
     display:inline-block;
@@ -320,7 +294,7 @@
   }
 
   .hero p{
-    margin-top:28px;
+    margin:28px auto 0;
     max-width:58ch;
     color:var(--muted);
     font-size:1.1rem;
@@ -337,6 +311,7 @@
     display:flex;
     gap:16px;
     flex-wrap:wrap;
+    justify-content:center;
     opacity:0;
     animation:fade-up 0.7s ease-out 1.1s forwards;
   }
@@ -418,6 +393,7 @@
   }
   .n-item{
     position:relative;
+    overflow:hidden;
     text-align:center;
     padding:28px 14px;
     border:1px solid var(--line);
@@ -429,15 +405,25 @@
     cursor:none;
   }
   .n-item.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .n-item::before{
+    content:'';
+    position:absolute;
+    left:0; right:0; top:0;
+    height:0%;
+    background:rgba(226,113,29,0.2);
+    transition:height 0.4s ease;
+    z-index:0;
+  }
+  .n-item:hover::before{ height:100%; }
   .n-item:hover{
-    background:transparent;
     border-color:var(--sage);
     transform:translateY(0) scale(1.18);
     z-index:2;
   }
+  .n-val, .n-label{ position:relative; z-index:1; }
   .n-val{
     display:block;
-    font-family:'Newsreader', serif;
+    font-family:'Merriweather', serif;
     font-size:2.3rem;
     color:var(--sage);
     margin-bottom:10px;
@@ -461,8 +447,9 @@
   .skills-ribbon{
     overflow:hidden;
     background:#f6ddc2;
-    border-top:1px solid #e0b483;
-    border-bottom:1px solid #e0b483;
+    border-top:4px solid #000;
+    border-bottom:4px solid #000;
+    box-shadow:inset 0 4px 0 #f7c948, inset 0 -4px 0 #f7c948;
     padding:18px 0;
     margin-bottom:44px;
     -webkit-mask-image:linear-gradient(to right, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
@@ -480,13 +467,14 @@
     .skills-track .skill{ animation:none !important; }
   }
   .skills-track:hover{ animation-play-state:paused; }
+  .skills-track:hover .skill{ animation-play-state:paused; }
   .skills-set{
     display:flex;
     gap:0;
     flex-shrink:0;
   }
   .skills-track .skill{
-    color:#7a3d12;
+    color:#3a1c08;
     font-size:1rem;
     white-space:nowrap;
     padding:0 22px;
@@ -505,7 +493,7 @@
     content:'·';
     position:absolute;
     right:-2px;
-    color:rgba(122,61,18,0.4);
+    color:rgba(58,28,8,0.5);
   }
   @keyframes ribbon-scroll{
     from{ transform:translateX(0); }
@@ -545,30 +533,28 @@
   .case-list{ position:relative; padding-left:48px; }
   .case{
     position:relative;
-    background:var(--surface);
+    background:#2b2a28;
     border:3px solid #000;
     border-radius:16px;
     padding:30px 32px 32px;
     margin-bottom:32px;
     opacity:0;
-    transform:translateY(18px);
-    transition:opacity 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    transform:translateY(18px) scale(1);
+    transition:opacity 0.6s ease, transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, border-color 0.28s ease;
     box-shadow:8px 8px 0 #000;
   }
-  .case.in-view{ opacity:1; transform:translateY(0); }
+  .case.in-view{ opacity:1; transform:translateY(0) scale(1); }
   .case:hover{
-    box-shadow:12px 12px 0 #000;
-    transform:translate(-4px, -4px);
+    background:#37312a;
+    border-color:var(--sage);
+    box-shadow:12px 12px 0 var(--sage);
+    transform:translate(-4px, -4px) scale(1.015);
   }
   .case:active{
-    box-shadow:4px 4px 0 #000;
-    transform:translate(2px, 2px);
+    box-shadow:4px 4px 0 var(--sage);
+    transform:translate(2px, 2px) scale(1);
   }
   .case:last-child{ margin-bottom:0; }
-  .case-color-a{ background:#f5d9c0; }
-  .case-color-b{ background:#f6e2b8; }
-  .case-color-c{ background:#e9c9ae; }
-  .case-color-d{ background:#f2e4d3; }
   .case-dot{
     position:absolute;
     left:-48px;
@@ -585,32 +571,54 @@
   }
   .case-tag{
     font-size:0.85rem;
-    color:#a1531c;
+    color:var(--sage);
     margin-bottom:10px;
   }
   .case-company{
     font-size:0.85rem;
-    color:#6b6f76;
+    color:#a8a49c;
     margin-bottom:18px;
   }
   .case-title{
     font-size:1.4rem;
     margin-bottom:14px;
     max-width:38ch;
-    color:#24272c;
+    color:#ffffff;
   }
   .case-summary{
     margin:0 0 20px;
     max-width:62ch;
     font-size:1rem;
-    color:#4d525a;
+    color:#d8d4cc;
   }
+  .case-kpis{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:22px;
+  }
+  .kpi-tag{
+    display:inline-block;
+    font-size:0.78rem;
+    font-weight:700;
+    padding:6px 14px;
+    border-radius:20px;
+    border:1.5px solid var(--sage);
+    color:var(--sage);
+    background:transparent;
+    transition:background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+  }
+  .case:hover .kpi-tag{
+    background:var(--sage);
+    color:#fff;
+  }
+  .kpi-tag:hover{ transform:scale(1.08); }
   .case-readmore{
     display:inline-block;
     font-size:0.95rem;
-    color:#7a3d12;
+    color:var(--sage);
     text-decoration:none;
-    border-bottom:1px solid #7a3d12;
+    border-bottom:1px solid var(--sage);
     padding-bottom:3px;
     transition:opacity 0.2s ease;
   }
@@ -622,6 +630,69 @@
     .timeline-rail{ left:7px; }
   }
 
+  /* ---------- MORE WORK ---------- */
+  .more-work-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+  }
+  .mp-card{
+    background:#2b2a28;
+    border:2px solid #000;
+    border-radius:12px;
+    padding:24px 24px 26px;
+    box-shadow:5px 5px 0 #000;
+    opacity:0;
+    transform:translateY(14px) scale(1);
+    transition:opacity 0.55s ease, transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  }
+  .mp-card.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .mp-card:hover{
+    background:#37312a;
+    border-color:var(--sage);
+    box-shadow:8px 8px 0 var(--sage);
+    transform:translate(-3px, -3px) scale(1.01);
+  }
+  .mp-co{
+    font-size:0.78rem;
+    color:var(--sage);
+    font-weight:700;
+    letter-spacing:0.02em;
+    margin-bottom:8px;
+  }
+  .mp-title{
+    font-family:'Merriweather', serif;
+    font-size:1.05rem;
+    color:#ffffff;
+    margin-bottom:10px;
+    line-height:1.3;
+  }
+  .mp-desc{
+    font-size:0.86rem;
+    color:#d8d4cc;
+    margin:0 0 16px;
+    line-height:1.55;
+  }
+  .mp-tags{ display:flex; flex-wrap:wrap; gap:7px; }
+  .mp-tag{
+    display:inline-block;
+    font-size:0.7rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:16px;
+    border:1.5px solid var(--sage);
+    color:var(--sage);
+    background:transparent;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+  .mp-card:hover .mp-tag{ background:var(--sage); color:#fff; }
+  @media (max-width:900px){
+    .more-work-grid{ grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:640px){
+    .more-work-grid{ grid-template-columns:1fr; }
+  }
+
   /* ---------- PRINCIPLES ---------- */
   .principles-grid{
     display:grid;
@@ -630,40 +701,130 @@
   }
   .principle{
     padding:30px;
-    background:var(--surface);
-    border-radius:var(--radius);
+    background:#2b2a28;
+    border-radius:12px;
     opacity:0;
-    transform:translateY(16px);
-    transition:opacity 0.55s ease, transform 0.55s ease;
+    transform:translateY(16px) rotate(0deg) scale(1);
+    transition:opacity 0.55s ease, transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    box-shadow:0 12px 24px rgba(255,255,255,0.1);
+    cursor:none;
   }
   .principles-grid.in-view .principle:nth-child(1){ transition-delay:0.02s; }
   .principles-grid.in-view .principle:nth-child(2){ transition-delay:0.1s; }
   .principles-grid.in-view .principle:nth-child(3){ transition-delay:0.18s; }
   .principles-grid.in-view .principle:nth-child(4){ transition-delay:0.26s; }
-  .principles-grid.in-view .principle{ opacity:1; transform:translateY(0); }
-  .principle h3{ font-size:1.12rem; margin-bottom:10px; }
-  .principle p{ margin:0; color:var(--muted); font-size:0.96rem; }
+  .principles-grid.in-view .principle{ opacity:1; transform:translateY(0) rotate(0deg) scale(1); }
+  .principle:nth-child(odd):hover{ background:#37312a; transform:translateY(0) rotate(-3deg) scale(1.04); box-shadow:0 16px 30px rgba(226,113,29,0.35); }
+  .principle:nth-child(even):hover{ background:#37312a; transform:translateY(0) rotate(3deg) scale(1.04); box-shadow:0 16px 30px rgba(226,113,29,0.35); }
+  .principle h3{ font-size:1.12rem; margin-bottom:10px; color:#ffffff; }
+  .principle p{ margin:0; color:#d8d4cc; font-size:0.96rem; }
   @media (max-width:640px){ .principles-grid{ grid-template-columns:1fr; } }
 
   /* ---------- EXPERIENCE ---------- */
-  .tl-item{
-    display:flex;
-    justify-content:space-between;
-    gap:20px;
-    padding:20px 0;
-    border-bottom:1px solid var(--line);
-    opacity:0;
-    transform:translateY(10px);
-    transition:opacity 0.5s ease, transform 0.5s ease;
+  /* ---------- EXPERIENCE CARDS ---------- */
+  .exp-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:24px;
   }
-  .tl-item.in-view{ opacity:1; transform:translateY(0); }
-  .tl-item:last-of-type{ border-bottom:none; }
-  .tl-role{ font-size:1.02rem; }
-  .tl-company{ color:var(--muted); font-size:0.92rem; margin-top:3px; }
-  .tl-date{ color:var(--muted-2); font-size:0.88rem; white-space:nowrap; padding-top:2px; }
-  .tl-edu{ margin-top:40px; padding-top:32px; border-top:1px solid var(--line); }
-  .tl-edu-label{ font-size:0.85rem; color:var(--muted-2); margin-bottom:16px; }
-  @media (max-width:560px){ .tl-item{ flex-direction:column; gap:4px; } }
+  .e-card{
+    background:#2b2a28;
+    border:3px solid #000;
+    border-radius:14px;
+    padding:26px 28px;
+    box-shadow:6px 6px 0 #000;
+    opacity:0;
+    transform:translateY(16px) scale(1);
+    transition:opacity 0.55s ease, transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, border-color 0.28s ease;
+  }
+  .e-card.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .e-card:hover{
+    background:#37312a;
+    border-color:var(--sage);
+    box-shadow:9px 9px 0 var(--sage);
+    transform:translate(-3px, -3px) scale(1.01);
+  }
+  .e-date{
+    font-size:0.82rem;
+    color:var(--sage);
+    font-weight:700;
+    letter-spacing:0.03em;
+    margin-bottom:10px;
+  }
+  .e-title{
+    font-family:'Merriweather', serif;
+    font-size:1.15rem;
+    color:#ffffff;
+    margin-bottom:6px;
+  }
+  .e-co{
+    font-size:0.86rem;
+    color:#a8a49c;
+    margin-bottom:14px;
+  }
+  .e-desc{
+    font-size:0.92rem;
+    color:#d8d4cc;
+    margin:0 0 18px;
+    line-height:1.55;
+  }
+  .e-wins{ display:flex; flex-wrap:wrap; gap:8px; }
+  .e-win{
+    display:inline-block;
+    font-size:0.74rem;
+    font-weight:700;
+    padding:5px 12px;
+    border-radius:20px;
+    border:1.5px solid var(--sage);
+    color:var(--sage);
+    background:transparent;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+  .e-card:hover .e-win{ background:var(--sage); color:#fff; }
+  @media (max-width:760px){
+    .exp-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- EDUCATION TABLE ---------- */
+  .exp-table-wrap{
+    border:3px solid #000;
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:6px 6px 0 #000;
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .exp-table-wrap.in-view{ opacity:1; transform:translateY(0); }
+  table.exp-table{
+    width:100%;
+    border-collapse:collapse;
+  }
+  .exp-table th{
+    background:var(--sage);
+    color:#0f0d0c;
+    text-transform:uppercase;
+    font-size:0.76rem;
+    letter-spacing:0.05em;
+    text-align:left;
+    padding:14px 18px;
+    border-bottom:3px solid #000;
+  }
+  .exp-table td{
+    padding:16px 18px;
+    border-top:1px solid var(--line);
+    font-size:0.95rem;
+    vertical-align:top;
+  }
+  .exp-table tr:first-child td{ border-top:none; }
+  .exp-table tr:nth-child(even){ background:rgba(226,113,29,0.06); }
+  .exp-table td.exp-role{ color:var(--ink); font-weight:600; }
+  .exp-table td.exp-company{ color:var(--muted); }
+  .exp-table td.exp-date{ color:var(--muted-2); white-space:nowrap; }
+  .exp-education-head{ margin-top:44px; margin-bottom:18px; font-size:0.9rem; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.04em; }
+  @media (max-width:640px){
+    .exp-table th:nth-child(3), .exp-table td.exp-date{ display:none; }
+  }
 
   /* ---------- CONTACT ---------- */
   .contact{ background:var(--surface); border-top:1px solid var(--line); }
@@ -705,6 +866,31 @@
     box-shadow:3px 3px 0 #000;
   }
 
+  .email-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    background:var(--sage);
+    color:#0f0d0c;
+    padding:14px 24px;
+    border:3px solid #000;
+    box-shadow:6px 6px 0 #000;
+    font-weight:700;
+    font-size:1rem;
+    text-decoration:none !important;
+    border-radius:4px;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .email-btn:hover{
+    transform:translate(-3px, -3px);
+    box-shadow:9px 9px 0 #000;
+    color:#0f0d0c !important;
+  }
+  .email-btn:active{
+    transform:translate(2px, 2px);
+    box-shadow:3px 3px 0 #000;
+  }
+
   footer{ padding:30px 0 44px; color:var(--muted-2); font-size:0.84rem; }
 </style>
 </head>
@@ -729,21 +915,6 @@
     <div class="blob blob-a"></div>
     <div class="blob blob-b"></div>
     <canvas id="wave-canvas"></canvas>
-    <div class="hero-figure-wrap">
-      <svg class="hero-figure" viewBox="0 0 320 320" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="160" cy="165" r="135" fill="var(--sage)" opacity="0.08"/>
-        <rect x="95" y="118" width="130" height="112" rx="22" fill="#1c1815"/>
-        <rect x="106" y="132" width="108" height="96" rx="32" fill="var(--sage)"/>
-        <rect x="86" y="180" width="34" height="14" rx="7" fill="#f5efe6"/>
-        <rect x="200" y="180" width="34" height="14" rx="7" fill="#f5efe6"/>
-        <circle cx="160" cy="98" r="32" fill="#f5efe6"/>
-        <path d="M128,90 a32,32 0 0,1 64,0 q-6,-14 -32,-14 q-26,0 -32,14 z" fill="#0f0d0c"/>
-        <rect x="38" y="228" width="244" height="14" rx="5" fill="#0f0d0c"/>
-        <rect x="118" y="206" width="94" height="10" rx="3" fill="#000"/>
-        <polygon points="122,206 130,150 190,150 198,206" fill="#000"/>
-        <polygon points="128,200 134,156 186,156 192,200" fill="var(--sage)" opacity="0.85"/>
-      </svg>
-    </div>
     <div class="wrap hero-inner">
       <div class="hero-name">Deepam Khirwar</div>
       <div class="hero-roles">
@@ -810,48 +981,117 @@
 
     <section id="programs" class="case-studies">
       <div class="section-head">
-        <h2>Selected programs</h2>
+        <h2>My work</h2>
         <p>Four programs, in my words - where I picked up each one and what I'd change if I ran it again.</p>
       </div>
 
       <div class="case-list" id="case-list">
         <div class="timeline-rail"><div class="timeline-fill" id="timeline-fill"></div></div>
 
-        <div class="case case-color-a">
+        <div class="case">
           <div class="case-dot"></div>
           <div class="case-tag">Product Strategy &middot; Platform Launch</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
           <h3 class="case-title">A pharmacy cost-transparency platform, from nothing to 4M+ members</h3>
           <p class="case-summary">Owned product strategy and MVP scope for a 0-to-1 platform across 15 cross-functional teams, using phased rollout and member research to lift satisfaction 25% and mobile engagement 30%.</p>
+          <div class="case-kpis">
+            <span class="kpi-tag">+25% Satisfaction</span>
+            <span class="kpi-tag">+30% Engagement</span>
+          </div>
           <a class="case-readmore" href="program-pharmacy.html">Read more</a>
         </div>
 
-        <div class="case case-color-b">
+        <div class="case">
           <div class="case-dot"></div>
           <div class="case-tag">Governance &middot; Risk &amp; Compliance</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
           <h3 class="case-title">An AI governance framework built to move as fast as the teams using it</h3>
           <p class="case-summary">Defined the intake process and review criteria for an org-wide AI governance framework, adopted across 15+ business units and cutting compliance escalations 45%.</p>
+          <div class="case-kpis">
+            <span class="kpi-tag">-45% Escalations</span>
+            <span class="kpi-tag">15+ Business Units</span>
+          </div>
           <a class="case-readmore" href="program-ai-governance.html">Read more</a>
         </div>
 
-        <div class="case case-color-c">
+        <div class="case">
           <div class="case-dot"></div>
           <div class="case-tag">Program Governance &middot; Regulatory Deadline</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
           <h3 class="case-title">Annual enrollment: 80+ people, one deadline that doesn't move</h3>
           <p class="case-summary">Owned end-to-end program governance - cadence, escalation path, and dependency tracking - for 80+ contributors, hitting 100% on-time delivery and cutting cross-team delays 35%.</p>
+          <div class="case-kpis">
+            <span class="kpi-tag">100% On-Time</span>
+            <span class="kpi-tag">-35% Delays</span>
+          </div>
           <a class="case-readmore" href="program-enrollment.html">Read more</a>
         </div>
 
-        <div class="case case-color-d">
+        <div class="case">
           <div class="case-dot"></div>
           <div class="case-tag">Product Strategy &middot; Platform Scaling</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
           <h3 class="case-title">Turning ad hoc A/B testing into a standard, org-wide practice</h3>
           <p class="case-summary">Built the org's first enterprise experimentation framework - governance, tooling, and prioritization - scaling from ad hoc testing to 12+ concurrent experiments.</p>
+          <div class="case-kpis">
+            <span class="kpi-tag">12+ Experiments</span>
+            <span class="kpi-tag">0 &rarr; 12 Scale</span>
+          </div>
           <a class="case-readmore" href="program-experimentation.html">Read more</a>
         </div>
+
+      </div>
+    </section>
+
+
+    <section id="more-work">
+      <div class="section-head">
+        <h2>More of my work</h2>
+        <p>A few more projects from along the way, beyond the four above.</p>
+      </div>
+      <div class="more-work-grid" id="more-work-grid">
+
+        <article class="mp-card">
+          <div class="mp-co">Cognizant Technology Solutions</div>
+          <div class="mp-title">Salesforce partner onboarding platform</div>
+          <p class="mp-desc">Led delivery of a Salesforce-integrated onboarding and case management platform with external healthcare partners.</p>
+          <div class="mp-tags"><span class="mp-tag">-60% Manual Processing</span><span class="mp-tag">-35% SLA Response</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Cognizant Technology Solutions</div>
+          <div class="mp-title">AI-assisted requirements workflow</div>
+          <p class="mp-desc">Introduced an AI-assisted requirements documentation workflow, reclaiming a full sprint of engineering capacity per quarter.</p>
+          <div class="mp-tags"><span class="mp-tag">-35% Spec Turnaround</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Blue Shield of California</div>
+          <div class="mp-title">Release governance redesign</div>
+          <p class="mp-desc">Partnered with engineering leadership to redesign release governance and prioritization, stabilizing release cadence.</p>
+          <div class="mp-tags"><span class="mp-tag">-15% Scope Volatility</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Blue Shield of California</div>
+          <div class="mp-title">Delivery standardization across pods</div>
+          <p class="mp-desc">Standardized delivery workflows across six engineering pods, cutting rework and accelerating time-to-production.</p>
+          <div class="mp-tags"><span class="mp-tag">-25% Rework</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">CoinGenius</div>
+          <div class="mp-title">Crypto analytics dashboard redesign</div>
+          <p class="mp-desc">Partnered with engineering and data science to redesign dashboards and personalized recommendations for a crypto analytics platform.</p>
+          <div class="mp-tags"><span class="mp-tag">+23% Satisfaction</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">City National Bank &middot; Amplify</div>
+          <div class="mp-title">Intelligent troubleshooting tool</div>
+          <p class="mp-desc">Led a cross-functional innovation team from discovery through executive presentation for an intelligent troubleshooting solution.</p>
+          <div class="mp-tags"><span class="mp-tag">-30% Resolution Time</span><span class="mp-tag">Patent Considered</span></div>
+        </article>
 
       </div>
     </section>
@@ -876,19 +1116,73 @@
         <p>2013 – present</p>
       </div>
 
-      <div id="tl-list">
-        <div class="tl-item"><div><div class="tl-role">Product Manager / Technical Program Manager</div><div class="tl-company">Cognizant Technology Solutions</div></div><div class="tl-date">Aug 2021 – Present</div></div>
-        <div class="tl-item"><div><div class="tl-role">Product Manager</div><div class="tl-company">Blue Shield of California</div></div><div class="tl-date">May 2020 – Aug 2021</div></div>
-        <div class="tl-item"><div><div class="tl-role">Associate Product Manager</div><div class="tl-company">CoinGenius</div></div><div class="tl-date">Feb 2020 – May 2020</div></div>
-        <div class="tl-item"><div><div class="tl-role">Product Owner Intern, Amplify</div><div class="tl-company">City National Bank</div></div><div class="tl-date">Jun 2019 – Aug 2019</div></div>
-        <div class="tl-item"><div><div class="tl-role">Associate Product Manager</div><div class="tl-company">Unisys India</div></div><div class="tl-date">Nov 2016 – Oct 2017</div></div>
-        <div class="tl-item"><div><div class="tl-role">Co-Founder</div><div class="tl-company">Sphinx Vision Services</div></div><div class="tl-date">Aug 2013 – May 2016</div></div>
+      <div class="exp-grid" id="exp-grid">
+        <article class="e-card">
+          <div class="e-date">Aug 2021 – Present</div>
+          <div class="e-title">Product Manager / Technical Program Manager</div>
+          <div class="e-co">Cognizant Technology Solutions &middot; Healthcare</div>
+          <p class="e-desc">Own product strategy and program governance for enterprise healthcare platforms serving 4M+ members, including a 0-to-1 pharmacy transparency platform and an org-wide AI governance framework.</p>
+          <div class="e-wins"><span class="e-win">4M+ Members</span><span class="e-win">AI Governance</span><span class="e-win">15+ Teams</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">May 2020 – Aug 2021</div>
+          <div class="e-title">Product Manager</div>
+          <div class="e-co">Blue Shield of California &middot; Healthcare</div>
+          <p class="e-desc">Owned roadmap execution across 10+ engineering teams, sustaining 95%+ sprint predictability and delivering 8 regulatory programs on time.</p>
+          <div class="e-wins"><span class="e-win">95% Predictability</span><span class="e-win">$2M Risk Avoided</span><span class="e-win">8 Programs</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">Feb 2020 – May 2020</div>
+          <div class="e-title">Associate Product Manager</div>
+          <div class="e-co">CoinGenius &middot; Fintech</div>
+          <p class="e-desc">Partnered with engineering and data science to redesign cryptocurrency analytics dashboards, lifting customer satisfaction 23%.</p>
+          <div class="e-wins"><span class="e-win">+23% Satisfaction</span><span class="e-win">Dashboards</span><span class="e-win">Fintech</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">Jun 2019 – Aug 2019</div>
+          <div class="e-title">Product Owner Intern, Amplify</div>
+          <div class="e-co">City National Bank &middot; Banking</div>
+          <p class="e-desc">Led a cross-functional innovation team through discovery, prototyping, and executive presentation for an intelligent troubleshooting tool.</p>
+          <div class="e-wins"><span class="e-win">-30% Resolution Time</span><span class="e-win">Patent Considered</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">Nov 2016 – Oct 2017</div>
+          <div class="e-title">Associate Product Manager</div>
+          <div class="e-co">Unisys India &middot; Enterprise FMCG</div>
+          <p class="e-desc">Translated stakeholder requirements into technical specs for enterprise FMCG clients, delivering dashboards that lifted operational efficiency 24%.</p>
+          <div class="e-wins"><span class="e-win">+24% Efficiency</span><span class="e-win">SQL &amp; Tableau</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">Aug 2013 – May 2016</div>
+          <div class="e-title">Co-Founder</div>
+          <div class="e-co">Sphinx Vision Services &middot; Market Research</div>
+          <p class="e-desc">Co-founded a market research and analytics startup from the ground up, growing the client roster to 15+ businesses over three years.</p>
+          <div class="e-wins"><span class="e-win">15+ Clients</span><span class="e-win">Co-Founder</span></div>
+        </article>
       </div>
 
-      <div class="tl-edu">
-        <div class="tl-edu-label">Education</div>
-        <div class="tl-item"><div><div class="tl-role">MS, Information Systems</div><div class="tl-company">California State University, Fullerton</div></div><div class="tl-date">Jan 2020</div></div>
-        <div class="tl-item"><div><div class="tl-role">BE, Electronics &amp; Communication</div><div class="tl-company">New Horizon College of Engineering</div></div><div class="tl-date">Jul 2013</div></div>
+      <div class="exp-education-head">Education</div>
+      <div class="exp-grid" id="edu-grid">
+        <article class="e-card">
+          <div class="e-date">Jan 2020</div>
+          <div class="e-title">MS, Information Systems</div>
+          <div class="e-co">California State University, Fullerton</div>
+          <p class="e-desc">Graduate coursework in systems analysis, information architecture, and data-driven decision making - the technical foundation for a PM/TPM career.</p>
+          <div class="e-wins"><span class="e-win">Information Systems</span><span class="e-win">Fullerton, CA</span></div>
+        </article>
+
+        <article class="e-card">
+          <div class="e-date">Jul 2013</div>
+          <div class="e-title">BE, Electronics &amp; Communication</div>
+          <div class="e-co">New Horizon College of Engineering</div>
+          <p class="e-desc">Undergraduate engineering foundation in electronics and communication systems, the technical base for a decade building enterprise software and platforms.</p>
+          <div class="e-wins"><span class="e-win">Electronics &amp; Comm.</span><span class="e-win">Engineering</span></div>
+        </article>
       </div>
     </section>
 
@@ -900,7 +1194,10 @@
         <h2>Let's talk about what you're building.</h2>
         <p>Open to Product Management, Technical Program Management, and platform / AI governance roles.</p>
         <div class="contact-links">
-          <a href="mailto:Deepamkhirwar2406@gmail.com">Deepamkhirwar2406@gmail.com</a>
+          <a href="mailto:Deepamkhirwar2406@gmail.com" class="email-btn" aria-label="Email Deepam">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+            Email
+          </a>
           <a href="https://www.linkedin.com/in/deepamkhirwar" target="_blank" rel="noopener" class="linkedin-btn" aria-label="Connect with Deepam on LinkedIn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
             Connect on LinkedIn
@@ -945,7 +1242,7 @@
       requestAnimationFrame(ringLoop);
     }
     ringLoop();
-    var hoverables = document.querySelectorAll('a, button, .case, .n-item');
+    var hoverables = document.querySelectorAll('a, button, .case, .n-item, .mp-card, .e-card, .principle');
     hoverables.forEach(function(el){
       el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
       el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
@@ -1107,16 +1404,16 @@
     pObserver.observe(principlesGrid);
   }
 
-  // Experience rows grouped stagger reveal
-  var tlItems = document.querySelectorAll('.tl-item');
+  // Experience / education table reveal
+  var tlItems = document.querySelectorAll('.e-card, .mp-card');
   var tlObserver = new IntersectionObserver(function(entries){
     entries.forEach(function(entry, idx){
       if(entry.isIntersecting){
-        setTimeout(function(){ entry.target.classList.add('in-view'); }, idx * 40);
+        setTimeout(function(){ entry.target.classList.add('in-view'); }, idx * 100);
         tlObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.2 });
+  }, { threshold: 0.15 });
   tlItems.forEach(function(item){ tlObserver.observe(item); });
 })();
 </script>

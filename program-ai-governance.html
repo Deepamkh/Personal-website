@@ -6,35 +6,35 @@
 <title>An AI governance framework built to move as fast as the teams using it — Deepam Khirwar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     :root{
       --paper:#0f0d0c; --surface:#1c1815; --ink:#f5efe6; --muted:#b9ada0;
       --muted-2:#8a8074; --line:#33291f; --sage:#e2711d; --clay:#c9761f; --radius:6px; --maxw:760px;
     }
     *{box-sizing:border-box;}
-    body{margin:0;background:var(--paper);color:var(--ink);font-family:'Public Sans',sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;cursor:none;}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:'Raleway',sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;cursor:none;}
     a{cursor:none;}
     .cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--sage);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
     .cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--sage);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
     .cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,0.12);}
     @media (hover:none){ .cur-main,.cur-ring{display:none;} body,a{cursor:auto;} }
-    h1,h2,h3{font-family:'Newsreader',serif;font-weight:400;margin:0;color:var(--ink);letter-spacing:-0.01em;}
+    h1,h2,h3{font-family:'Merriweather',serif;font-weight:400;margin:0;color:var(--ink);letter-spacing:-0.01em;}
     a{color:inherit;}
     a:focus-visible{outline:2px solid var(--sage);outline-offset:3px;}
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
     .topbar{position:sticky;top:0;z-index:30;background:var(--sage);border-bottom:4px solid #000;box-shadow:0 6px 14px rgba(0,0,0,0.35);}
     .topbar-inner{max-width:960px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
-    .logo-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:10px;background:#000;color:var(--sage);font-family:'Newsreader',serif;font-weight:700;font-size:1.05rem;letter-spacing:0.02em;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.35);transition:transform 0.3s cubic-bezier(.2,.7,.2,1),box-shadow 0.3s ease;}
-    .logo-badge:hover{transform:scale(1.12);}
-    .back-link{font-size:0.92rem;color:#000;text-decoration:none;border-bottom:1px solid #000;padding-bottom:2px;transition:color 0.2s ease,border-color 0.2s ease;}
-    .back-link:hover{color:#1c1815;border-color:#1c1815;}
+    .logo-badge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:10px;background:#000;color:var(--sage);font-family:'Merriweather',serif;font-weight:700;font-size:1.05rem;letter-spacing:0.02em;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.35);transition:transform 0.3s cubic-bezier(.2,.7,.2,1),box-shadow 0.3s ease;}
+    .logo-badge:hover{transform:scale(1.12);box-shadow:0 6px 16px rgba(0,0,0,0.4);}
+    .back-link{font-size:0.92rem;color:#000;text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.25s cubic-bezier(.2,.7,.2,1),color 0.25s ease,background 0.25s ease,border-color 0.25s ease;}
+    .back-link:hover{transform:scale(1.08);background:#000;border-color:#000;color:var(--sage);}
     .article-head{padding:64px 0 40px;}
     .case-tag{font-size:0.9rem;color:var(--clay);margin-bottom:10px;}
     .case-company{font-size:0.9rem;color:var(--muted-2);margin-bottom:20px;}
     .article-head h1{font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.25;max-width:22ch;}
     .case-block{margin-bottom:30px;max-width:64ch;}
-    .case-block h4{font-family:'Public Sans',sans-serif;font-size:0.82rem;font-weight:600;color:var(--muted-2);margin-bottom:8px;}
+    .case-block h4{font-family:'Raleway',sans-serif;font-size:0.82rem;font-weight:600;color:var(--muted-2);margin-bottom:8px;}
     .case-block p{margin:0;font-size:1.05rem;}
     .case-block.reflection p{color:var(--muted);font-style:italic;}
     article{padding-bottom:80px;}
@@ -47,6 +47,9 @@
     .linkedin-btn{display:inline-flex;align-items:center;gap:12px;background:#0077B5;color:#fff;padding:14px 24px;border:3px solid #000;box-shadow:6px 6px 0 #000;font-weight:700;font-size:1rem;text-decoration:none !important;border-radius:4px;transition:transform 0.2s ease,box-shadow 0.2s ease;}
     .linkedin-btn:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 #000;color:#fff !important;}
     .linkedin-btn:active{transform:translate(2px,2px);box-shadow:3px 3px 0 #000;}
+    .email-btn{display:inline-flex;align-items:center;gap:12px;background:var(--sage);color:#0f0d0c;padding:14px 24px;border:3px solid #000;box-shadow:6px 6px 0 #000;font-weight:700;font-size:1rem;text-decoration:none !important;border-radius:4px;transition:transform 0.2s ease,box-shadow 0.2s ease;}
+    .email-btn:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 #000;color:#0f0d0c !important;}
+    .email-btn:active{transform:translate(2px,2px);box-shadow:3px 3px 0 #000;}
     footer{padding:26px 0 40px;color:var(--muted-2);font-size:0.82rem;}
     section{padding:56px 0;}
 </style>
@@ -58,8 +61,11 @@
 
   <div class="topbar">
     <div class="topbar-inner">
-      <a href="index-light.html" class="logo-badge" aria-label="Back to portfolio">DK</a>
-      <a href="index-light.html#programs" class="back-link">Back to portfolio</a>
+      <a href="index.html" class="logo-badge" aria-label="Back to portfolio">DK</a>
+      <a href="index.html" class="back-link" aria-label="Back to home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Back to home
+      </a>
     </div>
   </div>
 
@@ -84,7 +90,10 @@
         <h2>Let's talk about what you're building.</h2>
         <p>Open to Product Management, Technical Program Management, and platform / AI governance roles.</p>
         <div class="contact-links">
-          <a href="mailto:Deepamkhirwar2406@gmail.com">Deepamkhirwar2406@gmail.com</a>
+          <a href="mailto:Deepamkhirwar2406@gmail.com" class="email-btn" aria-label="Email Deepam">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+            Email
+          </a>
           <a href="https://www.linkedin.com/in/deepamkhirwar" target="_blank" rel="noopener" class="linkedin-btn" aria-label="Connect with Deepam on LinkedIn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
             Connect on LinkedIn
