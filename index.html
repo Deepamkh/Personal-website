@@ -9,15 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#fafaf9;
-    --surface:#f1f0ea;
-    --ink:#2a2d31;
-    --muted:#6e7176;
-    --muted-2:#9a9d9f;
-    --line:#dedcd5;
-    --sage:#55705e;
-    --sage-soft:#e4e9e4;
-    --clay:#9c7b58;
+    --paper:#0f0d0c;
+    --surface:#1c1815;
+    --ink:#f5efe6;
+    --muted:#b9ada0;
+    --muted-2:#8a8074;
+    --line:#33291f;
+    --sage:#e2711d;
+    --sage-soft:#3d2a18;
+    --clay:#c9761f;
     --radius:6px;
     --maxw:960px;
   }
@@ -33,6 +33,60 @@
     font-size:16px;
     line-height:1.65;
     -webkit-font-smoothing:antialiased;
+    cursor:none;
+  }
+  a, button{ cursor:none; }
+
+  .cur-main{
+    position:fixed;
+    top:0; left:0;
+    width:8px;
+    height:8px;
+    margin:-4px 0 0 -4px;
+    border-radius:50%;
+    background:var(--sage);
+    pointer-events:none;
+    z-index:9999;
+    transform:translate(-100px,-100px);
+  }
+  .cur-ring{
+    position:fixed;
+    top:0; left:0;
+    width:34px;
+    height:34px;
+    margin:-17px 0 0 -17px;
+    border-radius:50%;
+    border:1.5px solid var(--sage);
+    pointer-events:none;
+    z-index:9998;
+    transform:translate(-100px,-100px);
+    transition:width 0.2s ease, height 0.2s ease, margin 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .cur-ring.hover{
+    width:52px;
+    height:52px;
+    margin:-26px 0 0 -26px;
+    background:rgba(226,113,29,0.12);
+  }
+  .cur-trail{
+    position:fixed;
+    top:0; left:0;
+    width:5px;
+    height:5px;
+    margin:-2.5px 0 0 -2.5px;
+    border-radius:50%;
+    background:var(--sage);
+    pointer-events:none;
+    z-index:9990;
+    opacity:0.55;
+    animation:trail-fade 0.55s ease-out forwards;
+  }
+  @keyframes trail-fade{
+    to{ opacity:0; transform:scale(0.15); }
+  }
+  @media (hover:none){
+    .cur-main, .cur-ring{ display:none; }
+    body, a, button{ cursor:auto; }
   }
 
   h1,h2,h3{
@@ -66,9 +120,9 @@
     position:sticky;
     top:0;
     z-index:30;
-    background:rgba(250,250,249,0.86);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
+    background:var(--sage);
+    border-bottom:4px solid #000;
+    box-shadow:0 6px 14px rgba(0,0,0,0.35);
   }
   .topbar-inner{
     max-width:var(--maxw);
@@ -78,53 +132,68 @@
     align-items:center;
     justify-content:space-between;
   }
-  .topbar-name{
+  .logo-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    background:#000;
+    color:var(--sage);
     font-family:'Newsreader', serif;
-    font-size:1.1rem;
-    display:inline-block;
-    transition:transform 0.3s cubic-bezier(.2,.7,.2,1);
-    transform-origin:left center;
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:0.02em;
+    text-decoration:none;
+    box-shadow:0 3px 10px rgba(0,0,0,0.35);
+    transition:transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.3s ease;
   }
-  .topbar-name:hover{ transform:scale(1.12); }
+  .logo-badge:hover{
+    transform:scale(1.12);
+    box-shadow:0 6px 16px rgba(0,0,0,0.4);
+  }
   .topbar-nav{
     display:flex;
     gap:30px;
-    font-size:0.92rem;
-    color:var(--muted);
+    font-size:0.88rem;
+    color:#000;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
   }
   .topbar-nav a{
     text-decoration:none;
     position:relative;
     display:inline-block;
-    transition:transform 0.25s cubic-bezier(.2,.7,.2,1), color 0.25s ease;
+    padding:6px 10px;
+    margin:-6px -10px;
+    border-radius:4px;
+    border:1px solid transparent;
+    transition:transform 0.25s cubic-bezier(.2,.7,.2,1), color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
     transform-origin:center;
   }
-  .topbar-nav a:hover{ transform:scale(1.15); }
-  .topbar-nav a::after{
-    content:'';
-    position:absolute;
-    left:0; right:0; bottom:-4px;
-    height:1px;
-    background:var(--sage);
-    transform:scaleX(0);
-    transform-origin:left;
-    transition:transform 0.25s ease;
+  .topbar-nav a:hover{
+    transform:scale(1.15);
+    background:#000;
+    border-color:#000;
+    color:var(--sage);
   }
-  .topbar-nav a:hover{ color:var(--ink); }
-  .topbar-nav a:hover::after{ transform:scaleX(1); }
-  @media (max-width:640px){ .topbar-nav{ display:none; } }
+  @media (max-width:640px){
+    .topbar-inner{ flex-wrap:wrap; gap:10px; padding:14px 20px; }
+    .topbar-nav{ gap:14px; font-size:0.78rem; }
+  }
 
   /* ---------- HERO ---------- */
   .hero{
     position:relative;
-    padding:120px 0 88px;
+    padding:120px 0 168px;
     overflow:hidden;
   }
   .blob{
     position:absolute;
     border-radius:50%;
     filter:blur(50px);
-    opacity:0.5;
+    opacity:0.16;
     pointer-events:none;
     z-index:0;
   }
@@ -136,7 +205,7 @@
   }
   .blob-b{
     width:260px; height:260px;
-    background:#eee6da;
+    background:#4a2c12;
     bottom:-80px; left:-60px;
     animation:drift-b 22s ease-in-out infinite alternate;
   }
@@ -149,14 +218,89 @@
     to{ transform:translate(24px, -28px) scale(1.05); }
   }
 
+  #wave-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  .hero-figure-wrap{
+    position:absolute;
+    right:50px;
+    top:50%;
+    width:min(280px, 22vw);
+    opacity:0;
+    transform:translateY(-50%) translateX(24px);
+    animation:figure-in 0.8s ease-out 1.5s forwards;
+    z-index:1;
+    pointer-events:none;
+  }
+  @keyframes figure-in{
+    to{ opacity:1; transform:translateY(-50%) translateX(0); }
+  }
+  .hero-figure{
+    animation:figure-float 4.5s ease-in-out infinite;
+  }
+  @keyframes figure-float{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-12px); }
+  }
+  @media (max-width:960px){
+    .hero-figure-wrap{ display:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-figure-wrap{ animation:none; opacity:1; transform:translateY(-50%) translateX(0); }
+    .hero-figure{ animation:none; }
+  }
+
   .hero-inner{ position:relative; z-index:1; }
 
-  .hero-kicker{
-    color:var(--muted);
-    font-size:0.98rem;
-    margin-bottom:22px;
+  .hero-name{
+    font-family:'Public Sans', sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    font-size:2.5rem;
+    color:var(--ink);
+    margin-bottom:26px;
     opacity:0;
     animation:fade-up 0.6s ease-out 0.05s forwards;
+  }
+
+  .hero-roles{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+    opacity:0;
+    animation:fade-up 0.6s ease-out 0.25s forwards;
+  }
+  .role-badge{
+    display:inline-block;
+    padding:8px 18px;
+    border-radius:20px;
+    font-size:0.86rem;
+    font-weight:600;
+    border:1px solid;
+    animation:badge-pulse 2.6s ease-in-out infinite;
+  }
+  .role-badge-a{
+    background:#f7dcc0;
+    color:#8a4712;
+    border-color:#e9c19a;
+    animation-delay:0s;
+  }
+  .role-badge-b{
+    background:#f4c98f;
+    color:#6b3610;
+    border-color:#e3ac6a;
+    animation-delay:0.4s;
+  }
+  @keyframes badge-pulse{
+    0%, 100%{ transform:scale(1); }
+    50%{ transform:scale(1.05); }
   }
 
   .hero h1{
@@ -207,48 +351,118 @@
   }
   .btn-primary{
     background:var(--sage);
-    color:#fdfdfc;
+    color:#0f0d0c;
     border-color:var(--sage);
+    font-weight:600;
   }
-  .btn-primary:hover{ transform:translateY(-2px); background:#4a6353; }
-  .btn-secondary:hover{ transform:translateY(-2px); border-color:var(--sage); }
+  .btn-primary:hover{ transform:translateY(-2px); background:#c85f16; }
+  .btn-secondary:hover{ transform:translateY(-2px); border-color:var(--sage); color:var(--sage); }
 
-  /* ---------- STATS ---------- */
-  .stats{
+  .scroll-arrow-wrap{
+    position:absolute;
+    bottom:36px;
+    left:50%;
+    opacity:0;
+    animation:arrow-fade 0.7s ease-out 1.3s forwards;
+  }
+  @keyframes arrow-fade{
+    from{ opacity:0; transform:translate(-50%, 8px); }
+    to{ opacity:1; transform:translate(-50%, 0); }
+  }
+  .get-to-know-wrap{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:112px;
+    height:112px;
+    text-decoration:none;
+  }
+  .rotating-ring{
+    width:100%;
+    height:100%;
+    color:var(--ink);
+  }
+  .static-arrow{
+    position:absolute;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--sage);
+    border:3px solid #000;
+    box-shadow:4px 4px 0 #000;
+    color:#fdfdfc;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- NUMBERS ---------- */
+  .numbers{
+    position:relative;
+    overflow:hidden;
     background:var(--surface);
     border-top:1px solid var(--line);
     border-bottom:1px solid var(--line);
+    padding:88px 0;
   }
-  .stats-grid{
+  .nums-grid{
+    position:relative;
+    z-index:1;
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 32px;
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns:repeat(5, 1fr);
+    gap:20px;
   }
-  .stat{
-    padding:34px 26px;
-    border-left:1px solid var(--line);
+  .n-item{
+    position:relative;
+    text-align:center;
+    padding:28px 14px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:transparent;
+    opacity:0;
+    transform:translateY(16px) scale(1);
+    transition:opacity 0.6s ease, transform 0.3s ease, border-color 0.3s ease;
+    cursor:none;
   }
-  .stat:first-child{ border-left:none; }
-  .stat-num{
+  .n-item.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .n-item:hover{
+    background:transparent;
+    border-color:var(--sage);
+    transform:translateY(0) scale(1.18);
+    z-index:2;
+  }
+  .n-val{
+    display:block;
     font-family:'Newsreader', serif;
-    font-size:2rem;
+    font-size:2.3rem;
     color:var(--sage);
+    margin-bottom:10px;
+    transition:color 0.3s ease;
   }
-  .stat-label{
-    margin-top:8px;
+  .n-item:hover .n-val{ color:#ffffff; }
+  .n-label{
     color:var(--muted);
-    font-size:0.88rem;
+    font-size:0.85rem;
+    line-height:1.4;
   }
   @media (max-width:720px){
-    .stats-grid{ grid-template-columns:repeat(2,1fr); }
-    .stat:nth-child(3){ border-left:none; }
+    .nums-grid{
+      grid-template-columns:repeat(5, minmax(120px, 1fr));
+      overflow-x:auto;
+      padding-bottom:8px;
+    }
   }
 
   /* ---------- SKILLS RIBBON ---------- */
   .skills-ribbon{
     overflow:hidden;
-    background:#dce8f0;
-    border-top:1px solid #b8cddb;
-    border-bottom:1px solid #b8cddb;
+    background:#f6ddc2;
+    border-top:1px solid #e0b483;
+    border-bottom:1px solid #e0b483;
     padding:18px 0;
     margin-bottom:44px;
     -webkit-mask-image:linear-gradient(to right, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
@@ -272,7 +486,7 @@
     flex-shrink:0;
   }
   .skills-track .skill{
-    color:#2f5872;
+    color:#7a3d12;
     font-size:1rem;
     white-space:nowrap;
     padding:0 22px;
@@ -291,7 +505,7 @@
     content:'·';
     position:absolute;
     right:-2px;
-    color:rgba(47,88,114,0.35);
+    color:rgba(122,61,18,0.4);
   }
   @keyframes ribbon-scroll{
     from{ transform:translateX(0); }
@@ -328,65 +542,75 @@
     height:0%;
     background:var(--sage);
   }
-  .case-list{ position:relative; padding-left:44px; }
+  .case-list{ position:relative; padding-left:48px; }
   .case{
     position:relative;
     background:var(--surface);
-    border-radius:var(--radius);
+    border:3px solid #000;
+    border-radius:16px;
     padding:30px 32px 32px;
-    margin-bottom:28px;
+    margin-bottom:32px;
     opacity:0;
     transform:translateY(18px);
-    transition:opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease;
-    box-shadow:0 1px 2px rgba(42,45,49,0.02);
+    transition:opacity 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow:8px 8px 0 #000;
   }
   .case.in-view{ opacity:1; transform:translateY(0); }
   .case:hover{
-    box-shadow:0 16px 32px rgba(42,45,49,0.09);
-    transform:translateY(-5px);
+    box-shadow:12px 12px 0 #000;
+    transform:translate(-4px, -4px);
+  }
+  .case:active{
+    box-shadow:4px 4px 0 #000;
+    transform:translate(2px, 2px);
   }
   .case:last-child{ margin-bottom:0; }
+  .case-color-a{ background:#f5d9c0; }
+  .case-color-b{ background:#f6e2b8; }
+  .case-color-c{ background:#e9c9ae; }
+  .case-color-d{ background:#f2e4d3; }
   .case-dot{
     position:absolute;
-    left:-44px;
-    top:34px;
-    width:20px; height:20px;
+    left:-48px;
+    top:30px;
+    width:26px; height:26px;
     border-radius:50%;
     background:var(--paper);
-    border:2px solid var(--line);
-    transition:border-color 0.4s ease, background 0.4s ease;
+    border:3px solid #000;
+    box-shadow:3px 3px 0 #000;
+    transition:background 0.4s ease;
   }
   .case.in-view .case-dot{
-    border-color:var(--sage);
     background:var(--sage);
   }
   .case-tag{
     font-size:0.85rem;
-    color:var(--clay);
+    color:#a1531c;
     margin-bottom:10px;
   }
   .case-company{
     font-size:0.85rem;
-    color:var(--muted-2);
+    color:#6b6f76;
     margin-bottom:18px;
   }
   .case-title{
     font-size:1.4rem;
     margin-bottom:14px;
     max-width:38ch;
+    color:#24272c;
   }
   .case-summary{
     margin:0 0 20px;
     max-width:62ch;
     font-size:1rem;
-    color:var(--muted);
+    color:#4d525a;
   }
   .case-readmore{
     display:inline-block;
     font-size:0.95rem;
-    color:var(--sage);
+    color:#7a3d12;
     text-decoration:none;
-    border-bottom:1px solid var(--sage);
+    border-bottom:1px solid #7a3d12;
     padding-bottom:3px;
     transition:opacity 0.2s ease;
   }
@@ -445,7 +669,7 @@
   .contact{ background:var(--surface); border-top:1px solid var(--line); }
   .contact h2{ font-size:1.9rem; max-width:16ch; }
   .contact p{ color:var(--muted); margin-top:18px; max-width:50ch; }
-  .contact-links{ margin-top:34px; display:flex; gap:34px; flex-wrap:wrap; }
+  .contact-links{ margin-top:34px; display:flex; align-items:center; gap:34px; flex-wrap:wrap; }
   .contact-links a{
     text-decoration:none;
     border-bottom:1px solid var(--line);
@@ -455,14 +679,43 @@
   }
   .contact-links a:hover{ border-color:var(--sage); color:var(--sage); }
 
+  .linkedin-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    background:#0077B5;
+    color:#fff;
+    padding:14px 24px;
+    border:3px solid #000;
+    box-shadow:6px 6px 0 #000;
+    font-weight:700;
+    font-size:1rem;
+    text-decoration:none !important;
+    border-radius:4px;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .linkedin-btn:hover{
+    transform:translate(-3px, -3px);
+    box-shadow:9px 9px 0 #000;
+    border-color:#000 !important;
+    color:#fff !important;
+  }
+  .linkedin-btn:active{
+    transform:translate(2px, 2px);
+    box-shadow:3px 3px 0 #000;
+  }
+
   footer{ padding:30px 0 44px; color:var(--muted-2); font-size:0.84rem; }
 </style>
 </head>
 <body>
 
+  <div class="cur-main" id="cMain"></div>
+  <div class="cur-ring" id="cRing"></div>
+  <div id="top"></div>
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="topbar-name">Deepam Khirwar</div>
+      <a href="#top" class="logo-badge" aria-label="Back to top">DK</a>
       <nav class="topbar-nav">
         <a href="#programs">Programs</a>
         <a href="#how-i-work">How I work</a>
@@ -475,8 +728,28 @@
   <section class="hero">
     <div class="blob blob-a"></div>
     <div class="blob blob-b"></div>
+    <canvas id="wave-canvas"></canvas>
+    <div class="hero-figure-wrap">
+      <svg class="hero-figure" viewBox="0 0 320 320" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="160" cy="165" r="135" fill="var(--sage)" opacity="0.08"/>
+        <rect x="95" y="118" width="130" height="112" rx="22" fill="#1c1815"/>
+        <rect x="106" y="132" width="108" height="96" rx="32" fill="var(--sage)"/>
+        <rect x="86" y="180" width="34" height="14" rx="7" fill="#f5efe6"/>
+        <rect x="200" y="180" width="34" height="14" rx="7" fill="#f5efe6"/>
+        <circle cx="160" cy="98" r="32" fill="#f5efe6"/>
+        <path d="M128,90 a32,32 0 0,1 64,0 q-6,-14 -32,-14 q-26,0 -32,14 z" fill="#0f0d0c"/>
+        <rect x="38" y="228" width="244" height="14" rx="5" fill="#0f0d0c"/>
+        <rect x="118" y="206" width="94" height="10" rx="3" fill="#000"/>
+        <polygon points="122,206 130,150 190,150 198,206" fill="#000"/>
+        <polygon points="128,200 134,156 186,156 192,200" fill="var(--sage)" opacity="0.85"/>
+      </svg>
+    </div>
     <div class="wrap hero-inner">
-      <div class="hero-kicker">Product Manager · Technical Program Manager</div>
+      <div class="hero-name">Deepam Khirwar</div>
+      <div class="hero-roles">
+        <span class="role-badge role-badge-a">Product Manager</span>
+        <span class="role-badge role-badge-b">Technical Program Manager</span>
+      </div>
       <h1 id="hero-headline">Platforms ship because someone owns the path between strategy and delivery.</h1>
       <p>I'm Deepam Khirwar. For 10+ years I've defined what enterprise platforms should do and run the programs that get them there on time - across healthcare, fintech, and SaaS, for organizations serving 5M+ people.</p>
       <div class="hero-links">
@@ -484,18 +757,50 @@
         <a class="btn btn-secondary" href="mailto:Deepamkhirwar2406@gmail.com">Get in touch</a>
       </div>
     </div>
+    <div class="scroll-arrow-wrap">
+      <a href="#programs" class="get-to-know-wrap" aria-label="Scroll to selected programs">
+        <svg class="rotating-ring" viewBox="0 0 120 120">
+          <defs>
+            <path id="ringPath" d="M60,60 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"/>
+          </defs>
+          <text font-size="10.5" fill="currentColor" letter-spacing="2">
+            <textPath href="#ringPath" startOffset="0%">GET TO KNOW ME &middot; GET TO KNOW ME &middot; </textPath>
+          </text>
+        </svg>
+        <span class="static-arrow" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+        </span>
+      </a>
+    </div>
   </section>
 
-  <div class="stats">
-    <div class="wrap">
-      <div class="stats-grid" id="stats-grid">
-        <div class="stat"><div class="stat-num" data-target="5" data-suffix="M+">0</div><div class="stat-label">People served by platforms I've led</div></div>
-        <div class="stat"><div class="stat-num" data-target="15" data-suffix="+">0</div><div class="stat-label">Cross-functional teams aligned on one program</div></div>
-        <div class="stat"><div class="stat-num" data-target="2" data-suffix="M+" data-prefix="$">0</div><div class="stat-label">Compliance exposure avoided</div></div>
-        <div class="stat"><div class="stat-num" data-target="10" data-suffix="+">0</div><div class="stat-label">Years across product &amp; program roles</div></div>
+  <section class="numbers" id="numbers">
+    <div class="nums-grid" id="nums-grid">
+      <div class="n-item">
+        <span class="n-val" data-target="5" data-suffix="M+">0</span>
+        <div class="n-label">People<br>Reached</div>
+      </div>
+      <div class="n-item">
+        <span class="n-val" data-target="10" data-suffix="+">0</span>
+        <div class="n-label">Years<br>Shipping</div>
+      </div>
+      <div class="n-item">
+        <span class="n-val" data-target="15" data-suffix="+">0</span>
+        <div class="n-label">Teams<br>Aligned</div>
+      </div>
+      <div class="n-item">
+        <span class="n-val" data-target="2" data-prefix="$" data-suffix="M+">0</span>
+        <div class="n-label">Risk<br>Avoided</div>
+      </div>
+      <div class="n-item">
+        <span class="n-val" data-target="45" data-suffix="%">0</span>
+        <div class="n-label">Escalations<br>Cut</div>
       </div>
     </div>
-  </div>
+  </section>
 
   <div class="skills-ribbon" aria-label="Core competencies">
     <div class="skills-track" id="skills-track"></div>
@@ -512,7 +817,7 @@
       <div class="case-list" id="case-list">
         <div class="timeline-rail"><div class="timeline-fill" id="timeline-fill"></div></div>
 
-        <div class="case">
+        <div class="case case-color-a">
           <div class="case-dot"></div>
           <div class="case-tag">Product Strategy &middot; Platform Launch</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
@@ -521,7 +826,7 @@
           <a class="case-readmore" href="program-pharmacy.html">Read more</a>
         </div>
 
-        <div class="case">
+        <div class="case case-color-b">
           <div class="case-dot"></div>
           <div class="case-tag">Governance &middot; Risk &amp; Compliance</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
@@ -530,7 +835,7 @@
           <a class="case-readmore" href="program-ai-governance.html">Read more</a>
         </div>
 
-        <div class="case">
+        <div class="case case-color-c">
           <div class="case-dot"></div>
           <div class="case-tag">Program Governance &middot; Regulatory Deadline</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
@@ -539,7 +844,7 @@
           <a class="case-readmore" href="program-enrollment.html">Read more</a>
         </div>
 
-        <div class="case">
+        <div class="case case-color-d">
           <div class="case-dot"></div>
           <div class="case-tag">Product Strategy &middot; Platform Scaling</div>
           <div class="case-company">Cognizant Technology Solutions &middot; Aug 2021 &ndash; Present</div>
@@ -596,8 +901,10 @@
         <p>Open to Product Management, Technical Program Management, and platform / AI governance roles.</p>
         <div class="contact-links">
           <a href="mailto:Deepamkhirwar2406@gmail.com">Deepamkhirwar2406@gmail.com</a>
-          <a href="tel:+16574457046">(657) 445 7046</a>
-          <a href="https://www.linkedin.com/in/deepamkhirwar" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/deepamkhirwar" target="_blank" rel="noopener" class="linkedin-btn" aria-label="Connect with Deepam on LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            Connect on LinkedIn
+          </a>
         </div>
       </section>
     </div>
@@ -608,6 +915,42 @@
 <script>
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Custom cursor: dot follows instantly, ring trails closely, comet trail behind
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100;
+    var lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    var hoverables = document.querySelectorAll('a, button, .case, .n-item');
+    hoverables.forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
 
   // Populate skills ribbon from Core Competencies
   var skills = [
@@ -641,9 +984,57 @@
     }
   }
 
-  // Count-up stats
-  var statsGrid = document.getElementById('stats-grid');
-  var statNums = document.querySelectorAll('.stat-num');
+  // Animated wave canvas in hero background
+  var waveCanvas = document.getElementById('wave-canvas');
+  if(waveCanvas){
+    var wctx = waveCanvas.getContext('2d');
+    var heroEl = document.querySelector('.hero');
+    function resizeWaveCanvas(){
+      var rect = heroEl.getBoundingClientRect();
+      waveCanvas.width = rect.width;
+      waveCanvas.height = rect.height;
+    }
+    resizeWaveCanvas();
+    window.addEventListener('resize', resizeWaveCanvas);
+
+    var waveLines = [
+      { amplitude: 22, wavelength: 260, speed: 0.010, yFactor: 0.62, color: 'rgba(226,113,29,0.16)', lineWidth: 2 },
+      { amplitude: 32, wavelength: 340, speed: 0.007, yFactor: 0.74, color: 'rgba(226,113,29,0.10)', lineWidth: 2 },
+      { amplitude: 16, wavelength: 200, speed: 0.014, yFactor: 0.85, color: 'rgba(226,113,29,0.08)', lineWidth: 1.5 }
+    ];
+    var t = 0;
+    function drawWaves(){
+      wctx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
+      waveLines.forEach(function(w){
+        wctx.beginPath();
+        var baseY = waveCanvas.height * w.yFactor;
+        for(var x = 0; x <= waveCanvas.width; x += 6){
+          var y = baseY + Math.sin((x / w.wavelength) + t * w.speed * 10) * w.amplitude;
+          if(x === 0){ wctx.moveTo(x, y); } else { wctx.lineTo(x, y); }
+        }
+        wctx.strokeStyle = w.color;
+        wctx.lineWidth = w.lineWidth;
+        wctx.stroke();
+      });
+      t += 1;
+      if(!reduced){ requestAnimationFrame(drawWaves); }
+    }
+    drawWaves();
+  }
+
+
+  var rotatingRing = document.querySelector('.rotating-ring');
+  if(rotatingRing){
+    function updateRingRotation(){
+      var angle = (window.scrollY * 0.25) % 360;
+      rotatingRing.style.transform = 'rotate(' + angle + 'deg)';
+    }
+    window.addEventListener('scroll', updateRingRotation, { passive: true });
+    updateRingRotation();
+  }
+
+
+  var numItems = document.querySelectorAll('.n-item');
   function animateCount(el){
     var target = parseFloat(el.getAttribute('data-target'));
     var suffix = el.getAttribute('data-suffix') || '';
@@ -661,15 +1052,20 @@
     }
     requestAnimationFrame(step);
   }
-  var statsObserver = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
+  var numsObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry, idx){
       if(entry.isIntersecting){
-        statNums.forEach(animateCount);
-        statsObserver.disconnect();
+        var el = entry.target;
+        setTimeout(function(){
+          el.classList.add('in-view');
+          var valEl = el.querySelector('.n-val');
+          if(valEl) animateCount(valEl);
+        }, idx * 90);
+        numsObserver.unobserve(el);
       }
     });
-  }, { threshold: 0.4 });
-  if(statsGrid) statsObserver.observe(statsGrid);
+  }, { threshold: 0.35 });
+  numItems.forEach(function(item){ numsObserver.observe(item); });
 
   // Case study timeline: reveal + line fill
   var caseList = document.getElementById('case-list');
