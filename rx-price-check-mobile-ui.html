@@ -1,0 +1,957 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rx Price Check — mobile UI reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#11302B; --ink2:#5C6E68; --ink3:#8A9994;
+  --line:#DDE6E2; --line2:#EDF2F0;
+  --canvas:#EEF2F0; --surface:#FFFFFF;
+  --action:#0D6E5A; --action-dk:#0A5747;
+  --save-bg:#DDF0E9; --save-ink:#0A5747;
+  --amber:#8A5300; --amber-bg:#F7ECD9;
+  --alert:#8C2F2F;
+  --r:14px;
+  --sh:0 1px 2px rgba(17,48,43,.06), 0 8px 24px rgba(17,48,43,.07);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:#20342F;
+  background-image:radial-gradient(1100px 600px at 20% -10%, #2C4A43 0%, #20342F 60%);
+  color:var(--ink); min-height:100vh;
+  display:flex; gap:34px; align-items:flex-start;
+  padding:38px 28px 70px; justify-content:center;
+}
+button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
+
+/* ---------- index rail ---------- */
+.rail{width:236px; flex:0 0 236px; position:sticky; top:38px; color:#CFE0DA}
+.rail h1{font-size:20px; font-weight:800; letter-spacing:-.02em; margin:0 0 2px; color:#fff}
+.rail p{font-size:12.5px; line-height:1.55; color:#93AFA7; margin:0 0 22px}
+.rail ol{list-style:none; margin:0; padding:0; counter-reset:s}
+.rail li{counter-increment:s}
+.rail li button{
+  display:flex; gap:11px; width:100%; text-align:left; padding:9px 10px;
+  border-radius:9px; font-size:13px; line-height:1.35; color:#B9D0C9;
+}
+.rail li button:before{
+  content:counter(s,decimal-leading-zero); font-size:11px; font-weight:700;
+  color:#6E8C84; padding-top:2px; font-variant-numeric:tabular-nums;
+}
+.rail li button:hover{background:rgba(255,255,255,.06); color:#fff}
+.rail li button[aria-current="true"]{background:#0D6E5A; color:#fff}
+.rail li button[aria-current="true"]:before{color:#8FD3C1}
+.rail .note{margin-top:22px; font-size:11.5px; line-height:1.6; color:#7C9A92; border-top:1px solid rgba(255,255,255,.12); padding-top:14px}
+
+/* ---------- device ---------- */
+.device{
+  width:390px; height:844px; flex:0 0 390px; position:relative;
+  background:var(--canvas); border-radius:46px;
+  box-shadow:0 0 0 11px #0C1A17, 0 0 0 13px #2E4640, 0 40px 80px rgba(0,0,0,.45);
+  overflow:hidden;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:118px; height:31px; background:#0C1A17; border-radius:19px; z-index:60}
+.statusbar{position:absolute; top:0; left:0; right:0; height:52px; z-index:55; display:flex; align-items:center; justify-content:space-between; padding:16px 28px 0; font-size:13.5px; font-weight:700; color:var(--ink); pointer-events:none}
+.statusbar .sig{display:flex; gap:5px; align-items:center}
+.statusbar .sig i{display:block; width:3px; background:var(--ink); border-radius:1px}
+.homebar{position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:136px; height:5px; border-radius:3px; background:rgba(17,48,43,.32); z-index:59}
+
+/* ---------- screens ---------- */
+.screen{position:absolute; inset:0; display:none; flex-direction:column; background:var(--canvas)}
+.screen.on{display:flex}
+.nav{padding:58px 20px 12px; background:var(--surface); border-bottom:1px solid var(--line); flex:0 0 auto}
+.nav.flat{border-bottom:0}
+.navrow{display:flex; align-items:center; gap:12px; min-height:30px}
+.back{width:30px; height:30px; margin-left:-6px; display:grid; place-items:center; border-radius:50%}
+.back:hover{background:var(--line2)}
+.navtitle{font-size:17px; font-weight:700; letter-spacing:-.015em}
+.navsub{font-size:12px; color:var(--ink2); margin-top:1px}
+.body{flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; padding-bottom:104px}
+.body::-webkit-scrollbar{width:0}
+.pad{padding:0 20px}
+
+.plantag{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--ink2); background:var(--line2); padding:4px 9px; border-radius:6px}
+.plantag b{color:var(--ink); font-weight:700}
+
+/* ---------- search ---------- */
+.hero{padding:20px 20px 22px; background:var(--surface)}
+.hero h2{margin:12px 0 6px; font-size:27px; line-height:1.14; font-weight:800; letter-spacing:-.032em; max-width:16ch}
+.hero p{margin:0 0 18px; font-size:13.5px; line-height:1.5; color:var(--ink2); max-width:34ch}
+.searchbox{display:flex; align-items:center; gap:10px; height:52px; padding:0 14px; background:var(--canvas); border:1.5px solid var(--line); border-radius:12px}
+.searchbox.focus{border-color:var(--action); background:#fff; box-shadow:0 0 0 3px rgba(13,110,90,.13)}
+.searchbox input{flex:1; border:0; outline:0; background:none; font:inherit; font-size:16px; font-weight:500; color:var(--ink)}
+.searchbox input::placeholder{color:var(--ink3); font-weight:400}
+.btn{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:52px; border-radius:12px; background:var(--action); color:#fff; font-size:16px; font-weight:700; letter-spacing:-.01em}
+.btn:hover{background:var(--action-dk)}
+.btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--line2)}
+.btn[disabled]{background:#C6D3CE; cursor:default}
+
+.sectlabel{font-size:12.5px; font-weight:700; color:var(--ink2); margin:22px 0 9px; letter-spacing:.01em}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{padding:8px 13px; border-radius:20px; background:#fff; border:1px solid var(--line); font-size:13.5px; font-weight:500}
+.chip:hover{border-color:var(--action); color:var(--action-dk)}
+
+.rowlist{background:#fff; border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+.row{display:flex; align-items:center; gap:12px; padding:13px 15px; width:100%; text-align:left; border-bottom:1px solid var(--line2)}
+.row:last-child{border-bottom:0}
+.row:hover{background:#F7FAF9}
+.row .rmain{flex:1; min-width:0}
+.row .rname{font-size:15px; font-weight:600; letter-spacing:-.01em}
+.row .rmeta{font-size:12.5px; color:var(--ink2); margin-top:2px}
+.pill{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em; padding:2.5px 6px; border-radius:4px; vertical-align:1.5px}
+.pill.gen{background:var(--save-bg); color:var(--save-ink)}
+.pill.brand{background:var(--amber-bg); color:var(--amber)}
+
+/* typeahead overlay */
+.typeahead{position:absolute; left:0; right:0; top:0; bottom:0; background:var(--canvas); z-index:40; display:none; flex-direction:column}
+.typeahead.on{display:flex}
+
+/* ---------- results ---------- */
+.current{background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:15px; margin-top:14px}
+.current .top{display:flex; justify-content:space-between; align-items:flex-start; gap:14px}
+.drugname{font-size:19px; font-weight:800; letter-spacing:-.02em}
+.drugsub{font-size:12.5px; color:var(--ink2); margin-top:3px; line-height:1.45}
+.price{font-size:27px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums; white-space:nowrap}
+.price small{font-size:12px; font-weight:600; color:var(--ink2); display:block; text-align:right; letter-spacing:0; margin-top:1px}
+.tierline{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid var(--line2)}
+.tag{font-size:11.5px; font-weight:600; color:var(--ink2); background:var(--line2); padding:3px 8px; border-radius:5px}
+
+.aihead{display:flex; align-items:center; gap:8px; margin:26px 0 4px}
+.aihead h3{margin:0; font-size:16px; font-weight:800; letter-spacing:-.02em}
+.aihead svg{flex:0 0 auto}
+.aisub{font-size:12.5px; line-height:1.5; color:var(--ink2); margin:0 0 12px; max-width:40ch}
+
+.alt{display:block; width:100%; text-align:left; background:#fff; border:1px solid var(--line); border-left:4px solid var(--action); border-radius:var(--r); padding:14px 15px; margin-bottom:10px; position:relative}
+.alt.up{border-left-color:#C99B4A}
+.alt:hover{border-color:var(--action); border-left-color:var(--action); box-shadow:var(--sh)}
+.alt.up:hover{border-color:#C99B4A; border-left-color:#C99B4A}
+.alt .top{display:flex; justify-content:space-between; align-items:flex-start; gap:14px}
+.alt .an{font-size:16px; font-weight:700; letter-spacing:-.018em}
+.alt .ar{font-size:13px; line-height:1.48; color:var(--ink2); margin-top:7px; max-width:38ch}
+.alt .ap{font-size:22px; font-weight:800; letter-spacing:-.028em; font-variant-numeric:tabular-nums; white-space:nowrap}
+.alt .ap small{display:block; font-size:11.5px; font-weight:600; color:var(--ink2); text-align:right; letter-spacing:0; margin-top:1px}
+.saveflag{display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:12.5px; font-weight:700; color:var(--save-ink); background:var(--save-bg); padding:4px 9px; border-radius:6px}
+.saveflag.up{color:var(--amber); background:var(--amber-bg)}
+.needrx{display:inline-block; margin-top:10px; margin-left:6px; font-size:12px; font-weight:600; color:var(--ink2); background:var(--line2); padding:4px 9px; border-radius:6px}
+
+.disclaim{display:flex; gap:9px; margin:14px 0 0; padding:12px 13px; background:#fff; border:1px dashed var(--line); border-radius:11px; font-size:12.5px; line-height:1.5; color:var(--ink2)}
+.disclaim b{color:var(--ink); font-weight:700}
+.expander{display:flex; align-items:center; justify-content:space-between; width:100%; padding:13px 15px; background:#fff; border:1px solid var(--line); border-radius:var(--r); font-size:14px; font-weight:600; margin-top:18px}
+.expander:hover{border-color:var(--ink3)}
+
+/* ---------- configure ---------- */
+.field{margin-top:14px}
+.flabel{font-size:12.5px; font-weight:700; color:var(--ink2); margin-bottom:6px}
+.select{display:flex; align-items:center; justify-content:space-between; width:100%; height:52px; padding:0 15px; background:#fff; border:1.5px solid var(--line); border-radius:12px; font-size:16px; font-weight:600; letter-spacing:-.01em}
+.select:hover{border-color:var(--ink3)}
+.select.open{border-color:var(--action); box-shadow:0 0 0 3px rgba(13,110,90,.13)}
+.seg{display:flex; gap:8px}
+.seg button{flex:1; height:52px; border:1.5px solid var(--line); border-radius:12px; background:#fff; font-size:15px; font-weight:600}
+.seg button[aria-pressed="true"]{border-color:var(--action); background:var(--save-bg); color:var(--save-ink)}
+.runningtotal{display:flex; justify-content:space-between; align-items:flex-end; margin-top:22px; padding:16px; background:#fff; border:1px solid var(--line); border-radius:var(--r)}
+.runningtotal .lbl{font-size:13px; font-weight:600; color:var(--ink2); line-height:1.45}
+.runningtotal .lbl b{display:block; color:var(--ink); font-size:14.5px; font-weight:700}
+.bignum{font-size:34px; font-weight:800; letter-spacing:-.035em; font-variant-numeric:tabular-nums; line-height:1}
+
+.cta{position:absolute; left:0; right:0; bottom:0; padding:14px 20px 30px; background:linear-gradient(to bottom, rgba(238,242,240,0), var(--canvas) 26%); z-index:30}
+
+/* ---------- sheet ---------- */
+.scrim{position:absolute; inset:0; background:rgba(11,26,23,.45); z-index:70; display:none}
+.scrim.on{display:block}
+.sheet{position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:22px 22px 0 0; z-index:71; padding:10px 0 30px; display:none; max-height:76%; overflow-y:auto; box-shadow:0 -12px 40px rgba(11,26,23,.2)}
+.sheet.on{display:block; animation:rise .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.grab{width:38px; height:4px; border-radius:2px; background:var(--line); margin:0 auto 12px}
+.sheet h4{margin:0; padding:0 20px 10px; font-size:16px; font-weight:800; letter-spacing:-.02em}
+.opt{display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; padding:14px 20px; font-size:16px; font-weight:500; border-top:1px solid var(--line2)}
+.opt:hover{background:#F7FAF9}
+.opt[aria-selected="true"]{font-weight:700; color:var(--action-dk)}
+.opt .os{font-size:13px; color:var(--ink2); font-weight:500}
+
+/* ---------- location ---------- */
+.locbtn{display:flex; align-items:center; gap:13px; width:100%; text-align:left; padding:16px 15px; background:#fff; border:1.5px solid var(--action); border-radius:var(--r); margin-top:16px}
+.locbtn:hover{background:var(--save-bg)}
+.locbtn .li{width:38px; height:38px; border-radius:50%; background:var(--save-bg); display:grid; place-items:center; flex:0 0 auto}
+.locbtn .lt{font-size:15.5px; font-weight:700; letter-spacing:-.012em}
+.locbtn .ld{font-size:12.5px; color:var(--ink2); margin-top:2px}
+.or{display:flex; align-items:center; gap:12px; margin:20px 0 4px; font-size:12.5px; font-weight:600; color:var(--ink3)}
+.or:before,.or:after{content:""; height:1px; background:var(--line); flex:1}
+.attrib{display:flex; align-items:center; gap:6px; justify-content:flex-end; font-size:11px; color:var(--ink3); padding:8px 4px 0}
+.privacy{font-size:12px; line-height:1.55; color:var(--ink2); margin-top:18px; padding:12px 13px; background:#fff; border-radius:11px; border:1px solid var(--line2)}
+
+/* ---------- pharmacy list ---------- */
+.toolbar{display:flex; align-items:center; gap:10px; padding:10px 20px 12px; background:#fff; border-bottom:1px solid var(--line)}
+.switch{display:flex; background:var(--canvas); border-radius:9px; padding:3px; flex:0 0 auto}
+.switch button{padding:7px 15px; border-radius:7px; font-size:13.5px; font-weight:700; color:var(--ink2)}
+.switch button[aria-pressed="true"]{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(17,48,43,.12)}
+.sortchips{display:flex; gap:7px; overflow-x:auto; flex:1}
+.sortchips::-webkit-scrollbar{height:0}
+.sc{flex:0 0 auto; padding:7px 12px; border-radius:18px; border:1px solid var(--line); font-size:12.5px; font-weight:600; white-space:nowrap; background:#fff}
+.sc[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink)}
+
+.ph{display:flex; gap:13px; align-items:flex-start; width:100%; text-align:left; padding:15px 20px; background:#fff; border-bottom:1px solid var(--line2)}
+.ph:hover{background:#F7FAF9}
+.ph .pinfo{flex:1; min-width:0}
+.ph .pname{font-size:15.5px; font-weight:700; letter-spacing:-.015em}
+.ph .paddr{font-size:12.5px; color:var(--ink2); margin-top:3px; line-height:1.45}
+.ph .pmeta{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+.badge{font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px}
+.badge.pref{background:var(--save-bg); color:var(--save-ink)}
+.badge.innet{background:var(--line2); color:var(--ink2)}
+.badge.out{background:#F6E4E4; color:var(--alert)}
+.badge.est{background:var(--amber-bg); color:var(--amber)}
+.ph .pprice{text-align:right; flex:0 0 auto}
+.ph .pv{font-size:21px; font-weight:800; letter-spacing:-.028em; font-variant-numeric:tabular-nums}
+.ph .pd{font-size:12px; color:var(--ink2); font-weight:600; margin-top:2px; font-variant-numeric:tabular-nums}
+.banner{display:flex; gap:9px; padding:11px 20px; background:#FFF; border-bottom:1px solid var(--line); font-size:12.5px; line-height:1.5; color:var(--ink2)}
+
+/* ---------- map ---------- */
+.maparea{position:relative; flex:1; overflow:hidden; background:#E6ECE8}
+.maparea svg{position:absolute; inset:0; width:100%; height:100%}
+.pin{position:absolute; transform:translate(-50%,-100%); z-index:5; cursor:pointer}
+.pin .lab{display:flex; align-items:center; gap:4px; background:#fff; border:1.5px solid var(--ink); border-radius:15px; padding:4px 9px; font-size:13px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; box-shadow:0 3px 9px rgba(17,48,43,.22); white-space:nowrap}
+.pin .tail{width:2px; height:7px; background:var(--ink); margin:0 auto}
+.pin.pref .lab{background:var(--action); border-color:var(--action); color:#fff}
+.pin.pref .tail{background:var(--action)}
+.pin.active{z-index:9}
+.pin.active .lab{background:var(--ink); border-color:var(--ink); color:#fff; transform:scale(1.1)}
+.pin.active .tail{background:var(--ink)}
+.pin.me{transform:translate(-50%,-50%)}
+.pin.me .dot{width:16px; height:16px; border-radius:50%; background:#1A73E8; border:3px solid #fff; box-shadow:0 0 0 7px rgba(26,115,232,.2), 0 2px 6px rgba(0,0,0,.3)}
+
+.callout{position:absolute; transform:translate(-50%,calc(-100% - 40px)); z-index:12; width:216px; background:#fff; border-radius:13px; padding:12px 13px; box-shadow:0 10px 30px rgba(11,26,23,.28); display:none}
+.callout.on{display:block}
+.callout:after{content:""; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%) rotate(45deg); width:14px; height:14px; background:#fff}
+.callout.below{transform:translate(-50%,12px)}
+.callout.below:after{bottom:auto; top:-7px}
+.callout .cn{font-size:14px; font-weight:800; letter-spacing:-.018em}
+.callout .ca{font-size:11.5px; color:var(--ink2); margin-top:2px}
+.callout .crow{display:flex; align-items:flex-end; justify-content:space-between; margin-top:9px; padding-top:9px; border-top:1px solid var(--line2)}
+.callout .cp{font-size:23px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums; line-height:1}
+.callout .cd{font-size:12px; font-weight:600; color:var(--ink2); text-align:right; line-height:1.35; font-variant-numeric:tabular-nums}
+.callout .cgo{display:block; width:100%; margin-top:10px; padding:8px; border-radius:8px; background:var(--action); color:#fff; font-size:13px; font-weight:700; text-align:center}
+
+.mapchip{position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:14; background:#fff; border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; box-shadow:0 3px 12px rgba(11,26,23,.18); white-space:nowrap}
+.recenter{position:absolute; right:14px; bottom:150px; z-index:14; width:42px; height:42px; border-radius:50%; background:#fff; display:grid; place-items:center; box-shadow:0 3px 12px rgba(11,26,23,.2)}
+.gattrib{position:absolute; left:10px; bottom:8px; z-index:14; font-size:10px; color:#5C6E68; background:rgba(255,255,255,.75); padding:2px 6px; border-radius:4px}
+.deck{position:absolute; left:0; right:0; bottom:0; z-index:15; display:flex; gap:11px; overflow-x:auto; padding:12px 16px 24px; scroll-snap-type:x mandatory}
+.deck::-webkit-scrollbar{height:0}
+.dcard{flex:0 0 238px; scroll-snap-align:center; background:#fff; border-radius:14px; padding:13px; box-shadow:0 6px 20px rgba(11,26,23,.18); text-align:left}
+.dcard .dn{font-size:14.5px; font-weight:700; letter-spacing:-.018em}
+.dcard .dm{font-size:12px; color:var(--ink2); margin-top:3px}
+.dcard .drow{display:flex; align-items:flex-end; justify-content:space-between; margin-top:10px}
+.dcard .dp{font-size:21px; font-weight:800; letter-spacing:-.028em; font-variant-numeric:tabular-nums}
+
+/* ---------- detail ---------- */
+.summary{background:#fff; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:14px}
+.srow{display:flex; justify-content:space-between; align-items:baseline; padding:13px 15px; border-bottom:1px solid var(--line2); font-size:14px}
+.srow:last-child{border-bottom:0}
+.srow .sk{color:var(--ink2); font-weight:500}
+.srow .sv{font-weight:700; font-variant-numeric:tabular-nums}
+.srow.total{background:#F7FAF9}
+.srow.total .sk{color:var(--ink); font-weight:700; font-size:15px}
+.srow.total .sv{font-size:23px; font-weight:800; letter-spacing:-.028em}
+.actions{display:flex; gap:10px; margin-top:16px}
+.actions .btn{height:48px; font-size:15px}
+.hours{font-size:13px; line-height:1.7; color:var(--ink2); margin-top:6px}
+.hours b{color:var(--ink); font-weight:700}
+
+@media (max-width:980px){
+  body{flex-direction:column; align-items:center; padding:24px 14px 60px; gap:24px}
+  .rail{position:static; width:100%; max-width:390px; flex:none}
+  .device{transform-origin:top center}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+</style>
+
+<nav class="rail">
+  <h1>Rx Price Check</h1>
+  <p>Mobile UI reference — tap through the flow, or jump to any screen.</p>
+  <ol id="rail"></ol>
+  <div class="note">390 × 844 pt. Map is a static illustration standing in for the Google Maps SDK; pins carry live price labels.</div>
+</nav>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sig">
+      <i style="height:5px"></i><i style="height:8px"></i><i style="height:11px"></i><i style="height:13px"></i>
+      <svg width="17" height="12" viewBox="0 0 17 12" style="margin-left:3px"><rect x="0" y="1.5" width="13" height="9" rx="2.5" fill="none" stroke="#11302B" stroke-width="1.2"/><rect x="1.6" y="3.1" width="9" height="5.8" rx="1.2" fill="#11302B"/><path d="M14.6 4.4v3.2a1.9 1.9 0 0 0 0-3.2z" fill="#11302B"/></svg>
+    </span>
+  </div>
+  <div class="homebar"></div>
+
+  <!-- ═══════════ 1 · SEARCH ═══════════ -->
+  <section class="screen on" id="s1">
+    <div class="hero">
+      <span class="plantag">Cascade Health · <b>PPO 1500</b></span>
+      <h2>What does your prescription cost?</h2>
+      <p>Search a medication to see your price, plus lower-cost options you can ask your doctor about.</p>
+      <div class="searchbox focus">
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="8.7" cy="8.7" r="6.2" stroke="#0D6E5A" stroke-width="1.9"/><path d="M13.3 13.3 17.5 17.5" stroke="#0D6E5A" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="q" placeholder="Drug name, brand or generic" autocomplete="off">
+      </div>
+    </div>
+    <div class="body">
+      <div class="pad">
+        <div class="sectlabel">Recent searches</div>
+        <div class="chips">
+          <button class="chip" onclick="go(2)">Lipitor</button>
+          <button class="chip" onclick="go(2)">Metformin</button>
+          <button class="chip" onclick="go(2)">Levothyroxine</button>
+        </div>
+        <div class="sectlabel">Your saved medications</div>
+        <div class="rowlist">
+          <button class="row" onclick="go(2)">
+            <div class="rmain">
+              <div class="rname">Lipitor <span class="pill brand">Brand</span></div>
+              <div class="rmeta">20 mg tablet · 30 ct · last filled Aug 14</div>
+            </div>
+            <div class="price" style="font-size:19px">$84<small>per month</small></div>
+          </button>
+          <button class="row" onclick="go(2)">
+            <div class="rmain">
+              <div class="rname">Metformin HCl <span class="pill gen">Generic</span></div>
+              <div class="rmeta">500 mg tablet · 60 ct · last filled Sep 2</div>
+            </div>
+            <div class="price" style="font-size:19px">$4<small>per month</small></div>
+          </button>
+        </div>
+        <div class="sectlabel">Type a few letters</div>
+        <div class="rowlist">
+          <button class="row" onclick="go(2)">
+            <div class="rmain">
+              <div class="rname">lipi<span style="color:var(--ink3);font-weight:400">tor</span></div>
+              <div class="rmeta">Typeahead matches brand, generic and common misspellings</div>
+            </div>
+            <svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5l-5 5" stroke="#8A9994" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 2 · ALTERNATIVES ═══════════ -->
+  <section class="screen" id="s2">
+    <div class="nav">
+      <div class="navrow">
+        <button class="back" onclick="go(1)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Lipitor</div>
+          <div class="navsub">atorvastatin calcium · cholesterol</div>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="pad">
+        <div class="current">
+          <div class="top">
+            <div>
+              <div class="drugname">Lipitor <span class="pill brand">Brand</span></div>
+              <div class="drugsub">20 mg tablet · 30-day supply</div>
+            </div>
+            <div class="price">$84.00<small>you pay</small></div>
+          </div>
+          <div class="tierline">
+            <span class="tag">Tier 3 · non-preferred brand</span>
+            <span class="tag">Covered</span>
+            <span class="tag">Deductible met</span>
+          </div>
+        </div>
+
+        <div class="aihead">
+          <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 .8l1.9 5.3L16.2 8l-5.3 1.9L9 15.2l-1.9-5.3L1.8 8l5.3-1.9z" fill="#0D6E5A"/><circle cx="15.2" cy="14.4" r="2.1" fill="#0D6E5A" opacity=".45"/></svg>
+          <h3>3 lower-cost options</h3>
+        </div>
+        <p class="aisub">Ranked by your cost on the Cascade PPO 1500 formulary. Generic equivalents are listed first.</p>
+
+        <button class="alt" onclick="go(3)">
+          <div class="top">
+            <div><div class="an">Atorvastatin calcium <span class="pill gen">Generic</span></div></div>
+            <div class="ap">$9.00<small>per month</small></div>
+          </div>
+          <div class="ar">Same active ingredient as Lipitor, at the same strength. The FDA rates it therapeutically equivalent.</div>
+          <div>
+            <span class="saveflag">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Save $75 a month
+            </span>
+          </div>
+        </button>
+
+        <button class="alt" onclick="go(3)">
+          <div class="top">
+            <div><div class="an">Rosuvastatin <span class="pill gen">Generic</span></div></div>
+            <div class="ap">$12.40<small>per month</small></div>
+          </div>
+          <div class="ar">A different statin in the same drug class. Your plan covers it at tier 1.</div>
+          <div>
+            <span class="saveflag">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Save $71.60 a month
+            </span>
+            <span class="needrx">Needs a new prescription</span>
+          </div>
+        </button>
+
+        <button class="alt" onclick="go(3)">
+          <div class="top">
+            <div><div class="an">Pravastatin sodium <span class="pill gen">Generic</span></div></div>
+            <div class="ap">$14.00<small>per month</small></div>
+          </div>
+          <div class="ar">Same class, lowest-tier coverage. Often chosen when other statins cause muscle aches.</div>
+          <div>
+            <span class="saveflag">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Save $70 a month
+            </span>
+            <span class="needrx">Needs a new prescription</span>
+          </div>
+        </button>
+
+        <button class="expander" onclick="toggleHigh()">
+          <span id="highlabel">2 higher-cost options in this class</span>
+          <svg id="highchev" width="13" height="8" viewBox="0 0 14 9" fill="none"><path d="M1.5 1.5 7 7l5.5-5.5" stroke="#11302B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div id="higher" style="display:none; margin-top:10px">
+          <button class="alt up" onclick="go(3)">
+            <div class="top">
+              <div><div class="an">Livalo <span class="pill brand">Brand</span></div></div>
+              <div class="ap">$210.00<small>per month</small></div>
+            </div>
+            <div class="ar">Brand-only, no generic available. Tier 3 with prior authorization.</div>
+            <div><span class="saveflag up">$126 more a month</span><span class="needrx">Needs approval</span></div>
+          </button>
+          <button class="alt up" onclick="go(3)">
+            <div class="top">
+              <div><div class="an">Zetia + atorvastatin <span class="pill brand">Brand</span></div></div>
+              <div class="ap">$96.50<small>per month</small></div>
+            </div>
+            <div class="ar">Combination therapy. Listed for completeness — your prescriber would decide if it applies.</div>
+            <div><span class="saveflag up">$12.50 more a month</span></div>
+          </button>
+        </div>
+
+        <div class="disclaim">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex:0 0 auto;margin-top:1px"><circle cx="9" cy="9" r="7.6" stroke="#5C6E68" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#5C6E68" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div><b>Prices only, not medical advice.</b> Talk to your prescriber before changing any medication. Estimates reflect your plan as of Sep 13, 2026.</div>
+        </div>
+        <div style="height:14px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 3 · CONFIGURE ═══════════ -->
+  <section class="screen" id="s3">
+    <div class="nav">
+      <div class="navrow">
+        <button class="back" onclick="go(2)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Atorvastatin calcium</div>
+          <div class="navsub">Generic · tier 1 · covered</div>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="pad" style="padding-top:16px">
+        <div class="field">
+          <div class="flabel">Strength</div>
+          <button class="select" id="selDose" onclick="openSheet('dose')">
+            <span id="doseLabel">20 mg</span>
+            <svg width="13" height="8" viewBox="0 0 14 9" fill="none"><path d="M1.5 1.5 7 7l5.5-5.5" stroke="#5C6E68" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <div class="flabel">Form</div>
+          <button class="select" id="selForm" onclick="openSheet('form')">
+            <span id="formLabel">Tablet</span>
+            <svg width="13" height="8" viewBox="0 0 14 9" fill="none"><path d="M1.5 1.5 7 7l5.5-5.5" stroke="#5C6E68" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <div class="flabel">Supply</div>
+          <div class="seg">
+            <button id="q30" aria-pressed="true" onclick="setQty(30)">30 days</button>
+            <button id="q90" aria-pressed="false" onclick="setQty(90)">90 days</button>
+          </div>
+        </div>
+
+        <div class="runningtotal">
+          <div class="lbl"><b>Estimated cost</b>for <span id="sumLine">20 mg tablet, 30 days</span></div>
+          <div class="bignum" id="sumPrice">$9.00</div>
+        </div>
+
+        <div class="disclaim" style="margin-top:12px">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex:0 0 auto;margin-top:1px"><circle cx="9" cy="9" r="7.6" stroke="#5C6E68" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#5C6E68" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div>Strength and form come from products actually dispensable near you. 90-day supply is cheaper per month at preferred pharmacies.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta"><button class="btn" onclick="go(4)">Check prices near you</button></div>
+  </section>
+
+  <!-- ═══════════ 4 · LOCATION ═══════════ -->
+  <section class="screen" id="s4">
+    <div class="nav">
+      <div class="navrow">
+        <button class="back" onclick="go(3)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Where should we look?</div>
+          <div class="navsub">Atorvastatin 20 mg tablet · 30 days</div>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="pad" style="padding-top:6px">
+        <button class="locbtn" onclick="go(5)">
+          <span class="li">
+            <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.1" stroke="#0D6E5A" stroke-width="1.8"/><circle cx="10" cy="10" r="7" stroke="#0D6E5A" stroke-width="1.5" opacity=".5"/><path d="M10 .8v2.4M10 16.8v2.4M.8 10h2.4M16.8 10h2.4" stroke="#0D6E5A" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span style="flex:1">
+            <span class="lt" style="display:block">Use my current location</span>
+            <span class="ld" style="display:block">Fastest way to see nearby pharmacies</span>
+          </span>
+        </button>
+
+        <div class="or">or enter an address</div>
+
+        <div class="searchbox focus">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 18.5s6.3-5.6 6.3-10.3A6.3 6.3 0 0 0 3.7 8.2C3.7 12.9 10 18.5 10 18.5z" stroke="#0D6E5A" stroke-width="1.7" stroke-linejoin="round"/><circle cx="10" cy="8" r="2.3" stroke="#0D6E5A" stroke-width="1.7"/></svg>
+          <input value="4100 Legacy" readonly style="color:var(--ink)">
+        </div>
+
+        <div class="rowlist" style="margin-top:10px">
+          <button class="row" onclick="go(5)">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" style="flex:0 0 auto"><path d="M10 18.5s6.3-5.6 6.3-10.3A6.3 6.3 0 0 0 3.7 8.2C3.7 12.9 10 18.5 10 18.5z" stroke="#8A9994" stroke-width="1.7" stroke-linejoin="round"/><circle cx="10" cy="8" r="2.3" stroke="#8A9994" stroke-width="1.7"/></svg>
+            <div class="rmain">
+              <div class="rname" style="font-size:14.5px"><b>4100 Legacy</b> Dr</div>
+              <div class="rmeta">Frisco, TX 75034</div>
+            </div>
+          </button>
+          <button class="row" onclick="go(5)">
+            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" style="flex:0 0 auto"><path d="M10 18.5s6.3-5.6 6.3-10.3A6.3 6.3 0 0 0 3.7 8.2C3.7 12.9 10 18.5 10 18.5z" stroke="#8A9994" stroke-width="1.7" stroke-linejoin="round"/><circle cx="10" cy="8" r="2.3" stroke="#8A9994" stroke-width="1.7"/></svg>
+            <div class="rmain">
+              <div class="rname" style="font-size:14.5px"><b>4100 Legacy</b> Center Pkwy</div>
+              <div class="rmeta">Plano, TX 75024</div>
+            </div>
+          </button>
+        </div>
+        <div class="attrib">
+          powered by
+          <svg width="46" height="15" viewBox="0 0 92 30"><text x="0" y="22" font-family="Public Sans, sans-serif" font-size="21" font-weight="600" fill="#5C6E68">Google</text></svg>
+        </div>
+
+        <div class="sectlabel">Saved addresses</div>
+        <div class="rowlist">
+          <button class="row" onclick="go(5)">
+            <div class="rmain">
+              <div class="rname" style="font-size:14.5px">Home</div>
+              <div class="rmeta">2871 Hawthorn Ln, Frisco, TX 75035</div>
+            </div>
+            <svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5l-5 5" stroke="#8A9994" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="privacy">Your location is used only to find pharmacies near you. It is never sent with your medication or plan information.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 5 · PHARMACY LIST ═══════════ -->
+  <section class="screen" id="s5">
+    <div class="nav flat" style="padding-bottom:8px">
+      <div class="navrow">
+        <button class="back" onclick="go(4)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Atorvastatin 20 mg</div>
+          <div class="navsub">Tablet · 30 days · near 4100 Legacy Dr</div>
+        </div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="switch">
+        <button aria-pressed="true">List</button>
+        <button aria-pressed="false" onclick="go(6)">Map</button>
+      </div>
+      <div class="sortchips">
+        <button class="sc" aria-pressed="true">Lowest price</button>
+        <button class="sc" aria-pressed="false">Nearest</button>
+        <button class="sc" aria-pressed="false">Open now</button>
+      </div>
+    </div>
+    <div class="banner">
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none" style="flex:0 0 auto;margin-top:1px"><circle cx="9" cy="9" r="7.6" stroke="#5C6E68" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#5C6E68" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div>8 pharmacies within 10 miles. Prices confirmed with your plan at 9:41 AM.</div>
+    </div>
+    <div class="body" style="padding-bottom:40px">
+      <button class="ph" onclick="go(7)">
+        <div class="pinfo">
+          <div class="pname">Northgate Pharmacy</div>
+          <div class="paddr">3100 Preston Rd · Open until 9 PM</div>
+          <div class="pmeta"><span class="badge pref">Preferred</span><span class="badge innet">90-day available</span></div>
+        </div>
+        <div class="pprice"><div class="pv">$9.00</div><div class="pd">0.4 mi · 3 min</div></div>
+      </button>
+      <button class="ph" onclick="go(7)">
+        <div class="pinfo">
+          <div class="pname">Costco Pharmacy</div>
+          <div class="paddr">2601 Preston Rd · Open until 8:30 PM</div>
+          <div class="pmeta"><span class="badge pref">Preferred</span></div>
+        </div>
+        <div class="pprice"><div class="pv">$9.40</div><div class="pd">1.8 mi · 7 min</div></div>
+      </button>
+      <button class="ph" onclick="go(7)">
+        <div class="pinfo">
+          <div class="pname">CVS Pharmacy</div>
+          <div class="paddr">8700 Gaylord Pkwy · Open 24 hours</div>
+          <div class="pmeta"><span class="badge innet">In network</span></div>
+        </div>
+        <div class="pprice"><div class="pv">$14.00</div><div class="pd">0.9 mi · 4 min</div></div>
+      </button>
+      <button class="ph" onclick="go(7)">
+        <div class="pinfo">
+          <div class="pname">Walgreens</div>
+          <div class="paddr">4851 Legacy Dr · Open until 10 PM</div>
+          <div class="pmeta"><span class="badge innet">In network</span><span class="badge est">Estimate</span></div>
+        </div>
+        <div class="pprice"><div class="pv">$16.50</div><div class="pd">1.2 mi · 5 min</div></div>
+      </button>
+      <button class="ph" onclick="go(7)">
+        <div class="pinfo">
+          <div class="pname">Hawthorn Family Drug</div>
+          <div class="paddr">1140 Main St · Closed · opens 8 AM</div>
+          <div class="pmeta"><span class="badge out">Out of network</span></div>
+        </div>
+        <div class="pprice"><div class="pv">$38.20</div><div class="pd">2.4 mi · 9 min</div></div>
+      </button>
+      <div style="padding:18px 20px 6px">
+        <div class="sectlabel" style="margin-top:0">Not in a hurry?</div>
+        <div class="rowlist">
+          <button class="row" onclick="go(7)">
+            <div class="rmain">
+              <div class="rname" style="font-size:14.5px">Cascade Mail Order</div>
+              <div class="rmeta">90-day supply delivered · 5–7 days</div>
+            </div>
+            <div class="price" style="font-size:19px">$18<small>for 90 days</small></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 6 · MAP ═══════════ -->
+  <section class="screen" id="s6">
+    <div class="nav flat" style="padding-bottom:8px">
+      <div class="navrow">
+        <button class="back" onclick="go(5)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Atorvastatin 20 mg</div>
+          <div class="navsub">Tablet · 30 days · near 4100 Legacy Dr</div>
+        </div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="switch">
+        <button aria-pressed="false" onclick="go(5)">List</button>
+        <button aria-pressed="true">Map</button>
+      </div>
+      <div class="sortchips">
+        <button class="sc" aria-pressed="true">Lowest price</button>
+        <button class="sc" aria-pressed="false">Nearest</button>
+        <button class="sc" aria-pressed="false">Open now</button>
+      </div>
+    </div>
+
+    <div class="maparea" id="maparea">
+      <svg viewBox="0 0 390 560" preserveAspectRatio="xMidYMid slice">
+        <rect width="390" height="560" fill="#E8EDE9"/>
+        <path d="M0 300 L120 262 L190 300 L260 250 L390 286 L390 560 L0 560 Z" fill="#E2EBE1" opacity=".8"/>
+        <path d="M228 0 L262 130 L238 260 L280 400 L258 560" stroke="#CFE0E7" stroke-width="17" fill="none" opacity=".9"/>
+        <rect x="28" y="60" width="86" height="70" rx="5" fill="#DCE7DC"/>
+        <rect x="250" y="430" width="112" height="88" rx="5" fill="#DCE7DC"/>
+        <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+          <path d="M-10 168 H400" stroke-width="13"/>
+          <path d="M-10 382 H400" stroke-width="13"/>
+          <path d="M132 -10 V570" stroke-width="13"/>
+          <path d="M320 -10 V570" stroke-width="11"/>
+          <path d="M-10 92 H400" stroke-width="6.5"/>
+          <path d="M-10 262 H400" stroke-width="6.5"/>
+          <path d="M-10 470 H400" stroke-width="6.5"/>
+          <path d="M56 -10 V570" stroke-width="6.5"/>
+          <path d="M212 -10 V570" stroke-width="6.5"/>
+          <path d="M-10 520 H400" stroke-width="5"/>
+        </g>
+        <path d="M-10 226 H400" stroke="#F3E7C8" stroke-width="15" fill="none"/>
+        <path d="M-10 226 H400" stroke="#FBF6E7" stroke-width="4" fill="none" stroke-dasharray="9 7"/>
+        <g font-family="Public Sans, sans-serif" font-size="9.5" fill="#8A9994" font-weight="600">
+          <text x="14" y="164">Legacy Dr</text>
+          <text x="14" y="222">Preston Rd</text>
+          <text x="139" y="500" transform="rotate(-90 139 500)">Coit Rd</text>
+          <text x="288" y="470">Warren Park</text>
+        </g>
+      </svg>
+
+      <div class="mapchip">5 pharmacies · $9.00 – $38.20</div>
+
+      <div class="pin me" style="left:48%; top:46%"><span class="dot"></span></div>
+
+      <div class="pin pref active" style="left:29%; top:30%" data-i="0"><span class="lab">$9.00</span><span class="tail"></span></div>
+      <div class="pin pref" style="left:70%; top:22%" data-i="1"><span class="lab">$9.40</span><span class="tail"></span></div>
+      <div class="pin" style="left:64%; top:58%" data-i="2"><span class="lab">$14.00</span><span class="tail"></span></div>
+      <div class="pin" style="left:24%; top:66%" data-i="3"><span class="lab">$16.50</span><span class="tail"></span></div>
+      <div class="pin" style="left:82%; top:76%" data-i="4"><span class="lab">$38.20</span><span class="tail"></span></div>
+
+      <div class="callout on" id="callout" style="left:29%; top:30%">
+        <div class="cn" id="coName">Northgate Pharmacy</div>
+        <div class="ca" id="coAddr">3100 Preston Rd · Preferred · open until 9 PM</div>
+        <div class="crow">
+          <div class="cp" id="coPrice">$9.00</div>
+          <div class="cd" id="coDist">0.4 mi<br>3 min drive</div>
+        </div>
+        <button class="cgo" onclick="go(7)">View details</button>
+      </div>
+
+      <button class="recenter" aria-label="Recenter map">
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.1" stroke="#11302B" stroke-width="1.8"/><circle cx="10" cy="10" r="7" stroke="#11302B" stroke-width="1.4" opacity=".5"/><path d="M10 .8v2.4M10 16.8v2.4M.8 10h2.4M16.8 10h2.4" stroke="#11302B" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <div class="gattrib">Google</div>
+
+      <div class="deck" id="deck"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 7 · PHARMACY DETAIL ═══════════ -->
+  <section class="screen" id="s7">
+    <div class="nav">
+      <div class="navrow">
+        <button class="back" onclick="go(6)" aria-label="Back">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5 2 7.5l5.5 6" stroke="#11302B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="navtitle">Northgate Pharmacy</div>
+          <div class="navsub">3100 Preston Rd · 0.4 mi away</div>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="pad" style="padding-top:14px">
+        <div class="current" style="margin-top:0">
+          <div class="top">
+            <div>
+              <div class="drugname" style="font-size:17px">Atorvastatin 20 mg <span class="pill gen">Generic</span></div>
+              <div class="drugsub">Tablet · 30 tablets · 30-day supply</div>
+            </div>
+          </div>
+          <div class="tierline"><span class="badge pref">Preferred pharmacy</span><span class="tag">Price confirmed 9:41 AM</span></div>
+        </div>
+
+        <div class="summary">
+          <div class="srow"><span class="sk">Pharmacy retail price</span><span class="sv">$52.00</span></div>
+          <div class="srow"><span class="sk">Your plan pays</span><span class="sv">−$43.00</span></div>
+          <div class="srow"><span class="sk">Applies to your deductible</span><span class="sv">Yes</span></div>
+          <div class="srow total"><span class="sk">You pay at pickup</span><span class="sv">$9.00</span></div>
+        </div>
+
+        <div class="disclaim" style="margin-top:12px">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex:0 0 auto;margin-top:1px"><circle cx="9" cy="9" r="7.6" stroke="#5C6E68" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#5C6E68" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div>A 90-day supply here is <b>$18.00</b> — $6.00 a month instead of $9.00.</div>
+        </div>
+
+        <div class="sectlabel">Hours</div>
+        <div class="hours"><b>Mon–Fri</b> 8 AM – 9 PM<br><b>Saturday</b> 9 AM – 6 PM<br><b>Sunday</b> 10 AM – 4 PM</div>
+
+        <div class="actions">
+          <button class="btn ghost">Call pharmacy</button>
+          <button class="btn">Directions</button>
+        </div>
+        <div style="height:20px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- shared sheet -->
+  <div class="scrim" id="scrim" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <h4 id="sheetTitle">Strength</h4>
+    <div id="sheetOpts"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- screen index ---------- */
+const SCREENS = [
+  "Search a medication",
+  "Lower-cost alternatives",
+  "Strength, form and supply",
+  "Add or detect location",
+  "Pharmacy prices — list",
+  "Pharmacy prices — map",
+  "Pharmacy detail"
+];
+const rail = document.getElementById('rail');
+SCREENS.forEach((name,i)=>{
+  const li = document.createElement('li');
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = ()=>go(i+1);
+  li.appendChild(b); rail.appendChild(li);
+});
+
+let cur = 1;
+function go(n){
+  closeSheet();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s'+n).classList.add('on');
+  document.querySelectorAll('#rail button').forEach((b,i)=>b.setAttribute('aria-current', i===n-1 ? 'true':'false'));
+  cur = n;
+  const b = document.querySelector('#s'+n+' .body'); if(b) b.scrollTop = 0;
+}
+go(1);
+
+/* ---------- alternatives: higher-cost expander ---------- */
+function toggleHigh(){
+  const box = document.getElementById('higher');
+  const open = box.style.display !== 'none';
+  box.style.display = open ? 'none' : 'block';
+  document.getElementById('highchev').style.transform = open ? '' : 'rotate(180deg)';
+  document.getElementById('highlabel').textContent = open
+    ? '2 higher-cost options in this class'
+    : 'Hide higher-cost options';
+}
+
+/* ---------- configurator ---------- */
+const DOSES = [
+  {v:'10 mg', p:7.00},
+  {v:'20 mg', p:9.00},
+  {v:'40 mg', p:12.00},
+  {v:'80 mg', p:15.00, forms:['Tablet']}
+];
+const FORMS = [
+  {v:'Tablet', add:0, note:'Most common'},
+  {v:'Chewable tablet', add:6.00, note:'Limited stock nearby'},
+  {v:'Oral suspension', add:18.00, note:'Compounded'}
+];
+let dose = DOSES[1], form = FORMS[0], qty = 30;
+
+function priceNow(){
+  const monthly = dose.p + form.add;
+  return qty === 30 ? monthly : monthly * 2.0; // 90-day discount
+}
+function money(n){ return '$' + n.toFixed(2); }
+function paint(){
+  document.getElementById('doseLabel').textContent = dose.v;
+  document.getElementById('formLabel').textContent = form.v;
+  document.getElementById('sumLine').textContent = dose.v + ' ' + form.v.toLowerCase() + ', ' + qty + ' days';
+  document.getElementById('sumPrice').textContent = money(priceNow());
+}
+function setQty(n){
+  qty = n;
+  document.getElementById('q30').setAttribute('aria-pressed', n===30);
+  document.getElementById('q90').setAttribute('aria-pressed', n===90);
+  paint();
+}
+
+function openSheet(kind){
+  const sheet = document.getElementById('sheet');
+  const opts = document.getElementById('sheetOpts');
+  document.getElementById('sheetTitle').textContent = kind==='dose' ? 'Strength' : 'Form';
+  document.getElementById('selDose').classList.toggle('open', kind==='dose');
+  document.getElementById('selForm').classList.toggle('open', kind==='form');
+  opts.innerHTML = '';
+  const list = kind==='dose' ? DOSES : FORMS;
+  list.forEach(o=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    const selected = (kind==='dose' ? dose.v : form.v) === o.v;
+    b.setAttribute('aria-selected', selected);
+    const right = kind==='dose'
+      ? money(o.p + form.add)
+      : (o.add ? '+' + money(o.add) : o.note);
+    b.innerHTML = '<span>'+o.v+'</span><span class="os">'+right+'</span>';
+    b.onclick = ()=>{
+      if(kind==='dose'){
+        dose = o;
+        if(o.forms && !o.forms.includes(form.v)) form = FORMS[0];
+      } else form = o;
+      paint(); closeSheet();
+    };
+    opts.appendChild(b);
+  });
+  document.getElementById('scrim').classList.add('on');
+  sheet.classList.add('on');
+}
+function closeSheet(){
+  document.getElementById('scrim').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on');
+  document.getElementById('selDose').classList.remove('open');
+  document.getElementById('selForm').classList.remove('open');
+}
+paint();
+
+/* ---------- map pins ---------- */
+const PHARMACIES = [
+  {n:'Northgate Pharmacy', a:'3100 Preston Rd · Preferred · open until 9 PM', m:'Preferred · open until 9 PM', p:'$9.00',  d:'0.4 mi', t:'3 min drive'},
+  {n:'Costco Pharmacy',    a:'2601 Preston Rd · Preferred · open until 8:30 PM', m:'Preferred · open until 8:30 PM', p:'$9.40', d:'1.8 mi', t:'7 min drive'},
+  {n:'CVS Pharmacy',       a:'8700 Gaylord Pkwy · In network · open 24 hours', m:'In network · open 24 hours', p:'$14.00', d:'0.9 mi', t:'4 min drive'},
+  {n:'Walgreens',          a:'4851 Legacy Dr · In network · estimated price', m:'In network · estimate', p:'$16.50', d:'1.2 mi', t:'5 min drive'},
+  {n:'Hawthorn Family Drug', a:'1140 Main St · Out of network · closed now', m:'Out of network · closed', p:'$38.20', d:'2.4 mi', t:'9 min drive'}
+];
+
+const deck = document.getElementById('deck');
+PHARMACIES.forEach((p,i)=>{
+  const c = document.createElement('button');
+  c.className = 'dcard';
+  c.innerHTML = '<div class="dn">'+p.n+'</div><div class="dm">'+p.m+'</div>'+
+    '<div class="drow"><span class="dp">'+p.p+'</span><span class="dm">'+p.d+' · '+p.t.replace(' drive','')+'</span></div>';
+  c.onclick = ()=> selectPin(i);
+  deck.appendChild(c);
+});
+
+function selectPin(i){
+  const pins = document.querySelectorAll('#maparea .pin[data-i]');
+  pins.forEach(p=>p.classList.toggle('active', +p.dataset.i === i));
+  const pin = document.querySelector('#maparea .pin[data-i="'+i+'"]');
+  const co = document.getElementById('callout');
+  co.style.left = pin.style.left;
+  co.style.top = pin.style.top;
+  // flip below the pin when there isn't room above it
+  const above = parseFloat(pin.style.top) > 38;
+  co.classList.toggle('below', !above);
+  const p = PHARMACIES[i];
+  document.getElementById('coName').textContent = p.n;
+  document.getElementById('coAddr').textContent = p.a;
+  document.getElementById('coPrice').textContent = p.p;
+  document.getElementById('coDist').innerHTML = p.d + '<br>' + p.t;
+  co.classList.add('on');
+}
+
+document.querySelectorAll('#maparea .pin[data-i]').forEach(pin=>{
+  const i = +pin.dataset.i;
+  pin.addEventListener('mouseenter', ()=>selectPin(i));
+  pin.addEventListener('click', ()=>selectPin(i));
+});
+selectPin(0);
+
+/* search box → results */
+const q = document.getElementById('q');
+q.addEventListener('keydown', e=>{ if(e.key==='Enter') go(2); });
+</script>
