@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal - design document</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0f0d0c; --panel:#1c1815; --ink:#f5efe6; --ink2:#b9ada0; --ink3:#8a8074;
+  --line:#33291f; --amber:#e2711d; --amber-dk:#c85f16;
+  --serif:"Merriweather", Georgia, serif;
+  --sans:"Raleway", -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.7; cursor:none;}
+a,button{cursor:none}
+img,iframe{max-width:100%}
+a{color:var(--amber)}
+.wrap{max-width:840px; margin:0 auto; padding:0 32px}
+
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--amber);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(232,163,61,0.14);}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:9990;opacity:0.5;animation:trail-fade 0.55s ease-out forwards;}
+@keyframes trail-fade{ to{ opacity:0; transform:scale(0.15); } }
+@media (hover:none){ .cur-main,.cur-ring{display:none;} body,a,button{cursor:auto;} }
+
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:22px 0; border-bottom:1px solid var(--line); margin-bottom: 8px;}
+.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--amber);font-family:var(--serif);font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.logo-badge:hover{transform:scale(1.12);}
+.back-link{font-size:0.86rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.2s ease,color 0.2s ease,background 0.2s ease,border-color 0.2s ease;}
+.back-link:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--amber);}
+
+.doc{padding:40px 0 80px;}
+h1{font-family:var(--serif); font-size:2.1rem; line-height:1.25; font-weight:700; margin:0 0 10px; color:#fff;}
+h2{font-family:var(--serif); font-size:1.5rem; font-weight:700; margin:48px 0 16px; color:#fff; border-top:1px solid var(--line); padding-top:32px;}
+h3{font-family:var(--serif); font-size:1.15rem; font-weight:700; margin:28px 0 12px; color:#fff;}
+p{margin:0 0 16px; color:var(--ink2); font-size:0.98rem;}
+strong{color:#fff; font-weight:700;}
+em{color:var(--ink2); font-style:italic;}
+hr{border:none; border-top:1px solid var(--line); margin:0;}
+ul,ol{margin:0 0 20px; padding-left:1.4em; color:var(--ink2);}
+li{margin-bottom:8px; font-size:0.98rem; line-height:1.6;}
+li::marker{color:var(--amber);}
+
+code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; font-size:0.85em; background:#2b2a28; color:var(--amber); padding:2px 6px; border-radius:4px;}
+pre{background:#000; border:2px solid #000; box-shadow:5px 5px 0 var(--line); border-radius:8px; padding:20px; overflow-x:auto; margin:0 0 24px;}
+pre code{background:none; color:var(--ink2); padding:0; font-size:0.82rem; line-height:1.6;}
+
+table{width:100%; border-collapse:collapse; margin:0 0 24px; background:#1c1815; border:2px solid #000; box-shadow:5px 5px 0 #000; border-radius:8px; overflow:hidden;}
+thead th{background:var(--amber); color:#0f0d0c; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.03em;}
+td{padding:12px 16px; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink2);}
+tr:nth-child(even) td{background:rgba(232,163,61,0.05);}
+
+@media (max-width:640px){
+  h1{font-size:1.6rem;}
+  h2{font-size:1.25rem;}
+  pre{font-size:0.75rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cur-main" id="cMain"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<div class="wrap">
+  <div class="topbar">
+    <a class="logo-badge" href="index.html" aria-label="Back to home">DK</a>
+    <a href="signal-case-study.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Back to case study
+    </a>
+  </div>
+</div>
+
+<div class="wrap doc">
+<h1>Signal - Design Document</h1>
+<p><strong>AI-powered job matching, call-likelihood scoring, and resume tailoring for mobile</strong></p>
+<hr />
+<h2>1. Problem</h2>
+<p>Job seekers apply broadly and hear back rarely. The core failure isn't effort, it's information: a candidate can't easily tell, before applying, which of the 40 open roles in their search actually fit their background well enough to get a callback - and if a role is close-but-not-quite, they don't know what specifically to change on their resume to close the gap.</p>
+<p>Today this requires manually reading each job description, mentally comparing it to a resume, and guessing. It doesn't scale past a handful of roles, and it gets worse the more senior or niche the search is.</p>
+<p><strong>Signal's job:</strong> for any given resume, continuously surface open roles ranked by realistic call-likelihood, explain the gap for each one, propose the specific resume edit that closes it, and surface a human to reach out to - all from a phone, in the small pockets of time job searching actually happens in (a commute, a lunch break, right before bed).</p>
+<h2>2. Who it's for</h2>
+<ul>
+<li><strong>Active searchers</strong>, applying to 10–30 roles a week, who are triaging on subject lines and gut feel today.</li>
+<li><strong>Passive lookers</strong>, who'd move for the right role but won't spend evenings scanning boards - they need the signal-to-noise ratio to be very high before they engage.</li>
+<li><strong>Career changers</strong>, whose resume doesn't map cleanly onto the roles they want, and who most need to know <em>what to change</em>, not just whether they're a fit.</li>
+</ul>
+<h2>3. What "done" looks like</h2>
+<ol>
+<li>Paste or import a resume once.</li>
+<li>See a ranked list of open roles, each with a call-likelihood score and freshness.</li>
+<li>Open any role and see: what matches, what's missing, a specific rewritten resume bullet that would close the gap, and the recruiter or hiring manager tied to it.</li>
+<li>Get a full tailored resume draft for a specific role in one tap.</li>
+<li>Do all of the above one-handed, on a phone, in under a minute per role.</li>
+</ol>
+<h2>4. Product structure</h2>
+<p>Three tabs, one detail view:</p>
+<pre><code>┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+│   Resume    │   │   Matches   │   │  Contacts   │
+│  (input)    │──▶│  (ranked)   │──▶│ (aggregated)│
+└─────────────┘   └──────┬──────┘   └─────────────┘
+                         ▼
+                  ┌──────────────┐
+                  │ Job detail   │
+                  │ - score      │
+                  │ - gap        │
+                  │ - edits      │
+                  │ - contact    │
+                  └──────────────┘
+</code></pre>
+<ul>
+<li><strong>Resume tab</strong> - the only required input. Paste, upload, or (in production) pull from LinkedIn/a prior upload. Alongside the resume, the person sets <strong>preferred locations</strong> (free text) and <strong>work style</strong> (remote/hybrid/on-site, multi-select) - these are soft signals that re-rank matches and flag mismatches, not hard filters, since an otherwise-strong match shouldn't disappear just because the location field wasn't filled in carefully.</li>
+<li><strong>Matches tab</strong> - the home screen for a returning user. Ranked cards, not a feed: rank order <em>is</em> the recommendation.</li>
+<li><strong>Job detail</strong> - everything needed to decide whether to apply and how to tailor the resume, without leaving the app.</li>
+<li><strong>Contacts tab</strong> - every recruiter/hiring manager touchpoint surfaced by the matches, deduplicated, in one list - this is the thing a person forwards to themselves or acts on at the end of a session.</li>
+</ul>
+<h2>5. The call-likelihood score</h2>
+<p>This is the product's central promise, so it has to be legible, not a black box.</p>
+<p><strong>What feeds it:</strong>
+- Skill/keyword overlap between resume and job description (explicit, shown as matched vs. missing chips)
+- Seniority alignment (years of experience implied vs. required)
+- Posting freshness (a 3-hour-old posting behaves differently than a 3-week-old one - older postings may already have a shortlist)
+- Historical response-rate patterns for similar profiles/roles, where available (a real system would train this from outcome data over time, with the person's consent to share application outcomes)</p>
+<p><strong>Design decision:</strong> show the <em>reasoning</em>, not just the number. Every score is paired with 2–4 sentence justification and an explicit matched/missing skill breakdown. A percentage without a "why" trains distrust; this system is only useful if people believe it enough to act on it.</p>
+<p><strong>Design decision:</strong> separate the <strong>cheap, instant score</strong> (client-side/heuristic, computed the moment a resume is pasted, used to rank the list) from the <strong>deep AI analysis</strong> (a real model call, run on demand per role, that reads the full job description and resume and produces a written gap analysis + rewrite suggestions). This keeps the list fast and free to browse, and reserves the expensive, high-quality reasoning for the roles a person actually cares about - which also keeps inference cost proportional to engagement.</p>
+<h2>6. Resume tailoring</h2>
+<p>For each role, Signal proposes edits at two levels:</p>
+<ul>
+<li><strong>Bullet-level rewrites</strong> - take an existing resume line and rewrite it to surface relevant, already-true experience using the job's own vocabulary (not fabricated achievements - the system only reweights and rephrases what's already there, and should refuse to invent metrics the person hasn't provided).</li>
+<li><strong>Full tailored draft</strong> - a complete reordered/reweighted version of the resume for a specific role: relevant experience surfaced higher, relevant skills reordered to the top of the skills section, irrelevant sections compressed.</li>
+</ul>
+<p><strong>Guardrail:</strong> the person always sees a before/after diff and approves changes explicitly - nothing is auto-submitted anywhere. Signal tailors, the person decides.</p>
+<h2>7. Recruiter &amp; hiring manager discovery</h2>
+<p>This is the most legally and ethically sensitive part of the product, and it's worth being explicit about the constraint: <strong>Signal does not scrape LinkedIn.</strong> Scraping LinkedIn profile data violates LinkedIn's Terms of Service and, depending on jurisdiction, relevant data-protection law, regardless of the end use.</p>
+<p><strong>Production approach instead:</strong>
+- LinkedIn's official <strong>Talent Solutions / Recruiter System Connect API</strong>, where the employer or a licensed partner has opted in
+- Licensed B2B contact-data providers (e.g. providers that maintain consented, opted-in professional contact graphs) rather than direct scraping
+- Publicly published company contacts (e.g. a recruiter's email listed directly on the job posting itself, or a company's own careers page)
+- Where no compliant source exists for a given company, Signal shows the job with no contact card rather than fabricating or scraping one</p>
+<p>This is a hard constraint on the product, not a nice-to-have: any contact surfaced in the app should be traceable to a source that had a right to share it.</p>
+<h2>7a. Portal attribution &amp; applicant benchmarking</h2>
+<p>Every job card and detail view names the <strong>source portal</strong> the listing came from (e.g. "via LinkedIn", "via Indeed", "via Company Careers Site"). This matters for two reasons: it sets expectations about the application process itself (a company-site posting behaves differently than a LinkedIn Easy Apply), and it's a prerequisite for the next feature - attributing where any comparison or contact data came from, rather than presenting it as if Signal generated it independently.</p>
+<p>The job detail view also shows <strong>"how you compare"</strong>: an estimated percentile against other applicants for that specific posting, plus applicant count and average experience. This deliberately mirrors a feature job seekers already trust in the wild - LinkedIn's own "how you compare to other applicants" panel - rather than inventing a new mental model. In production this data would come directly from the portal's own applicant-analytics API where the employer has made it available (LinkedIn and several ATS platforms already expose aggregate, anonymized applicant stats for this purpose); where a portal doesn't expose it, the section should say so rather than estimate silently.</p>
+<p>Every job's detail view also links out to the <strong>original posting</strong> and the <strong>company's own site</strong>, both opening in a new tab. Signal is a triage and prep layer, not a replacement for the actual application flow - a person should always apply on the portal or company site itself, where the data and process are authoritative.</p>
+<h2>8. Job listing sourcing</h2>
+<p>Similarly, board-by-board scraping is fragile and frequently against individual sites' terms. Production sourcing should prioritize:
+- Official job-board APIs where available (Indeed Publisher API, Google for Jobs structured data, etc.)
+- Direct ATS integrations (Greenhouse, Lever, Ashby all expose public job feeds by design)
+- Employer-direct feeds for companies the person has opted to track</p>
+<p>Freshness (shown on every card) is a first-class signal, not decoration - a 2-day-old post at a fast-moving startup and a 2-day-old post at a slow enterprise employer carry different implications, and the design should eventually let the freshness read adapt per company hiring cadence.</p>
+<h2>9. Visual &amp; interaction language</h2>
+<p>The product is about a phone that might ring. That's the design's organizing metaphor, deliberately, rather than a generic dashboard treatment:</p>
+<ul>
+<li><strong>Signal bars</strong> stand in for match strength everywhere a score appears - on the list, in the header mark, in the detail view.</li>
+<li><strong>A warm signal amber</strong> (<code>#E8A33D</code>) is the one accent color reserved for calls-to-action and the brand mark, so it stays meaningful rather than decorative.</li>
+<li><strong>A deep muted green</strong> (<code>#3F7C5D</code>) marks strong matches and matched skills; a quiet wine (<code>#8B3A55</code>) marks gaps - both desaturated enough to sit calmly in a list of five without turning the screen into a traffic light.</li>
+<li><strong>Fraunces</strong>, a warm serif with old-style numerals, is used only for scores and page titles - numbers get a typographic personality distinct from the surrounding UI text (Inter), so a "91%" reads as a considered result, not a system-generated stat.</li>
+<li>Card structure (rank number, score, freshness chip) repeats identically across Matches and Contacts so the two lists feel like one system viewed two ways.</li>
+</ul>
+<h3>Color tokens</h3>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ink</td>
+<td><code>#12172B</code></td>
+<td>Text, headers, primary buttons</td>
+</tr>
+<tr>
+<td>Cloud</td>
+<td><code>#F6F4EE</code></td>
+<td>App background</td>
+</tr>
+<tr>
+<td>Panel</td>
+<td><code>#FFFFFF</code></td>
+<td>Cards</td>
+</tr>
+<tr>
+<td>Signal Amber</td>
+<td><code>#E8A33D</code></td>
+<td>Accent, primary CTA, brand mark</td>
+</tr>
+<tr>
+<td>Dial Green</td>
+<td><code>#3F7C5D</code></td>
+<td>Strong match / matched skill</td>
+</tr>
+<tr>
+<td>Ring Wine</td>
+<td><code>#8B3A55</code></td>
+<td>Gap / missing skill</td>
+</tr>
+<tr>
+<td>Static Grey</td>
+<td><code>#8D93A6</code></td>
+<td>Secondary text</td>
+</tr>
+</tbody>
+</table>
+<h2>10. Key flows</h2>
+<p><strong>First-time use</strong>
+1. Land on Resume tab → paste resume → tap "Find matching jobs"
+2. Matches tab populates, sorted by score
+3. Tap top card → detail view: score, reasoning, skill gaps, contact
+4. Tap "Run live AI analysis" for a full written breakdown and tailored bullet suggestions on that specific role
+5. Switch to Contacts → see every recruiter surfaced so far in one place</p>
+<p><strong>Returning use</strong>
+1. Open app → land directly on Matches (resume already stored)
+2. New roles since last visit are visually marked "New" via the freshness chip
+3. Score re-ranks automatically as new postings arrive or the resume is updated</p>
+<h2>11. Edge cases &amp; failure states</h2>
+<ul>
+<li><strong>No skill overlap at all</strong> → don't hide the role; show it honestly ranked low with "long shot as written" and lead with the resume changes that would matter most, so the product stays useful even for a stretch application.</li>
+<li><strong>AI analysis call fails or times out</strong> → fall back visibly to the cheap heuristic score already shown, with a clear inline note, rather than a silent spinner or a broken screen.</li>
+<li><strong>Resume is very short or missing sections</strong> → prompt for the missing section (e.g. "add a skills line") before scoring, rather than returning a low score with no way to act on it.</li>
+<li><strong>Duplicate contacts across roles at the same company</strong> → dedupe in the Contacts tab; don't show the same recruiter three times because they own three postings.</li>
+<li><strong>Stale postings</strong> → surface freshness prominently enough that a 3-week-old high-score match doesn't read as identical in urgency to a 3-hour-old one.</li>
+</ul>
+<h2>12. Success metrics (production)</h2>
+<ul>
+<li><strong>Leading:</strong> % of surfaced roles a user opens the detail view for (are the rankings actually trusted enough to explore?)</li>
+<li><strong>Mid-funnel:</strong> % of detail views that result in a resume edit being accepted</li>
+<li><strong>Lagging, the real metric:</strong> actual callback/response rate for applications sent using a Signal-tailored resume, compared to a person's own baseline response rate - this requires the person to opt in to reporting outcomes, and is the only number that validates the score's honesty over time.</li>
+</ul>
+<h2>13. Deliberately out of scope (v1)</h2>
+<ul>
+<li>Auto-applying to jobs on the person's behalf</li>
+<li>Messaging recruiters automatically without explicit user composition and send</li>
+<li>Any resume fabrication (inventing metrics, titles, or experience not present in the source resume)</li>
+<li>Scraping any platform whose terms of service prohibit it, LinkedIn included</li>
+</ul>
+</div>
+
+<script>
+(function(){
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

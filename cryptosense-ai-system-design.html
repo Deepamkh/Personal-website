@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CryptoSense AI - System design</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0f0d0c; --panel:#1c1815; --ink:#f5efe6; --ink2:#b9ada0; --ink3:#8a8074;
+  --line:#33291f; --gold:#e2711d; --gold-dk:#c85f16;
+  --serif:"Merriweather", Georgia, serif;
+  --sans:"Raleway", -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.7; cursor:none;}
+a,button{cursor:none}
+img{max-width:100%}
+a{color:var(--gold)}
+.wrap{max-width:840px; margin:0 auto; padding:0 32px}
+
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--gold);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,0.14);}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:9990;opacity:0.5;animation:trail-fade 0.55s ease-out forwards;}
+@keyframes trail-fade{ to{ opacity:0; transform:scale(0.15); } }
+@media (hover:none){ .cur-main,.cur-ring{display:none;} body,a,button{cursor:auto;} }
+
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:22px 0; border-bottom:1px solid var(--line); margin-bottom: 8px;}
+.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--gold);font-family:var(--serif);font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.logo-badge:hover{transform:scale(1.12);}
+.back-link{font-size:0.86rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.2s ease,color 0.2s ease,background 0.2s ease,border-color 0.2s ease;}
+.back-link:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--gold);}
+
+.doc{padding:40px 0 80px;}
+h1{font-family:var(--serif); font-size:2.1rem; line-height:1.25; font-weight:700; margin:0 0 10px; color:#fff;}
+h2{font-family:var(--serif); font-size:1.5rem; font-weight:700; margin:48px 0 16px; color:#fff; border-top:1px solid var(--line); padding-top:32px;}
+h3{font-family:var(--serif); font-size:1.15rem; font-weight:700; margin:28px 0 12px; color:#fff;}
+p{margin:0 0 16px; color:var(--ink2); font-size:0.98rem;}
+strong{color:#fff; font-weight:700;}
+em{color:var(--ink2); font-style:italic;}
+hr{border:none; border-top:1px solid var(--line); margin:0;}
+ul,ol{margin:0 0 20px; padding-left:1.4em; color:var(--ink2);}
+li{margin-bottom:8px; font-size:0.98rem; line-height:1.6;}
+li::marker{color:var(--gold);}
+li > p{margin-bottom:6px;}
+
+img{border-radius:8px; border:1px solid var(--line); background:#fff; padding:14px; box-shadow:5px 5px 0 #000; margin:0 0 24px; display:block;}
+
+table{width:100%; border-collapse:collapse; margin:0 0 24px; background:#1c1815; border:2px solid #000; box-shadow:5px 5px 0 #000; border-radius:8px; overflow:hidden;}
+thead th{background:var(--gold); color:#0f0d0c; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.03em;}
+td,th{padding:12px 16px; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink2); text-align:left;}
+tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
+
+@media (max-width:640px){
+  h1{font-size:1.6rem;}
+  h2{font-size:1.25rem;}
+  table{font-size:0.85rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cur-main" id="cMain"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<div class="wrap">
+  <div class="topbar">
+    <a class="logo-badge" href="index.html" aria-label="Back to home">DK</a>
+    <a href="cryptosense-ai-case-study.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Back to case study
+    </a>
+  </div>
+</div>
+
+<div class="wrap doc">
+<h1>CryptoSense AI - System Design &amp; Product Document</h1>
+<p><em>AI-powered crypto sentiment &amp; investment-likelihood advisor - portfolio case study, mobile-first application.</em></p>
+<p>Prepared as a design and engineering portfolio artifact. Contains prototype specifications, not a production system.</p>
+<h2>Executive summary</h2>
+<p>CryptoSense AI is a mobile application concept that aggregates social
+media chatter, news coverage, on-chain activity and market data for
+major cryptocurrencies, converts that raw signal into a composite
+sentiment score, and translates the score into a plain-language
+investment-likelihood indicator (Strong buy → Avoid). The app ranks all
+tracked currencies by that score, and for any single currency shows
+current price, 30-day history, a 7-day model-projected trend, and the
+underlying sentiment breakdown.</p>
+<p>This document covers the product scope, the mobile UX, the end-to-end
+system architecture, the sentiment and forecasting methodology, data and
+API design, and the non-functional and compliance considerations a
+production build would need. A working front-end prototype (with
+simulated data) accompanies this document.</p>
+<h2>Problem &amp; goals</h2>
+<p>Retail crypto investors track many scattered signals - X/Reddit chatter,
+headlines, on-chain flows, price action - with no single place that
+turns them into a consistent, comparable score across assets.</p>
+<p>Product goals:</p>
+<ul>
+<li>
+<p>Give a single, comparable investment-likelihood score (0–100%) per
+  currency.</p>
+</li>
+<li>
+<p>Make the reasoning behind the score visible (which sources drove it,
+  and why).</p>
+</li>
+<li>
+<p>Rank all tracked currencies so users can scan opportunities quickly.</p>
+</li>
+<li>
+<p>Forecast a 7-day expected trend with a visible confidence band, not a
+  false-precision single number.</p>
+</li>
+<li>
+<p>Be mobile-first: fast to scan, thumb-friendly, legible in a single
+  column.</p>
+</li>
+</ul>
+<p><em>Non-goals: this is not a trading or custody product, does not execute
+trades, and does not replace licensed financial advice.</em></p>
+<h2>Target users &amp; use cases</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Persona</strong></th>
+<th><strong>Need</strong></th>
+<th><strong>Primary flow</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Casual retail holder</td>
+<td>Quick gut-check before buying/holding</td>
+<td>Open app → scan ranked list → tap a coin</td>
+</tr>
+<tr>
+<td>Active trader</td>
+<td>Track sentiment shifts across many assets daily</td>
+<td>Ranked list sorted by score, daily check-in</td>
+</tr>
+<tr>
+<td>Researcher / analyst</td>
+<td>Understand why sentiment moved</td>
+<td>Detail view → source breakdown → headlines</td>
+</tr>
+</tbody>
+</table>
+<h2>Mobile experience</h2>
+<p>The prototype (see accompanying React file, CryptoSenseAI.jsx)
+implements two core screens in a single-column, thumb-first layout:</p>
+<h3>Rankings screen</h3>
+<ul>
+<li>
+<p>Search bar to filter by name or symbol.</p>
+</li>
+<li>
+<p>A ranked, scrollable list: rank, symbol badge, name, live price, 24h
+  change, and a likelihood % badge with a plain-language label (Strong
+  buy, Buy, Hold, Caution, Avoid).</p>
+</li>
+<li>
+<p>A persistent disclaimer that data is simulated in the prototype and
+  that the app is not financial advice.</p>
+</li>
+</ul>
+<h3>Currency detail screen</h3>
+<ul>
+<li>
+<p>Current price and 24h change.</p>
+</li>
+<li>
+<p>30-day historical price line chart.</p>
+</li>
+<li>
+<p>A semicircular gauge showing the investment-likelihood percentage and
+  label.</p>
+</li>
+<li>
+<p>A sentiment-source breakdown: social media, news coverage, on-chain
+  activity, each as a weighted bar.</p>
+</li>
+<li>
+<p>A 7-day expected-trend chart, shown as a trend with a widening
+  confidence band rather than a single line, plus the net expected
+  percentage move.</p>
+</li>
+<li>
+<p>Sample headlines that most influenced the score, with (fictional,
+  sample) sources for demo purposes.</p>
+</li>
+</ul>
+<p>Visual system: dark surface (#10131C / #171B27 cards) so charts and
+colour-coded scores read clearly; Space Grotesk for headings, IBM Plex
+Sans for body copy, IBM Plex Mono for all numeric data (prices,
+percentages, scores) to make figures easy to scan; a single warm amber
+accent (#F5A623) reserved for score/brand emphasis, with green/amber/red
+used only for gain/neutral/loss semantics.</p>
+<h2>Scoring methodology</h2>
+<p>Each tracked currency receives three 0–100 sub-scores, refreshed
+continuously as new data arrives:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Signal</strong></th>
+<th><strong>Weight</strong></th>
+<th><strong>What feeds it</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Social sentiment</td>
+<td>40%</td>
+<td>Volume-weighted NLP sentiment across X, Reddit, Telegram; spam/bot filtering applied first</td>
+</tr>
+<tr>
+<td>News sentiment</td>
+<td>35%</td>
+<td>NLP sentiment + relevance scoring over licensed news APIs and RSS feeds</td>
+</tr>
+<tr>
+<td>On-chain / market signal</td>
+<td>25%</td>
+<td>Wallet accumulation, exchange in/outflows, volatility, liquidity depth</td>
+</tr>
+</tbody>
+</table>
+<p>Composite score = 0.40 × social + 0.35 × news + 0.25 × on-chain. A
+hype-vs-substance penalty is subtracted when social sentiment sharply
+outpaces news and on-chain signal (a proxy for speculative pump activity
+with limited underlying support), before mapping to the final likelihood
+indicator:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Score range</strong></th>
+<th><strong>Label</strong></th>
+<th><strong>Interpretation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>75–100</td>
+<td>Strong buy signal</td>
+<td>Broad, consistent positive signal across all three sources</td>
+</tr>
+<tr>
+<td>60–74</td>
+<td>Buy signal</td>
+<td>Net positive signal, some mixed inputs</td>
+</tr>
+<tr>
+<td>40–59</td>
+<td>Hold / neutral</td>
+<td>Signals roughly balanced or conflicting</td>
+</tr>
+<tr>
+<td>25–39</td>
+<td>Caution advised</td>
+<td>Net negative signal, elevated uncertainty</td>
+</tr>
+<tr>
+<td>0–24</td>
+<td>Avoid signal</td>
+<td>Broadly negative signal across sources</td>
+</tr>
+</tbody>
+</table>
+<p>The 7-day forecast is produced by a separate time-series model seeded by
+the same composite trend direction, expressed as a projected price path
+with a widening confidence band - communicating uncertainty rather than
+a false-precision point estimate.</p>
+<h2>System architecture</h2>
+<p>High-level data and processing flow, from raw source data to the mobile
+client:</p>
+<p><img src="cryptosense-ai-architecture.png" alt="CryptoSense AI system architecture diagram"></p>
+<h3>Layer detail</h3>
+<ul>
+<li>
+<p>Data sources: social platform APIs (X, Reddit, Telegram), licensed
+  news APIs/RSS, blockchain nodes and indexers (e.g. block explorers,
+  Glassnode-style analytics), and exchange market-data feeds.</p>
+</li>
+<li>
+<p>Ingestion layer: stream collectors for high-frequency sources (social,
+  market ticks) and scheduled batch collectors for news/on-chain
+  snapshots, buffered through a message queue (Kafka/Pub-Sub) into a raw
+  data lake for reproducibility and backfill.</p>
+</li>
+<li>
+<p>NLP sentiment pipeline: transformer-based classifiers (e.g. a
+  FinBERT-style financial sentiment model) with entity linking (which
+  coin a post refers to), topic tagging, and bot/spam filtering.</p>
+</li>
+<li>
+<p>Forecasting models: per-asset time-series models (e.g. Prophet or
+  LSTM-based) trained on price and sentiment history, producing a 7-day
+  expected path with confidence bands, retrained on a rolling schedule.</p>
+</li>
+<li>
+<p>Scoring engine: applies the weighted composite formula, hype-penalty
+  adjustment, and label mapping; writes versioned scores so historical
+  scores remain auditable.</p>
+</li>
+<li>
+<p>API layer: REST/GraphQL service exposing rankings, per-asset detail,
+  and historical/forecast series, with auth, rate limiting and response
+  caching.</p>
+</li>
+<li>
+<p>Mobile app: React Native client consuming the API, rendering the
+  rankings list and per-asset detail screens described above.</p>
+</li>
+</ul>
+<h2>Data model (core entities)</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Entity</strong></th>
+<th><strong>Key fields</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Asset</td>
+<td>id, symbol, name, current_price, price_24h_change, updated_at</td>
+</tr>
+<tr>
+<td>SentimentSnapshot</td>
+<td>asset_id, ts, social_score, news_score, onchain_score, composite_score, label</td>
+</tr>
+<tr>
+<td>PriceHistory</td>
+<td>asset_id, ts, price, volume</td>
+</tr>
+<tr>
+<td>Forecast</td>
+<td>asset_id, generated_at, day_offset, projected_price, band_low, band_high</td>
+</tr>
+<tr>
+<td>SourceItem</td>
+<td>asset_id, source_type (social/news), source_name, text_summary, sentiment_polarity, ts, url</td>
+</tr>
+<tr>
+<td>User (if accounts added)</td>
+<td>id, watchlist[], alert_preferences, auth_provider</td>
+</tr>
+</tbody>
+</table>
+<h2>Key API endpoints (illustrative)</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Endpoint</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET /v1/rankings</td>
+<td>Ranked list of all tracked assets with current score and price</td>
+</tr>
+<tr>
+<td>GET /v1/assets/{id}</td>
+<td>Current price, 24h change, composite score and label for one asset</td>
+</tr>
+<tr>
+<td>GET /v1/assets/{id}/history?range=30d</td>
+<td>Historical price series for charting</td>
+</tr>
+<tr>
+<td>GET /v1/assets/{id}/forecast?days=7</td>
+<td>Projected price path with confidence band</td>
+</tr>
+<tr>
+<td>GET /v1/assets/{id}/sentiment</td>
+<td>Source breakdown (social/news/on-chain) and top driving headlines</td>
+</tr>
+<tr>
+<td>GET /v1/assets/{id}/headlines</td>
+<td>Recent, relevance-ranked headlines and posts feeding the score</td>
+</tr>
+</tbody>
+</table>
+<h2>Tech stack (proposed)</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Layer</strong></th>
+<th><strong>Suggested technology</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mobile client</td>
+<td>React Native (iOS/Android), Recharts/Victory for charts</td>
+</tr>
+<tr>
+<td>API layer</td>
+<td>Node.js or Python (FastAPI), REST/GraphQL, Redis cache</td>
+</tr>
+<tr>
+<td>Streaming &amp; queue</td>
+<td>Apache Kafka or a managed Pub/Sub service</td>
+</tr>
+<tr>
+<td>NLP / ML serving</td>
+<td>Python, HuggingFace transformers (FinBERT-style), model server (TorchServe/BentoML)</td>
+</tr>
+<tr>
+<td>Forecasting</td>
+<td>Prophet, or an LSTM/temporal-transformer model per asset</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>PostgreSQL or TimescaleDB for time-series; S3-compatible object storage for the raw data lake</td>
+</tr>
+<tr>
+<td>Infra</td>
+<td>Containerised services (Docker/Kubernetes), managed cloud (AWS/GCP), CI/CD pipeline</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td>Structured logging, metrics dashboards, model-drift monitoring on sentiment/forecast accuracy</td>
+</tr>
+</tbody>
+</table>
+<h2>Non-functional requirements</h2>
+<ul>
+<li>
+<p>Latency: rankings list should refresh within a few seconds of new
+  score computation; detail views cached and served in under 300ms.</p>
+</li>
+<li>
+<p>Scalability: ingestion and NLP layers scale horizontally with source
+  volume; scoring engine is stateless per asset per interval.</p>
+</li>
+<li>
+<p>Reliability: score history is immutable/versioned so past
+  recommendations can be audited.</p>
+</li>
+<li>
+<p>Data quality: bot/spam filtering and source-credibility weighting
+  before any post or article contributes to a score.</p>
+</li>
+<li>
+<p>Security: API auth and rate limiting; no PII beyond optional
+  account/watchlist data, encrypted at rest and in transit.</p>
+</li>
+</ul>
+<h2>Compliance &amp; responsible-use considerations</h2>
+<p>A tool like this sits close to financial advice, so a production build
+should treat the following as first-class requirements, not an
+afterthought:</p>
+<ul>
+<li>
+<p>Persistent, unavoidable disclaimer that the app provides informational
+  sentiment analysis, not personalized financial advice, and that all
+  investment decisions carry risk of loss.</p>
+</li>
+<li>
+<p>No guarantee-language in copy or marketing (avoid words like
+  "guaranteed returns" or "certain profit").</p>
+</li>
+<li>
+<p>Clear labelling of the confidence/uncertainty in forecasts (bands, not
+  single numbers).</p>
+</li>
+<li>
+<p>Jurisdictional review: depending on target markets, presenting scored
+  "buy/avoid" signals may trigger financial-advisory or
+  investment-research regulatory obligations (e.g. registration
+  requirements in the US, EU, or UK) - this should be reviewed with
+  legal counsel before launch.</p>
+</li>
+<li>
+<p>Transparent methodology page so users can see how a score is derived,
+  and a changelog when scoring weights change.</p>
+</li>
+</ul>
+<h2>Roadmap</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Phase</strong></th>
+<th><strong>Scope</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MVP</td>
+<td>Top 10–20 assets, rankings + detail screens, daily-refresh sentiment, static 7-day forecast</td>
+</tr>
+<tr>
+<td>V1</td>
+<td>Real-time sentiment refresh, push alerts on score changes, personal watchlists</td>
+</tr>
+<tr>
+<td>V2</td>
+<td>Portfolio-aware scoring (correlate score with a user's actual holdings), backtesting dashboard showing historical score accuracy</td>
+</tr>
+<tr>
+<td>V3</td>
+<td>Multi-language source coverage, community-verified source credibility ratings</td>
+</tr>
+</tbody>
+</table>
+<h2>Appendix - prototype scope note</h2>
+<p>The accompanying front-end prototype (CryptoSenseAI.jsx) uses
+deterministic simulated data for 10 major currencies to demonstrate the
+rankings screen, detail screen, gauge indicator, source breakdown, and
+7-day forecast chart end to end. It does not call live social, news or
+market APIs. Wiring it to production data means implementing sections
+6–9 above (ingestion, NLP pipeline, forecasting model, and API layer)
+behind the same API contract the prototype's UI already expects.</p>
+</div>
+
+<script>
+(function(){
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

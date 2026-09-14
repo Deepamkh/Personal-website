@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal - Case Study</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12172B; --cloud:#F6F4EE; --panel:#FFFFFF;
+    --amber:#e2711d; --green:#3F7C5D; --wine:#8B3A55; --grey:#8D93A6; --line:#E4E0D6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#0f0d0c; color:#f5efe6;
+    font-family:'Raleway',sans-serif; line-height:1.6; cursor:none;
+  }
+  .wrap{ max-width:760px; margin:0 auto; padding:0 24px; }
+  header.hero{
+    padding:90px 0 60px; border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, #12172B 0%, #12172B 60%, #12172B 100%);
+    color:var(--cloud);
+  }
+  header.hero .wrap{ position:relative; }
+  .eyebrow-mark{ display:flex; align-items:flex-end; gap:3px; height:18px; margin-bottom:22px;}
+  .eyebrow-mark span{ width:4px; background:var(--amber); border-radius:1px; }
+  .eyebrow-mark span:nth-child(1){height:6px;} .eyebrow-mark span:nth-child(2){height:10px;}
+  .eyebrow-mark span:nth-child(3){height:14px;} .eyebrow-mark span:nth-child(4){height:18px;}
+  h1.title{
+    font-family:'Merriweather',serif; font-weight:500; font-size:52px; line-height:1.08;
+    margin:0 0 20px; max-width:620px; letter-spacing:-0.01em;
+  }
+  p.dek{ font-size:18px; color:rgba(246,244,238,0.8); max-width:520px; margin:0 0 34px;}
+  .meta-row{ display:flex; gap:28px; flex-wrap:wrap; font-size:13px; color:rgba(246,244,238,0.6);}
+  .meta-row div span{ display:block; color:var(--cloud); font-size:14px; font-weight:600; margin-bottom:2px;}
+
+  main{ padding:64px 0 100px; }
+  section{ margin-bottom:64px; }
+  h2.h{
+    font-family:'Merriweather',serif; font-weight:500; font-size:28px; margin:0 0 18px; max-width:520px;
+  }
+  p{ font-size:16px; color:#d8d4cc; max-width:620px; }
+  p.lede{ font-size:18px; color:#f5efe6; }
+
+  .stat-strip{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:16px; overflow:hidden; margin:28px 0;
+  }
+  .stat{ background:var(--panel); padding:22px 18px; }
+  .stat .num{ font-family:'Merriweather',serif; font-size:30px; color:var(--amber); }
+  .stat .lbl{ font-size:12px; color:var(--grey); margin-top:4px; }
+
+  .quote{
+    border-left:3px solid var(--amber); padding:4px 0 4px 20px; margin:28px 0;
+    font-family:'Merriweather',serif; font-style:italic; font-size:20px; color:#f5efe6; max-width:560px;
+  }
+
+  /* mock screen illustrations reused from the product's own visual system */
+  .mock{
+    background:var(--ink); border-radius:28px; padding:10px; max-width:300px; margin:24px auto;
+  }
+  .mock-inner{ background:var(--cloud); border-radius:20px; padding:18px 16px 20px; }
+  .mock-brand{ display:flex; align-items:center; gap:7px; margin-bottom:14px;}
+  .mock-bars{ display:flex; align-items:flex-end; gap:2px; height:12px;}
+  .mock-bars span{ width:2.5px; background:var(--amber); border-radius:1px;}
+  .mock-bars span:nth-child(1){height:4px;} .mock-bars span:nth-child(2){height:7px;}
+  .mock-bars span:nth-child(3){height:10px;} .mock-bars span:nth-child(4){height:12px;}
+  .mock-brandname{ font-family:'Merriweather',serif; font-weight:600; font-size:14px;}
+  .mock-card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:11px; margin-bottom:8px;}
+  .mock-card-top{ display:flex; justify-content:space-between; align-items:flex-start;}
+  .mock-jt{ font-size:11.5px; font-weight:600; color:#12172B;} .mock-jc{ font-size:10px; color:var(--grey); margin:1px 0 0;}
+  .mock-score{ font-family:'Merriweather',serif; font-size:15px; font-weight:600; color:var(--green);}
+  .mock-chips{ display:flex; gap:5px; margin-top:7px;}
+  .mock-chip{ font-size:8.5px; padding:2px 6px; border-radius:10px; background:var(--cloud); border:1px solid var(--line);}
+  .mock-chip.fresh{ background:#EAF3EC; color:var(--green); border-color:#cfe4d4;}
+
+  .figure-cap{ text-align:center; font-size:12.5px; color:var(--grey); margin-top:-8px;}
+
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media(max-width:640px){ .two-col{ grid-template-columns:1fr; } }
+  .col-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+  .col-card h3{ font-size:14px; margin:0 0 8px; }
+  .col-card p{ font-size:13.5px; margin:0; color:#2c3148; }
+  .col-card.miss{ border-color:#ecd6de; }
+  .col-card.have{ border-color:#cfe4d4; }
+
+  .decision{ display:flex; gap:16px; margin-bottom:26px; }
+  .decision .num{
+    font-family:'Merriweather',serif; font-size:22px; color:var(--line); flex-shrink:0; width:34px;
+  }
+  .decision h3{ font-size:16px; margin:0 0 6px; }
+  .decision p{ font-size:14.5px; margin:0; }
+
+  .palette{ display:flex; gap:10px; flex-wrap:wrap; margin:20px 0;}
+  .swatch{ width:84px; }
+  .swatch .chip{ height:56px; border-radius:10px; border:1px solid var(--line); margin-bottom:6px;}
+  .swatch .name{ font-size:11px; font-weight:600;} .swatch .hex{ font-size:10.5px; color:var(--grey);}
+
+  footer{ border-top:1px solid var(--line); padding:40px 0; }
+  footer p{ font-size:13px; color:var(--grey); }
+  a,button{cursor:none}
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:20px 0; }
+  .topbar-wrap{ max-width:760px; margin:0 auto; padding:0 24px; }
+  .logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--amber);font-family:'Merriweather',serif;font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+  .logo-badge:hover{transform:scale(1.12);}
+  .back-link{font-size:0.86rem;color:var(--cloud);text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.2s ease,color 0.2s ease,background 0.2s ease,border-color 0.2s ease;}
+  .back-link:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--amber);}
+
+  .cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
+  .cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--amber);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
+  .cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,0.14);}
+  .cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:9990;opacity:0.5;animation:trail-fade 0.55s ease-out forwards;}
+  @keyframes trail-fade{ to{ opacity:0; transform:scale(0.15); } }
+  @media (hover:none){ .cur-main,.cur-ring{display:none;} body,a,button{cursor:auto;} }
+
+  .linkrow{ display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:6px; font-size:14px; font-weight:700; text-decoration:none; border:2.5px solid #000; transition:transform 0.18s ease, box-shadow 0.18s ease; }
+  .btn.primary{ background:var(--amber); color:#0f0d0c; box-shadow:4px 4px 0 #000; }
+  .btn.primary:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 #000; }
+  .btn.ghost{ background:transparent; color:var(--cloud); box-shadow:4px 4px 0 #000; }
+  .btn.ghost:hover{ border-color:var(--amber); transform:translate(-2px,-2px); box-shadow:6px 6px 0 #000; }
+
+  .device-shell{ width:340px; max-width:100%; margin:28px auto 0; border-radius:36px; background:#000; padding:11px; box-shadow:0 30px 70px rgba(0,0,0,.5); }
+  .device-shell iframe{ width:100%; height:800px; border:0; border-radius:26px; background:var(--ink); display:block; }
+  .demo-caption{ text-align:center; font-size:13px; color:var(--grey); margin-top:14px; }
+  .demo-caption a{ font-weight:700; color:var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="cur-main" id="cMain"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<div class="topbar-wrap">
+  <div class="topbar">
+    <a class="logo-badge" href="index.html" aria-label="Back to home">DK</a>
+    <a href="index.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Back to home
+    </a>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="eyebrow-mark"><span></span><span></span><span></span><span></span></div>
+    <h1 class="title">Signal: knowing which jobs will call back before you apply</h1>
+    <p class="dek">A mobile-first concept that scores open roles against a resume, explains the gap, drafts the fix, and surfaces who to talk to - end to end, from a phone.</p>
+    <div class="meta-row">
+      <div><span>Role</span>Product &amp; design concept, prototyped solo</div>
+      <div><span>Scope</span>Mobile app · design system · working prototype</div>
+      <div><span>Tools</span>Claude, HTML/CSS/JS prototype</div>
+    </div>
+    <div class="linkrow">
+      <a class="btn primary" href="#prototype">View the prototype</a>
+      <a class="btn ghost" href="signal-system-design.html">Read the system design doc</a>
+      <a class="btn ghost" href="signal-design-document.html">Read the design document</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+  <section>
+    <h2 class="h">The problem</h2>
+    <p class="lede">Most job searching is triage by gut feel. A candidate scans thirty listings, applies to twelve, and hears back from one - with no real signal, going in, about which ones were ever likely to call.</p>
+    <p>The information needed to fix this already exists: it's sitting in the job description and the resume. Nobody reads both carefully enough, at scale, to act on it. That's a matching problem, and matching problems are exactly what's tractable to solve with an LLM that can actually read both documents and reason about the gap between them - not just keyword-match them.</p>
+    <div class="stat-strip">
+      <div class="stat"><div class="num">3</div><div class="lbl">core screens: resume, matches, contacts</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">central number people are asked to trust: the call-likelihood score</div></div>
+      <div class="stat"><div class="num">0</div><div class="lbl">scraped platforms - sourcing is API-first by design</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="h">The idea</h2>
+    <p>Signal turns a resume into a live scanner: paste it once, and every open role in the search gets ranked by realistic call-likelihood, not recency or keyword luck. Open any role and the gap is explained in plain language - what matches, what's missing, and the exact resume line that would close it.</p>
+    <div class="quote">"Getting a call" is the real unit job seekers are optimizing for - so that's the number the whole product is organized around, not a generic match score.</div>
+    <p>The visual language leans into that literally: signal bars stand in for match strength everywhere, and the one accent color in the whole palette is reserved for the moments that matter - a strong match, a call to action, the brand mark.</p>
+  </section>
+
+  <section>
+    <h2 class="h">What it looks like</h2>
+    <div class="mock">
+      <div class="mock-inner">
+        <div class="mock-brand">
+          <div class="mock-bars"><span></span><span></span><span></span><span></span></div>
+          <div class="mock-brandname">Signal</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top">
+            <div><div class="mock-jt">Senior Frontend Engineer</div><div class="mock-jc">Fathom Analytics · Remote</div></div>
+            <div class="mock-score">91%</div>
+          </div>
+          <div class="mock-chips"><span class="mock-chip fresh">New · 3h</span><span class="mock-chip">$150k–180k</span></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top">
+            <div><div class="mock-jt">Frontend Engineer II</div><div class="mock-jc">Northwind Labs · NYC</div></div>
+            <div class="mock-score" style="color:var(--green)">84%</div>
+          </div>
+          <div class="mock-chips"><span class="mock-chip">1d ago</span><span class="mock-chip">$135k–160k</span></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top">
+            <div><div class="mock-jt">UI Engineer</div><div class="mock-jc">Cedar &amp; Co · Remote</div></div>
+            <div class="mock-score" style="color:var(--amber)">76%</div>
+          </div>
+          <div class="mock-chips"><span class="mock-chip">2d ago</span><span class="mock-chip">$120k–145k</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="figure-cap">Matches tab - ranked by call-likelihood, freshness always visible on the card.</p>
+  </section>
+
+  <section id="prototype">
+    <h2 class="h">Try it live</h2>
+    <p>Fully interactive - same file that ships alongside this page. Paste a resume, browse ranked matches, and open a role to run the live AI deep-dive.</p>
+    <div class="device-shell">
+      <iframe src="signal-prototype.html?embed=1" loading="lazy" title="Signal interactive prototype"></iframe>
+    </div>
+    <p class="demo-caption">Not rendering? <a href="signal-prototype.html" target="_blank" rel="noopener">Open the prototype directly</a>.</p>
+  </section>
+
+  <section>
+    <h2 class="h">Where it fits, where it doesn't</h2>
+    <div class="two-col">
+      <div class="col-card have">
+        <h3 style="color:var(--green)">Matched</h3>
+        <p>React, TypeScript, Jest, and dashboard-building experience carried straight across from the resume to roles asking for exactly that.</p>
+      </div>
+      <div class="col-card miss">
+        <h3 style="color:var(--wine)">Gap</h3>
+        <p>GraphQL and formal design-system experience were missing - the kind of gap a rewritten bullet can partially close, and a real one worth naming honestly instead of hiding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="h">Design decisions that mattered</h2>
+    <div class="decision">
+      <div class="num">01</div>
+      <div><h3>Show the reasoning, not just the number</h3><p>A percentage alone trains distrust. Every score ships with matched/missing skill chips and a plain-language reason, because the product only works if people are willing to act on what it tells them.</p></div>
+    </div>
+    <div class="decision">
+      <div class="num">02</div>
+      <div><h3>Split cheap ranking from deep analysis</h3><p>The list uses a fast, free heuristic score so browsing feels instant. Opening a role unlocks a real model call that reads the full description and resume and writes a tailored gap analysis - expensive reasoning spent only where someone has shown intent.</p></div>
+    </div>
+    <div class="decision">
+      <div class="num">03</div>
+      <div><h3>No scraping, by constraint not oversight</h3><p>Recruiter and hiring-manager contact data is the most sensitive part of this concept. The design explicitly rules out scraping LinkedIn or any board that prohibits it - production sourcing is API partnerships and licensed data only, even where that means showing fewer contacts.</p></div>
+    </div>
+    <div class="decision">
+      <div class="num">04</div>
+      <div><h3>Tailoring, never fabricating</h3><p>Resume rewrites reorder and rephrase real experience in the target role's vocabulary. The system doesn't invent metrics or claims that weren't in the source resume - the person approves every change via a visible before/after.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="h">Visual system</h2>
+    <p>The whole palette is built around one idea: a phone that might ring. Signal bars measure match strength everywhere a score shows up; a warm amber is the single accent color, reserved so it stays meaningful; and a serif with old-style numerals gives every score a bit of typographic weight against the plain grotesk used for everything else.</p>
+    <div class="palette">
+      <div class="swatch"><div class="chip" style="background:#12172B"></div><div class="name">Ink</div><div class="hex">#12172B</div></div>
+      <div class="swatch"><div class="chip" style="background:#F6F4EE"></div><div class="name">Cloud</div><div class="hex">#F6F4EE</div></div>
+      <div class="swatch"><div class="chip" style="background:#E8A33D"></div><div class="name">Signal Amber</div><div class="hex">#E8A33D</div></div>
+      <div class="swatch"><div class="chip" style="background:#3F7C5D"></div><div class="name">Dial Green</div><div class="hex">#3F7C5D</div></div>
+      <div class="swatch"><div class="chip" style="background:#8B3A55"></div><div class="name">Ring Wine</div><div class="hex">#8B3A55</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="h">What I'd validate next</h2>
+    <p>The score is only as good as its honesty over time. The real test isn't whether people open the detail view - it's whether resumes tailored through Signal actually get more callbacks than a person's own baseline, which means shipping outcome tracking and being willing to publish the number even if it's underwhelming at first. I'd also want to pressure-test the freshness signal against real posting data - a 2-day-old listing means very different things at a startup versus a slow-moving enterprise employer, and the current design treats them the same.</p>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Signal is a concept project: product thinking, interaction design, and a working prototype, built to explore how an LLM can turn a resume and a job description into an honest, actionable answer rather than a black-box score.</p>
+    <div class="linkrow">
+      <a href="signal-prototype.html" class="back-link">Open prototype</a>
+      <a href="signal-system-design.html" class="back-link">System design doc</a>
+      <a href="signal-design-document.html" class="back-link">Design document</a>
+      <a href="#top" class="back-link">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

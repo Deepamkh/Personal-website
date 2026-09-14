@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSense AI - Prototype</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#10131C;
+    --card:#171B27;
+    --card-2:#1E2333;
+    --border:#232838;
+    --border-soft:#1D2231;
+    --text:#F4F5F7;
+    --text-dim:#8B92A8;
+    --text-mute:#565E73;
+    --gold:#F5A623;
+    --green:#3DDC84;
+    --red:#FF6B6B;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top, #1A1F30 0%, #0B0D13 60%);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 16px;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  .stage{
+    width:100%;
+    max-width:400px;
+  }
+  .stage-label{
+    text-align:center;
+    color:var(--text-mute);
+    font-size:12px;
+    letter-spacing:0.02em;
+    margin-bottom:14px;
+  }
+  .stage-label b{color:var(--gold);font-weight:600;}
+
+  .phone{
+    background:var(--ink);
+    border-radius:28px;
+    border:1px solid var(--border-soft);
+    overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+  }
+  .app-header{padding:20px 16px 6px;}
+  .app-title{font-family:'Space Grotesk', sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+  .app-sub{font-size:13px;color:var(--text-dim);margin-top:2px;}
+  .search-wrap{padding:10px 16px;}
+  .search-box{
+    display:flex;align-items:center;gap:8px;background:var(--card);
+    border:1px solid var(--border);border-radius:10px;padding:9px 12px;
+  }
+  .search-box input{
+    background:transparent;border:none;outline:none;color:var(--text);
+    font-size:14px;width:100%;font-family:'IBM Plex Sans', sans-serif;
+  }
+  .search-box input::placeholder{color:var(--text-mute);}
+  .demo-note{
+    margin:6px 16px 12px;padding:10px 12px;border-radius:10px;
+    background:var(--card);border:1px solid var(--border);
+    font-size:11.5px;color:var(--text-dim);line-height:1.5;
+  }
+  .list{padding:0 16px 12px;max-height:520px;overflow-y:auto;}
+  .rank-row{
+    display:flex;align-items:center;gap:12px;width:100%;
+    background:transparent;border:none;border-bottom:1px solid var(--border-soft);
+    padding:14px 4px;text-align:left;cursor:pointer;color:inherit;
+  }
+  .rank-row:hover{background:rgba(255,255,255,0.02);}
+  .rank-num{width:22px;font-family:'IBM Plex Mono', monospace;font-size:13px;color:var(--text-mute);flex-shrink:0;}
+  .badge{
+    width:38px;height:38px;border-radius:50%;background:var(--card-2);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:12.5px;color:var(--gold);flex-shrink:0;
+  }
+  .rank-mid{flex:1;min-width:0;}
+  .rank-name{font-family:'Space Grotesk', sans-serif;font-size:15px;font-weight:500;color:var(--text);}
+  .rank-price-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
+  .rank-price{font-family:'IBM Plex Mono', monospace;font-size:12.5px;color:var(--text-dim);}
+  .rank-change{font-family:'IBM Plex Mono', monospace;font-size:12px;display:flex;align-items:center;gap:2px;}
+  .up{color:var(--green);} .down{color:var(--red);}
+  .rank-right{text-align:right;flex-shrink:0;}
+  .rank-score{font-family:'IBM Plex Mono', monospace;font-size:15px;font-weight:600;}
+  .rank-label{font-size:10.5px;color:var(--text-mute);margin-top:1px;white-space:nowrap;}
+  .chev{color:#3D4358;flex-shrink:0;font-size:15px;}
+
+  .detail-scroll{max-height:640px;overflow-y:auto;}
+  .detail-header{display:flex;align-items:center;gap:10px;padding:18px 16px 6px;}
+  .back-btn{
+    background:var(--card);border:1px solid var(--border);border-radius:8px;
+    width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--text);font-size:16px;
+  }
+  .back-btn:hover{background:var(--card-2);}
+  .detail-name{font-family:'Space Grotesk', sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+  .detail-name .sym{color:var(--text-mute);font-weight:500;}
+  .detail-price{font-family:'IBM Plex Mono', monospace;font-size:30px;font-weight:600;color:var(--text);padding:10px 16px 0;}
+  .detail-change{
+    display:inline-flex;align-items:center;gap:4px;margin:4px 16px 0;
+    font-size:13px;font-family:'IBM Plex Mono', monospace;
+  }
+  .chart-block{padding:16px 16px 0;}
+  .chart-label{font-size:12.5px;color:var(--text-dim);margin-bottom:6px;display:flex;justify-content:space-between;}
+  .chart-box{height:130px;position:relative;}
+
+  .gauge-card{
+    margin:20px 16px 0;padding:18px 12px 12px;border-radius:14px;
+    background:var(--card);border:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .gauge-label{font-size:12.5px;color:var(--text-dim);margin-bottom:4px;}
+  .gauge-pct{
+    font-family:'IBM Plex Mono', monospace;font-size:28px;font-weight:600;
+    position:relative;top:-42px;text-align:center;
+  }
+  .gauge-tag{
+    margin-top:-30px;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  }
+  .gauge-foot{font-size:11px;color:var(--text-mute);margin-top:8px;text-align:center;line-height:1.5;}
+
+  .source-card{margin:16px 16px 0;padding:16px 12px;border-radius:14px;background:var(--card);border:1px solid var(--border);}
+  .source-title{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;}
+  .source-row{margin-bottom:14px;}
+  .source-row:last-child{margin-bottom:0;}
+  .source-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .source-name{display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:13px;}
+  .source-val{font-family:'IBM Plex Mono', monospace;font-size:13px;color:var(--text);}
+  .source-track{height:6px;border-radius:3px;background:var(--card-2);overflow:hidden;}
+  .source-fill{height:100%;border-radius:3px;background:var(--gold);}
+
+  .headline-block{padding:20px 16px 24px;}
+  .headline-title{font-size:12.5px;color:var(--text-dim);margin-bottom:8px;}
+  .headline-item{padding:10px 0;border-bottom:1px solid var(--border-soft);}
+  .headline-item:last-child{border-bottom:none;}
+  .headline-text{font-size:13.5px;color:var(--text);line-height:1.45;}
+  .headline-src{font-size:11px;color:var(--text-mute);margin-top:3px;}
+  .forecast-foot{font-size:10.5px;color:var(--text-mute);margin-top:8px;line-height:1.5;padding:0 16px 4px;}
+
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-thumb{background:#2A3040;border-radius:3px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</head>
+<body>
+
+<a href="cryptosense-ai-case-study.html" style="position:fixed; top:20px; left:20px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8B92A8; text-decoration:none; display:flex; align-items:center; gap:6px; z-index:10;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+  Back to case study
+</a>
+
+<div class="stage">
+  <div class="stage-label">CryptoSense AI - <b>interactive prototype</b> · simulated data</div>
+  <div class="phone">
+    <div id="listView"></div>
+    <div id="detailView" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------
+// Deterministic mock data
+// ---------------------------------------------------------------------
+function seeded(seed){
+  let s = seed % 2147483647;
+  if(s<=0) s+=2147483646;
+  return function(){ s=(s*16807)%2147483647; return (s-1)/2147483646; };
+}
+function round(n,d){ const f=Math.pow(10,d); return Math.round(n*f)/f; }
+
+function genHistory(basePrice, seed, days, driftPctTotal){
+  const rand = seeded(seed);
+  const startPrice = basePrice/(1+driftPctTotal/100);
+  let price = startPrice;
+  const perStepDrift = driftPctTotal/days;
+  const arr=[];
+  for(let i=0;i<days;i++){
+    const noise=(rand()-0.5)*3.2;
+    price = price*(1+(perStepDrift+noise)/100);
+    if(price<=0) price = basePrice*0.05;
+    arr.push({day:i-days+1, price:round(price, price<1?4:2)});
+  }
+  arr[arr.length-1].price = round(basePrice, basePrice<1?4:2);
+  return arr;
+}
+function genForecast(basePrice, seed, dailyTrendPct, days){
+  const rand = seeded(seed+9001);
+  let price = basePrice;
+  const arr=[{day:0, price:round(basePrice, basePrice<1?4:2), low:null, high:null}];
+  for(let i=1;i<=days;i++){
+    const noise=(rand()-0.5)*0.9;
+    price = price*(1+(dailyTrendPct+noise)/100);
+    const bandWidth = price*(0.015*i+0.01);
+    arr.push({day:i, price:round(price, price<1?4:2), low:round(price-bandWidth,4), high:round(price+bandWidth,4)});
+  }
+  return arr;
+}
+function scoreLabel(score){
+  if(score>=75) return {label:"Strong buy signal", tone:"buy"};
+  if(score>=60) return {label:"Buy signal", tone:"buy"};
+  if(score>=40) return {label:"Hold / neutral", tone:"hold"};
+  if(score>=25) return {label:"Caution advised", tone:"caution"};
+  return {label:"Avoid signal", tone:"avoid"};
+}
+
+const RAW_COINS = [
+  {id:"btc", symbol:"BTC", name:"Bitcoin", price:62350, change24h:2.4, social:78, news:72, onchain:81, seed:11,
+   headlines:[{src:"Market Wire (sample)", text:"ETF inflows stay positive for a sixth straight week, desks note."},
+              {src:"OnChain Daily (sample)", text:"Long-term holder supply climbs to a new cycle high."}]},
+  {id:"eth", symbol:"ETH", name:"Ethereum", price:3120, change24h:1.1, social:70, news:68, onchain:74, seed:22,
+   headlines:[{src:"Chain Signals (sample)", text:"Layer-2 activity keeps setting fresh transaction records."},
+              {src:"Market Wire (sample)", text:"Staking yield remains steady as validator count grows."}]},
+  {id:"sol", symbol:"SOL", name:"Solana", price:148, change24h:5.8, social:85, news:80, onchain:88, seed:33,
+   headlines:[{src:"DevTracker (sample)", text:"Weekly active addresses hit another all-time high."},
+              {src:"Market Wire (sample)", text:"Analysts point to strong developer growth this quarter."}]},
+  {id:"bnb", symbol:"BNB", name:"BNB", price:585, change24h:-0.6, social:55, news:58, onchain:60, seed:44,
+   headlines:[{src:"Market Wire (sample)", text:"Trading volume holds flat amid a quiet news cycle."},
+              {src:"Regulatory Brief (sample)", text:"Exchange awaits a routine compliance review outcome."}]},
+  {id:"xrp", symbol:"XRP", name:"XRP", price:0.58, change24h:-2.1, social:48, news:40, onchain:45, seed:55,
+   headlines:[{src:"Legal Wire (sample)", text:"Court filing update draws mixed reactions from traders."},
+              {src:"Market Wire (sample)", text:"Sentiment splits as short-term momentum cools."}]},
+  {id:"ada", symbol:"ADA", name:"Cardano", price:0.42, change24h:-3.4, social:38, news:35, onchain:40, seed:66,
+   headlines:[{src:"DevTracker (sample)", text:"Upgrade timeline slips, community debates the delay."},
+              {src:"Market Wire (sample)", text:"Trading interest fades against larger-cap peers."}]},
+  {id:"doge", symbol:"DOGE", name:"Dogecoin", price:0.12, change24h:8.9, social:90, news:55, onchain:50, seed:77,
+   headlines:[{src:"Social Pulse (sample)", text:"Mentions spike sharply after a celebrity post goes viral."},
+              {src:"Market Wire (sample)", text:"Volatility jumps as retail trading activity surges."}]},
+  {id:"dot", symbol:"DOT", name:"Polkadot", price:5.2, change24h:-1.8, social:42, news:44, onchain:48, seed:88,
+   headlines:[{src:"DevTracker (sample)", text:"Parachain auctions see thinner participation this round."},
+              {src:"Market Wire (sample)", text:"Price drifts lower on below-average volume."}]},
+  {id:"avax", symbol:"AVAX", name:"Avalanche", price:28.4, change24h:3.2, social:66, news:62, onchain:70, seed:99,
+   headlines:[{src:"Chain Signals (sample)", text:"Subnet deployments continue to trend upward."},
+              {src:"Market Wire (sample)", text:"Institutional desks flag steady accumulation."}]},
+  {id:"matic", symbol:"POL", name:"Polygon", price:0.38, change24h:-4.5, social:30, news:28, onchain:33, seed:110,
+   headlines:[{src:"Market Wire (sample)", text:"Momentum stays weak as outflows continue for a third week."},
+              {src:"DevTracker (sample)", text:"Migration progress slower than the community expected."}]},
+];
+
+const COINS = RAW_COINS.map(c=>{
+  const composite = round(c.social*0.4 + c.news*0.35 + c.onchain*0.25, 0);
+  const volatilityPenalty = Math.abs(c.social-c.news) > 25 ? 6 : 0;
+  const likelihood = Math.max(4, Math.min(96, composite - volatilityPenalty));
+  const dailyTrendPct = ((composite-50)/50)*1.4;
+  const history = genHistory(c.price, c.seed, 30, dailyTrendPct*6);
+  const forecast = genForecast(c.price, c.seed, dailyTrendPct, 7);
+  const sl = scoreLabel(likelihood);
+  return Object.assign({}, c, {composite, likelihood: round(likelihood,0), label: sl.label, tone: sl.tone, history, forecast});
+}).sort((a,b)=>b.likelihood-a.likelihood);
+
+const TONE = {
+  buy:{fg:"#1E8E5A", bg:"#E4F5EC"},
+  hold:{fg:"#9C7A16", bg:"#FBF2DA"},
+  caution:{fg:"#B4530D", bg:"#FCEADA"},
+  avoid:{fg:"#C13F3F", bg:"#FBE6E6"},
+};
+
+function fmtPrice(p){
+  if(p>=1) return "$"+p.toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:2});
+  return "$"+p.toFixed(4);
+}
+
+// ---------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------
+let historyChart=null, forecastChart=null;
+
+function renderList(filter){
+  filter = (filter||"").toLowerCase();
+  const rows = COINS.filter(c=>c.name.toLowerCase().includes(filter)||c.symbol.toLowerCase().includes(filter));
+  const rowsHtml = rows.map((c,i)=>{
+    const tone = TONE[c.tone];
+    const up = c.change24h>=0;
+    return `
+    <button class="rank-row" onclick="openDetail('${c.id}')">
+      <div class="rank-num mono">${i+1}</div>
+      <div class="badge">${c.symbol.slice(0,2)}</div>
+      <div class="rank-mid">
+        <div class="rank-name">${c.name}</div>
+        <div class="rank-price-row">
+          <span class="rank-price">${fmtPrice(c.price)}</span>
+          <span class="rank-change ${up?'up':'down'}">${up?'▲':'▼'} ${up?'+':''}${c.change24h}%</span>
+        </div>
+      </div>
+      <div class="rank-right">
+        <div class="rank-score" style="color:${tone.fg}">${c.likelihood}%</div>
+        <div class="rank-label">${c.label}</div>
+      </div>
+      <div class="chev">›</div>
+    </button>`;
+  }).join("");
+
+  document.getElementById("listView").innerHTML = `
+    <div class="app-header">
+      <div class="app-title">CryptoSense AI</div>
+      <div class="app-sub">Ranked by investment-likelihood score</div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-box">
+        <span style="color:var(--text-mute);font-size:14px;">⌕</span>
+        <input id="searchInput" placeholder="Search a currency" value="${filter}" oninput="renderList(this.value)">
+      </div>
+    </div>
+    <div class="demo-note">Demo data - simulated for this prototype, not live market or sentiment feeds. Not financial advice.</div>
+    <div class="list">${rowsHtml}</div>
+  `;
+}
+
+function gaugeSvg(value, tone){
+  const t = Math.PI*(1-value/100);
+  const cx=100, cy=100, r=74;
+  const x2 = cx + r*Math.cos(t);
+  const y2 = cy - r*Math.sin(t);
+  const circumference = Math.PI*r;
+  return `
+  <svg viewBox="0 0 200 112" width="200" height="112">
+    <defs>
+      <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#C13F3F" />
+        <stop offset="27%" stop-color="#D98A2B" />
+        <stop offset="50%" stop-color="#C7B23A" />
+        <stop offset="73%" stop-color="#7FB86B" />
+        <stop offset="100%" stop-color="#1E8E5A" />
+      </linearGradient>
+    </defs>
+    <path d="M ${cx-r},${cy} A ${r},${r} 0 0 1 ${cx+r},${cy}" fill="none" stroke="#232838" stroke-width="14" stroke-linecap="round" />
+    <path d="M ${cx-r},${cy} A ${r},${r} 0 0 1 ${cx+r},${cy}" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round"
+      stroke-dasharray="${(value/100)*circumference} ${circumference}" />
+    <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#F4F5F7" stroke-width="3" stroke-linecap="round" />
+    <circle cx="${cx}" cy="${cy}" r="6" fill="#F4F5F7" />
+  </svg>`;
+}
+
+function openDetail(id){
+  const c = COINS.find(x=>x.id===id);
+  const tone = TONE[c.tone];
+  const up = c.change24h>=0;
+  const forecastEnd = c.forecast[c.forecast.length-1].price;
+  const forecastPct = round(((forecastEnd-c.price)/c.price)*100,1);
+
+  document.getElementById("listView").style.display="none";
+  const dv = document.getElementById("detailView");
+  dv.style.display="block";
+  dv.innerHTML = `
+    <div class="detail-scroll">
+    <div class="detail-header">
+      <button class="back-btn" onclick="closeDetail()">←</button>
+      <div class="detail-name">${c.name} <span class="sym">${c.symbol}</span></div>
+    </div>
+    <div class="detail-price">${fmtPrice(c.price)}</div>
+    <div class="detail-change ${up?'up':'down'}">${up?'▲':'▼'} ${up?'+':''}${c.change24h}% today</div>
+
+    <div class="chart-block">
+      <div class="chart-label"><span>30-day price history</span></div>
+      <div class="chart-box"><canvas id="historyCanvas"></canvas></div>
+    </div>
+
+    <div class="gauge-card">
+      <div class="gauge-label">Investment-likelihood indicator</div>
+      ${gaugeSvg(c.likelihood, c.tone)}
+      <div class="gauge-pct mono" style="color:${tone.fg}">${c.likelihood}%</div>
+      <div class="gauge-tag" style="background:${tone.bg};color:${tone.fg}">${c.label}</div>
+      <div class="gauge-foot">Composite of social, news and on-chain sentiment.<br>Simulated score, not investment advice.</div>
+    </div>
+
+    <div class="source-card">
+      <div class="source-title">Sentiment sources</div>
+      ${sourceRow('Social media', c.social)}
+      ${sourceRow('News coverage', c.news)}
+      ${sourceRow('On-chain activity', c.onchain)}
+    </div>
+
+    <div class="chart-block" style="padding-top:20px;">
+      <div class="chart-label">
+        <span>7-day expected trend</span>
+        <span class="mono" style="color:${forecastPct>=0?'var(--green)':'var(--red)'}">${forecastPct>=0?'+':''}${forecastPct}%</span>
+      </div>
+      <div class="chart-box"><canvas id="forecastCanvas"></canvas></div>
+    </div>
+    <div class="forecast-foot">Model-projected range, not a guarantee. Forecasts assume current sentiment trends continue.</div>
+
+    <div class="headline-block">
+      <div class="headline-title">Headlines driving the score</div>
+      ${c.headlines.map(h=>`
+        <div class="headline-item">
+          <div class="headline-text">${h.text}</div>
+          <div class="headline-src">${h.src}</div>
+        </div>`).join("")}
+    </div>
+    </div>
+  `;
+
+  if(historyChart) historyChart.destroy();
+  if(forecastChart) forecastChart.destroy();
+
+  historyChart = new Chart(document.getElementById("historyCanvas"), {
+    type:"line",
+    data:{
+      labels: c.history.map(d=>d.day),
+      datasets:[{data:c.history.map(d=>d.price), borderColor:"#F5A623", borderWidth:2, pointRadius:0, tension:0.3}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>fmtPrice(ctx.parsed.y)}}},
+      scales:{x:{display:false}, y:{display:false}}
+    }
+  });
+
+  forecastChart = new Chart(document.getElementById("forecastCanvas"), {
+    type:"line",
+    data:{
+      labels: c.forecast.map(d=> d.day===0 ? "Now" : `+${d.day}d`),
+      datasets:[
+        {data:c.forecast.map(d=>d.price), borderColor:"#F5A623", backgroundColor:"rgba(245,166,35,0.18)", borderWidth:2, pointRadius:0, fill:true, tension:0.3},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>fmtPrice(ctx.parsed.y)}}},
+      scales:{x:{ticks:{color:"#565E73", font:{size:10}}, grid:{display:false}}, y:{display:false}}
+    }
+  });
+}
+
+function sourceRow(label, value){
+  return `
+  <div class="source-row">
+    <div class="source-top">
+      <span class="source-name">${label}</span>
+      <span class="source-val">${value}</span>
+    </div>
+    <div class="source-track"><div class="source-fill" style="width:${value}%"></div></div>
+  </div>`;
+}
+
+function closeDetail(){
+  document.getElementById("detailView").style.display="none";
+  document.getElementById("listView").style.display="block";
+}
+
+renderList("");
+</script>
+</body>
+</html>
