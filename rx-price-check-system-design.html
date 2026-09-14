@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rx Price Check — system design</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0f0d0c; --panel:#1c1815; --ink:#f5efe6; --ink2:#b9ada0; --ink3:#8a8074;
+  --line:#33291f; --moss:#e2711d; --moss-dk:#c85f16;
+  --serif:"Merriweather", Georgia, serif;
+  --sans:"Raleway", -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.7; cursor:none;}
+a,button{cursor:none}
+img,iframe{max-width:100%}
+a{color:var(--moss)}
+.wrap{max-width:840px; margin:0 auto; padding:0 32px}
+
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--moss);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--moss);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,0.14);}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--moss);pointer-events:none;z-index:9990;opacity:0.5;animation:trail-fade 0.55s ease-out forwards;}
+@keyframes trail-fade{ to{ opacity:0; transform:scale(0.15); } }
+@media (hover:none){ .cur-main,.cur-ring{display:none;} body,a,button{cursor:auto;} }
+
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:22px 0; border-bottom:1px solid var(--line); margin-bottom: 8px;}
+.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--moss);font-family:var(--serif);font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.logo-badge:hover{transform:scale(1.12);}
+.back-link{font-size:0.86rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.2s ease,color 0.2s ease,background 0.2s ease,border-color 0.2s ease;}
+.back-link:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--moss);}
+
+.doc{padding:40px 0 80px;}
+h1{font-family:var(--serif); font-size:2.1rem; line-height:1.25; font-weight:700; margin:0 0 10px; color:#fff;}
+h2{font-family:var(--serif); font-size:1.5rem; font-weight:700; margin:48px 0 16px; color:#fff; border-top:1px solid var(--line); padding-top:32px;}
+h3{font-family:var(--serif); font-size:1.15rem; font-weight:700; margin:28px 0 12px; color:#fff;}
+p{margin:0 0 16px; color:var(--ink2); font-size:0.98rem;}
+strong{color:#fff; font-weight:700;}
+em{color:var(--ink2); font-style:italic;}
+hr{border:none; border-top:1px solid var(--line); margin:0;}
+ul,ol{margin:0 0 20px; padding-left:1.4em; color:var(--ink2);}
+li{margin-bottom:8px; font-size:0.98rem; line-height:1.6;}
+li::marker{color:var(--moss);}
+
+code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; font-size:0.85em; background:#2b2a28; color:var(--moss); padding:2px 6px; border-radius:4px;}
+pre{background:#000; border:2px solid #000; box-shadow:5px 5px 0 var(--line); border-radius:8px; padding:20px; overflow-x:auto; margin:0 0 24px;}
+pre code{background:none; color:var(--ink2); padding:0; font-size:0.82rem; line-height:1.6;}
+
+table{width:100%; border-collapse:collapse; margin:0 0 24px; background:#1c1815; border:2px solid #000; box-shadow:5px 5px 0 #000; border-radius:8px; overflow:hidden;}
+thead th{background:var(--moss); color:#0f0d0c; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.03em;}
+td{padding:12px 16px; border-top:1px solid var(--line); font-size:0.9rem; color:var(--ink2);}
+tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
+
+@media (max-width:640px){
+  h1{font-size:1.6rem;}
+  h2{font-size:1.25rem;}
+  pre{font-size:0.75rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cur-main" id="cMain"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<div class="wrap">
+  <div class="topbar">
+    <a class="logo-badge" href="index.html" aria-label="Back to home">DK</a>
+    <a href="rx-price-check-case-study.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Back to case study
+    </a>
+  </div>
+</div>
+
+<div class="wrap doc">
+<h1>Rx Price Check — System Design</h1>
+<p><strong>Version</strong> 0.1 (draft for review) · <strong>Scope</strong> Mobile web + native in-app tool · <strong>Owner</strong> TBD</p>
+<hr />
+<h2>1. What we're building</h2>
+<p>A member-facing tool that answers two questions in under a minute:</p>
+<ol>
+<li><em>What will this prescription actually cost me?</em></li>
+<li><em>Is there something cheaper my doctor could prescribe instead?</em></li>
+</ol>
+<p>The member types a drug name, gets an AI-assembled set of lower-cost and higher-cost alternatives with generic/brand clearly marked, picks a strength and form, then sees real prices at pharmacies near them in both a list and a map.</p>
+<h3>Goals</h3>
+<ul>
+<li>Show member-specific out-of-pocket cost, not a list price.</li>
+<li>Surface therapeutically relevant cheaper options the member can take to their prescriber.</li>
+<li>Make generic vs. brand legible at a glance.</li>
+<li>Get from search to a priced pharmacy list in ≤ 4 taps.</li>
+<li>Mobile-first. Every screen designed for one-handed use on a 390 px viewport.</li>
+</ul>
+<h3>Non-goals (v1)</h3>
+<ul>
+<li>No prescription transfer or ordering. We link out or show pharmacy contact details.</li>
+<li>No clinical advice. The tool never says "switch to X." It says "ask your prescriber about X."</li>
+<li>No controlled-substance price shopping beyond displaying cost (no pharmacy stock lookups).</li>
+<li>No desktop-specific layout work. Responsive up, not designed up.</li>
+</ul>
+<h3>Success metrics</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search → pharmacy list completion rate</td>
+<td>≥ 55%</td>
+</tr>
+<tr>
+<td>Median time to first price</td>
+<td>≤ 3.5 s</td>
+</tr>
+<tr>
+<td>Alternatives panel engagement (tap-through)</td>
+<td>≥ 30%</td>
+</tr>
+<tr>
+<td>"Was this helpful?" positive rate on AI panel</td>
+<td>≥ 70%</td>
+</tr>
+<tr>
+<td>Clinically inappropriate suggestion rate (audited sample)</td>
+<td>&lt; 0.5%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. User journey</h2>
+<pre><code>  Search            Alternatives          Configure           Location
+  ┌───────┐         ┌───────┐             ┌───────┐           ┌───────┐
+  │ &quot;lipi&quot;│  ───▶   │ brand │    ───▶     │ 20 mg │   ───▶    │ detect│
+  │  ───  │         │ ───── │             │ tablet│           │  or   │
+  │ typea-│         │generic│             │  30ct │           │ type  │
+  │ head  │         │ alts  │             │       │           │address│
+  └───────┘         └───────┘             └───────┘           └───────┘
+                         │                                        │
+                         │ higher-cost                            ▼
+                         │ options collapsed              ┌───────────────┐
+                         ▼                                │ Pharmacy list │
+                   &quot;Ask your doctor&quot;                      │   ⇄  Map      │
+                    disclaimer shown                      │  pin → price  │
+                                                          │    + distance │
+                                                          └───────────────┘
+</code></pre>
+<p>Two entry points beyond search: deep link from a claims/EOB row ("price this refill"), and a saved-medication list on the member's home screen.</p>
+<hr />
+<h2>3. Architecture</h2>
+<pre><code>┌──────────────────────────────────────────────────────────────┐
+│  Mobile client (React Native + shared RN-Web)                │
+│  search · alternatives · configurator · map · list           │
+└───────────────┬──────────────────────────────────────────────┘
+                │ HTTPS / OAuth2 member token
+┌───────────────▼──────────────────────────────────────────────┐
+│  BFF (GraphQL or REST-for-mobile)                            │
+│  session, response shaping, field-level PHI redaction        │
+└──┬──────┬──────────┬──────────────┬─────────────┬────────────┘
+   │      │          │              │             │
+┌──▼───┐ ┌▼────────┐ ┌▼───────────┐ ┌▼──────────┐ ┌▼──────────┐
+│Drug  │ │Alterna- │ │  Pricing   │ │ Pharmacy  │ │  Member   │
+│Search│ │tives    │ │  Service   │ │ Network   │ │ Context   │
+│Svc   │ │Svc (AI) │ │            │ │ Service   │ │  Service  │
+└──┬───┘ └──┬──────┘ └─┬──────────┘ └──┬────────┘ └──┬────────┘
+   │        │          │               │             │
+┌──▼────────▼──┐  ┌────▼──────────┐ ┌──▼─────────┐ ┌─▼─────────┐
+│ Drug KB      │  │ RTPB / PBM    │ │ Network    │ │ Eligibility│
+│ RxNorm, NDC  │  │ adjudication  │ │ roster +   │ │ accumulators│
+│ FDA Orange   │  │ Cash/discount │ │ Google     │ │ plan design │
+│ Book, class  │  │ price feeds   │ │ Places     │ │             │
+│ + vector idx │  └───────────────┘ └────────────┘ └─────────────┘
+└──────────────┘
+        ▲
+        │  retrieval only — candidate set is deterministic
+┌───────┴────────────────────┐
+│ LLM (BAA-covered endpoint) │  ranks + explains. Never invents drugs.
+└────────────────────────────┘
+</code></pre>
+<h3>Why a BFF</h3>
+<p>The mobile client must never hold plan design logic, and must never receive fields it doesn't render. The BFF composes one <code>/search-results</code> and one <code>/pharmacy-prices</code> response so the phone makes two calls, not nine, and strips anything the screen doesn't need before it leaves the trust boundary.</p>
+<hr />
+<h2>4. Services</h2>
+<h3>4.1 Drug Search Service</h3>
+<p>Typeahead over a normalized drug index.</p>
+<ul>
+<li><strong>Source of truth:</strong> RxNorm (RXCUI) for concept identity, NDC directory for packaged products, FDA Orange Book for therapeutic equivalence ratings (AB/AB1/BX).</li>
+<li><strong>Index:</strong> OpenSearch. Fields: brand name, generic name, synonyms, common misspellings, ingredient, route, dose form. Edge n-gram analyzer plus a fuzzy fallback at edit distance 1–2 (members type "lipator", "metaformin").</li>
+<li><strong>Ranking:</strong> prescription volume within the plan population, then formulary tier, then lexical score. Suppress obsolete NDCs and non-dispensable concepts.</li>
+<li><strong>Response:</strong> collapses to <em>drug concept</em>, not NDC. "Atorvastatin" is one result, not 40 package sizes.</li>
+</ul>
+<p>Latency budget: p95 ≤ 120 ms.</p>
+<h3>4.2 Alternatives Service — the AI layer</h3>
+<p>This is the part most likely to go wrong, so the design deliberately limits what the model is allowed to do.</p>
+<p><strong>Two-stage: deterministic retrieval, then model ranking.</strong></p>
+<p><strong>Stage 1 — candidate generation (no LLM).</strong> Given the searched RXCUI and the member's plan:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate type</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generic equivalent</td>
+<td>Same RxNorm ingredient + strength + form, Orange Book AB-rated</td>
+</tr>
+<tr>
+<td>Therapeutic alternative</td>
+<td>Same USP therapeutic class / ATC level 4, on formulary</td>
+</tr>
+<tr>
+<td>Formulary-preferred</td>
+<td>Plan's step-therapy or preferred agent for that class</td>
+</tr>
+<tr>
+<td>Different form/strength</td>
+<td>Same ingredient, cheaper package (e.g. two 20 mg vs one 40 mg — flag only, never advise splitting)</td>
+</tr>
+<tr>
+<td>Higher-cost</td>
+<td>Same class, higher member cost — shown for context, collapsed by default</td>
+</tr>
+</tbody>
+</table>
+<p>Everything in the candidate set is a real, dispensable, on-market product from our own KB. The model cannot add to this set.</p>
+<p><strong>Stage 2 — LLM ranking and explanation.</strong> The model receives the candidate list plus structured cost data and returns, per candidate: a rank, a one-sentence plain-language reason, and a <code>requiresNewPrescription</code> flag. The prompt is constrained to a JSON schema; responses that fail schema validation or that reference an RXCUI outside the candidate set are rejected and we fall back to a rules-only ordering (cost ascending, generic-equivalent first).</p>
+<p><strong>Guardrails, all enforced outside the model:</strong></p>
+<ul>
+<li>Suppression list by drug class: narrow-therapeutic-index drugs (warfarin, levothyroxine, lithium, some AEDs), biologics/biosimilars where substitution is state-regulated, and controlled substances never show <em>therapeutic</em> alternatives — generic-equivalent only.</li>
+<li>No dosing, titration, or tapering language in output. A regex + classifier pass rejects any generated sentence containing dose instructions.</li>
+<li>Every alternatives panel ships with a persistent line: <em>Prices and options only. Talk to your prescriber before changing any medication.</em></li>
+<li>The model never sees member identifiers, claims history, diagnoses, or address. It sees: drug concepts, formulary tier, and de-identified cost figures.</li>
+</ul>
+<p><strong>Evaluation:</strong> a golden set of ~500 (drug, plan) pairs reviewed by a pharmacist, scored on clinical appropriateness, cost-order correctness, and explanation accuracy. Run on every prompt or model change; block release below threshold. Plus a shadow-mode audit of 1% of live traffic reviewed weekly.</p>
+<p><strong>Caching:</strong> alternatives for a (RXCUI, formulary ID) pair are deterministic given the same KB snapshot. Cache in Redis for 24 h. Expected hit rate &gt; 90%, which also keeps LLM spend near-flat as traffic grows.</p>
+<h3>4.3 Pricing Service</h3>
+<p>Three price types, clearly labeled in the UI:</p>
+<ol>
+<li><strong>Plan price (real-time benefit).</strong> NCPDP Real-Time Prescription Benefit via Surescripts or the PBM's RTPB API. Returns member cost at a specific pharmacy given current deductible/accumulator state. This is the number we lead with.</li>
+<li><strong>Estimated plan price.</strong> Fallback when RTPB is unavailable or times out: computed from formulary tier + benefit design + accumulators. Labeled <em>estimate</em>.</li>
+<li><strong>Cash / discount price.</strong> Non-insurance price feeds. Shown when it beats the plan price, with a warning that cash purchases may not count toward the deductible.</li>
+</ol>
+<p>RTPB calls are fanned out per pharmacy, capped at the 15 nearest in-network pharmacies, with a 1.5 s budget and partial rendering — the list paints with distances first and prices fill in.</p>
+<p>Accumulator state changes; prices are cached at most 15 minutes and always stamped with "as of."</p>
+<h3>4.4 Pharmacy Network Service + Google Maps</h3>
+<ul>
+<li><strong>Network roster</strong> (in-network, preferred, 90-day retail, mail order) is ours, keyed by NCPDP pharmacy ID.</li>
+<li><strong>Geocoding:</strong> Google Geocoding API converts the member's typed address to lat/lng. Autocomplete uses the Places Autocomplete API with session tokens (billing is per session, not per keystroke — this matters, it's roughly a 10× cost difference).</li>
+<li><strong>Nearby resolution:</strong> we do <em>not</em> use Places Nearby Search to find pharmacies. We query our own roster with a PostGIS radius search, then enrich with Place Details (hours, phone, photo) matched by NCPDP → Place ID mapping maintained offline.</li>
+<li><strong>Distance:</strong> Distance Matrix API for driving/walking time on the visible set only (batched, ≤ 25 destinations per call). Straight-line distance renders immediately; travel time fills in.</li>
+<li><strong>Map render:</strong> Maps SDK for Android/iOS, Maps JavaScript API on web, with a custom style (POI density turned down so our pins dominate). Price-label markers are custom advanced markers.</li>
+</ul>
+<p><strong>Cost control:</strong> Autocomplete session tokens, a 300 ms debounce, radius search served from our own DB, Distance Matrix only for what's on screen, and a per-member daily quota. Map tiles are the largest line item — cache aggressively and avoid re-initializing the map on tab switches.</p>
+<p><strong>PHI boundary:</strong> member identifiers, drug names, and prices are never sent to Google. We send an address string or a lat/lng, nothing else. This is stated in the privacy copy.</p>
+<h3>4.5 Member Context Service</h3>
+<p>Eligibility, plan design, formulary ID, deductible and OOP-max accumulators, saved addresses, saved medications. Every read is audit-logged.</p>
+<hr />
+<h2>5. API surface</h2>
+<p>All endpoints require a member-scoped OAuth2 token. <code>Accept-Language</code> honored.</p>
+<h3><code>GET /v1/drugs/suggest?q=lipi&amp;limit=8</code></h3>
+<pre><code class="language-json">{
+  &quot;suggestions&quot;: [
+    { &quot;rxcui&quot;: &quot;153165&quot;, &quot;display&quot;: &quot;Lipitor&quot;, &quot;genericName&quot;: &quot;atorvastatin calcium&quot;,
+      &quot;type&quot;: &quot;BRAND&quot;, &quot;hasGeneric&quot;: true },
+    { &quot;rxcui&quot;: &quot;83367&quot;, &quot;display&quot;: &quot;Atorvastatin calcium&quot;,
+      &quot;type&quot;: &quot;GENERIC&quot;, &quot;brandNames&quot;: [&quot;Lipitor&quot;] }
+  ]
+}
+</code></pre>
+<h3><code>GET /v1/drugs/{rxcui}/alternatives</code></h3>
+<pre><code class="language-json">{
+  &quot;requested&quot;: {
+    &quot;rxcui&quot;: &quot;153165&quot;, &quot;name&quot;: &quot;Lipitor&quot;, &quot;type&quot;: &quot;BRAND&quot;,
+    &quot;formularyTier&quot;: 3, &quot;estimatedMonthlyCost&quot;: { &quot;amount&quot;: 84.00, &quot;currency&quot;: &quot;USD&quot; }
+  },
+  &quot;lowerCost&quot;: [
+    { &quot;rxcui&quot;: &quot;83367&quot;, &quot;name&quot;: &quot;Atorvastatin calcium&quot;, &quot;type&quot;: &quot;GENERIC&quot;,
+      &quot;relationship&quot;: &quot;GENERIC_EQUIVALENT&quot;, &quot;orangeBookCode&quot;: &quot;AB&quot;,
+      &quot;formularyTier&quot;: 1, &quot;estimatedMonthlyCost&quot;: { &quot;amount&quot;: 9.00 },
+      &quot;estimatedMonthlySavings&quot;: { &quot;amount&quot;: 75.00 },
+      &quot;requiresNewPrescription&quot;: false,
+      &quot;reason&quot;: &quot;Same active ingredient as Lipitor and rated equivalent by the FDA.&quot;,
+      &quot;reasonSource&quot;: &quot;LLM_RANKED&quot; }
+  ],
+  &quot;higherCost&quot;: [ /* same shape */ ],
+  &quot;disclaimer&quot;: &quot;Costs are estimates for your plan. Talk to your prescriber before changing any medication.&quot;,
+  &quot;asOf&quot;: &quot;2026-09-13T14:22:05Z&quot;
+}
+</code></pre>
+<p><code>reasonSource</code> is <code>LLM_RANKED</code> or <code>RULES_FALLBACK</code> — logged and used to monitor fallback rate.</p>
+<h3><code>GET /v1/drugs/{rxcui}/configurations</code></h3>
+<p>Returns available strengths, dose forms, and package quantities for the concept, so the two dropdowns are populated from real dispensable NDCs rather than a static list. Selecting a strength filters the form options and vice versa — the client must handle empty intersections (e.g. 80 mg has no oral suspension).</p>
+<h3><code>POST /v1/prices/pharmacies</code></h3>
+<pre><code class="language-json">{
+  &quot;ndc&quot;: &quot;00093505698&quot;,
+  &quot;quantity&quot;: 30, &quot;daysSupply&quot;: 30,
+  &quot;location&quot;: { &quot;lat&quot;: 33.1507, &quot;lng&quot;: -96.8236 },
+  &quot;radiusMiles&quot;: 10,
+  &quot;sort&quot;: &quot;PRICE_ASC&quot;
+}
+</code></pre>
+<p>Response: pharmacy array with <code>ncpdpId</code>, <code>name</code>, <code>address</code>, <code>lat</code>, <code>lng</code>, <code>distanceMiles</code>, <code>driveTimeMinutes</code>, <code>networkStatus</code> (<code>PREFERRED</code> | <code>IN_NETWORK</code> | <code>OUT_OF_NETWORK</code>), <code>price</code> (<code>{ amount, type: PLAN_RTPB | PLAN_ESTIMATE | CASH, appliesToDeductible }</code>), <code>hours</code>, <code>phone</code>, <code>googlePlaceId</code>.</p>
+<p>Streams via chunked response or returns <code>priceStatus: PENDING</code> per row with a follow-up poll, so the list is never blocked on the slowest RTPB call.</p>
+<hr />
+<h2>6. Data model (core entities)</h2>
+<pre><code>DrugConcept       rxcui, name, type(BRAND|GENERIC), ingredientId, classes[]
+DispensableProduct ndc, rxcui, strength, doseForm, packageQty, labeler, obCode
+FormularyEntry    formularyId, rxcui, tier, requiresPA, stepTherapy, qtyLimit
+Pharmacy          ncpdpId, name, address, geom(Point), googlePlaceId, chainId
+NetworkStatus     contractId, ncpdpId, status, effectiveDates
+PriceQuote        ndc, ncpdpId, memberId(hashed), amount, type, asOf, ttl
+MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
+</code></pre>
+<p><code>PriceQuote.memberId</code> is stored hashed with a per-environment pepper; quotes expire on a TTL index.</p>
+<hr />
+<h2>7. Non-functional requirements</h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Typeahead p95</td>
+<td>120 ms</td>
+</tr>
+<tr>
+<td>Alternatives p95 (cache hit)</td>
+<td>250 ms</td>
+</tr>
+<tr>
+<td>Alternatives p95 (cache miss, LLM)</td>
+<td>2.5 s, with skeleton UI from 0 ms</td>
+</tr>
+<tr>
+<td>Pharmacy list first paint</td>
+<td>1.2 s (distances), prices fill within 3 s</td>
+</tr>
+<tr>
+<td>Availability</td>
+<td>99.9%</td>
+</tr>
+<tr>
+<td>Map interaction</td>
+<td>60 fps pan/zoom, ≤ 40 pins rendered, cluster beyond that</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Degradation ladder.</strong> LLM down → rules-based ordering, no <code>reason</code> text. RTPB down → estimated prices, labeled. Google Maps down → list view only, map tab disabled with an explanation. Network roster stale → show prices with an "as of" date rather than an empty state.</p>
+<hr />
+<h2>8. Privacy, security, compliance</h2>
+<ul>
+<li><strong>HIPAA.</strong> Drug + member + location together is PHI. All services inside the covered-entity boundary; BAA required with the LLM vendor, the RTPB intermediary, and any discount-price partner.</li>
+<li><strong>LLM data handling.</strong> Zero-retention endpoint, no training on inputs. Prompts carry no member identifiers, no diagnosis, no address. Prompt and response are logged to a PHI-classified store for audit with 90-day retention.</li>
+<li><strong>Google Maps.</strong> Receives an address or coordinates only. Never a drug name, member ID, or price. Enforced at the BFF by an outbound field allowlist, not by convention.</li>
+<li><strong>Location consent.</strong> OS permission prompt is preceded by an in-app explainer ("we use your location only to find nearby pharmacies"). Location is held in memory for the session and persisted only if the member saves it as an address. Denial path is a plain address field — never a dead end.</li>
+<li><strong>Transport &amp; storage.</strong> TLS 1.3, field-level encryption for accumulators and quotes, mTLS between internal services.</li>
+<li><strong>Audit.</strong> Every eligibility and price read logged with member, actor, timestamp, purpose.</li>
+<li><strong>Data minimization.</strong> The BFF strips unrendered fields before responding. The client caches nothing sensitive to disk.</li>
+</ul>
+<hr />
+<h2>9. Clinical and legal guardrails</h2>
+<ol>
+<li>Every alternatives view carries the prescriber disclaimer, non-dismissible.</li>
+<li>Prices are labeled <em>estimate</em> unless they came from a real-time benefit check.</li>
+<li>Cash-price rows warn that the spend may not apply to the deductible.</li>
+<li>No dosing, splitting, tapering, or substitution instructions, ever.</li>
+<li>Narrow-therapeutic-index, biologic, and controlled substances: generic-equivalent alternatives only, no class switching.</li>
+<li>Pharmacist sign-off required on the class suppression list and on the explanation prompt, re-reviewed quarterly.</li>
+<li>Copy is reviewed by legal and by the plan's clinical team before launch and on any change to AI-generated text.</li>
+</ol>
+<hr />
+<h2>10. Error and empty states</h2>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No search results</td>
+<td>"No match for <em>X</em>. Check the spelling, or search the generic name." Plus 3 nearest lexical matches.</td>
+</tr>
+<tr>
+<td>Drug not on formulary</td>
+<td>Show it, marked <em>not covered</em>, with cash price and covered alternatives in the same class.</td>
+</tr>
+<tr>
+<td>Drug requires prior authorization</td>
+<td>Tier badge plus "Needs approval" chip and a link to the PA explainer.</td>
+</tr>
+<tr>
+<td>No alternatives found</td>
+<td>Say so plainly and go straight to the configurator. Don't invent options.</td>
+</tr>
+<tr>
+<td>No in-network pharmacy within radius</td>
+<td>Widen to 25 mi automatically, state that we did, and surface mail order.</td>
+</tr>
+<tr>
+<td>Location permission denied</td>
+<td>Address field, focused, with saved addresses listed.</td>
+</tr>
+<tr>
+<td>RTPB timeout</td>
+<td>Estimated price with an "estimate" chip and a retry affordance.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>11. Accessibility</h2>
+<ul>
+<li>WCAG 2.2 AA. Contrast ≥ 4.5:1 for all price text; savings never communicated by color alone — always paired with a "Save $X" label and an icon.</li>
+<li>Dropdowns use native pickers on mobile, not custom overlays.</li>
+<li>Map has a fully equivalent list view; the segmented control is the accessible escape hatch, and screen readers get the list by default.</li>
+<li>Prices announced as "nine dollars" not "9.00".</li>
+<li>Dynamic type up to 200% without truncation; the price is the last thing allowed to shrink.</li>
+<li>Touch targets ≥ 44 × 44 pt.</li>
+</ul>
+<hr />
+<h2>12. Analytics</h2>
+<p>Instrument: search submitted, zero-result searches (drives the synonym dictionary), alternative card tapped, alternative type tapped (generic-equivalent vs. class switch), configurator changes, location method chosen, list/map toggle, pin tapped, pharmacy detail opened, "call pharmacy" tapped, AI panel helpfulness vote, fallback-to-rules rate, RTPB timeout rate.</p>
+<p>Track estimated savings surfaced vs. a proxy for savings realized (subsequent claims for the suggested alternative) — that's the number that justifies the tool.</p>
+<hr />
+<h2>13. Rollout</h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Drug search + configurator + list-only pharmacy prices, estimated pricing. Internal employees.</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Alternatives service in shadow mode — generate, log, pharmacist-audit, don't display.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Alternatives shown to 10%, holdout for measurement. RTPB live.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Map view, Distance Matrix, pin price labels.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Full rollout, deep links from claims, saved medications, refill reminders.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>14. Open questions</h2>
+<ul>
+<li>Which RTPB path — direct PBM APIs, or Surescripts as a single integration? Coverage vs. integration cost.</li>
+<li>Do we show cash/discount prices that beat the plan price? It helps the member and hurts deductible accrual. Needs a plan-level policy decision.</li>
+<li>Mail-order: a peer row in the pharmacy list, or a separate module? It has no distance, which breaks the list's sort model.</li>
+<li>Is the strength/form configurator better as two dropdowns or as a single list of dispensable products? Dropdowns can produce invalid combinations; a flat list can be long. Prototype both.</li>
+<li>Do we let members send the alternatives list to their prescriber in-app, and does that create clinical liability?</li>
+</ul>
+</div>
+
+<script>
+(function(){
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

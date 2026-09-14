@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deepam Khirwar - Product &amp; Technical Program Manager</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -630,6 +634,61 @@
     .timeline-rail{ left:7px; }
   }
 
+  /* ---------- PERSONAL PROJECTS ---------- */
+  .pp-card{
+    background:#2b2a28;
+    border:3px solid #000;
+    border-radius:14px;
+    padding:36px 38px;
+    box-shadow:7px 7px 0 #000;
+    opacity:0;
+    transform:translateY(16px) scale(1);
+    transition:opacity 0.6s ease, transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, border-color 0.28s ease;
+  }
+  .pp-card.in-view{ opacity:1; transform:translateY(0) scale(1); }
+  .pp-card:hover{
+    background:#37312a;
+    border-color:var(--sage);
+    box-shadow:10px 10px 0 var(--sage);
+    transform:translate(-3px, -3px);
+  }
+  .pp-tag{
+    display:block;
+    font-size:0.8rem;
+    color:var(--sage);
+    font-weight:700;
+    letter-spacing:0.02em;
+    margin-bottom:12px;
+  }
+  .pp-title{
+    font-family:'Merriweather', serif;
+    font-size:1.6rem;
+    color:#ffffff;
+    margin-bottom:14px;
+  }
+  .pp-desc{
+    font-size:1rem;
+    color:#d8d4cc;
+    line-height:1.65;
+    margin:0 0 24px;
+    max-width:72ch;
+  }
+  .pp-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    align-items:center;
+  }
+  .pp-secondary{
+    font-size:0.94rem;
+    color:var(--sage);
+    text-decoration:none;
+    border-bottom:1px solid var(--sage);
+    padding-bottom:3px;
+    transition:opacity 0.2s ease;
+  }
+  .pp-secondary:hover{ opacity:0.7; }
+
   /* ---------- MORE WORK ---------- */
   .more-work-grid{
     display:grid;
@@ -821,7 +880,7 @@
   .exp-table td.exp-role{ color:var(--ink); font-weight:600; }
   .exp-table td.exp-company{ color:var(--muted); }
   .exp-table td.exp-date{ color:var(--muted-2); white-space:nowrap; }
-  .exp-education-head{ margin-top:44px; margin-bottom:18px; font-size:0.9rem; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.04em; }
+  .exp-education-head{ margin-top:52px; margin-bottom:20px; font-family:'Merriweather', serif; font-size:1.5rem; color:var(--ink); font-weight:400; }
   @media (max-width:640px){
     .exp-table th:nth-child(3), .exp-table td.exp-date{ display:none; }
   }
@@ -906,6 +965,7 @@
         <a href="#programs">Programs</a>
         <a href="#how-i-work">How I work</a>
         <a href="#experience">Experience</a>
+        <a href="#personal-projects">Personal Projects</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
@@ -1186,6 +1246,22 @@
       </div>
     </section>
 
+    <section id="personal-projects">
+      <div class="section-head">
+        <h2>Personal projects</h2>
+        <p>Work I build on my own time, connecting product thinking to real systems design.</p>
+      </div>
+      <div class="pp-card" id="pp-card">
+        <span class="pp-tag">Personal Project &middot; Product &amp; Systems Design</span>
+        <h3 class="pp-title">Rx Price Check</h3>
+        <p class="pp-desc">A self-directed personal project: a mobile tool that turns "what will this cost me" into a real answer - your price, a cheaper alternative worth asking your doctor about, and the nearest pharmacy that actually has it at that price. Includes a full system design write-up (HIPAA-aware architecture, guardrails that keep the AI panel from ever making a clinical call) and a fully clickable mobile prototype.</p>
+        <div class="pp-links">
+          <a class="btn btn-primary" href="rx-price-check-case-study.html">Explore more</a>
+          <a class="pp-secondary" href="rx-price-check-mobile-ui.html" target="_blank" rel="noopener">View the interactive prototype</a>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <div class="contact" id="contact">
@@ -1242,7 +1318,7 @@
       requestAnimationFrame(ringLoop);
     }
     ringLoop();
-    var hoverables = document.querySelectorAll('a, button, .case, .n-item, .mp-card, .e-card, .principle');
+    var hoverables = document.querySelectorAll('a, button, .case, .n-item, .mp-card, .e-card, .principle, .pp-card');
     hoverables.forEach(function(el){
       el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
       el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
@@ -1405,7 +1481,7 @@
   }
 
   // Experience / education table reveal
-  var tlItems = document.querySelectorAll('.e-card, .mp-card');
+  var tlItems = document.querySelectorAll('.e-card, .mp-card, .pp-card');
   var tlObserver = new IntersectionObserver(function(entries){
     entries.forEach(function(entry, idx){
       if(entry.isIntersecting){
