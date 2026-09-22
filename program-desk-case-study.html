@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Program Desk - case study</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<meta name="description" content="Design case study: an AI operating console for technical program managers. Signal in, structured record out, documents on demand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Merriweather:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ===== Program Desk case study - self-contained, pd- prefixed ===== */
+.pd{
+  --paper:#0f0d0c; --panel:#1c1815; --panel2:#1c1815;
+  --ink:#f5efe6; --ink2:#b9ada0; --ink3:#8a8074;
+  --rule:#33291f; --ruleS:#4a3f2e;
+  --blue:#e2711d; --blueW:#3d2a18; --onblue:#0f0d0c;
+  --green:#3DDC84; --amber:#e2711d; --red:#FF6B6B;
+  --violet:#e2711d; --violetW:#3d2a18;
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+}
+.pd,.pd *{box-sizing:border-box}
+.pd{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);
+  -webkit-font-smoothing:antialiased;margin:0;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px);-webkit-text-size-adjust:100%}
+body{margin:0}
+@media (prefers-reduced-motion:reduce){.pd *{animation:none!important;transition:none!important}}
+.pd :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+.pd-shell{max-width:1100px;margin:0 auto;padding:0 24px 96px;display:grid;grid-template-columns:172px minmax(0,1fr);gap:48px}
+.pd-toc{position:sticky;top:24px;align-self:start;font-family:var(--sans);font-size:12.5px;padding-top:40px}
+.pd-toc a{display:block;color:var(--ink3);text-decoration:none;padding:3px 0;border-left:2px solid transparent;padding-left:10px;margin-left:-12px}
+.pd-toc a:hover{color:var(--ink)}
+.pd-back{display:inline-block;font-family:var(--sans);font-size:12.5px;color:var(--ink2);text-decoration:none;margin-bottom:22px}
+.pd-back:hover{color:var(--blue)}
+.pd-main{min-width:0;padding-top:40px}
+
+/* masthead */
+.pd-mast{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
+.pd-mast h1{font-family:'Merriweather',var(--serif);font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em;line-height:1.12;margin:0 0 12px}
+.pd-lede{font-size:20px;line-height:1.5;color:var(--ink2);margin:0;max-width:34em}
+.pd-facts{display:flex;flex-wrap:wrap;gap:0 34px;font-family:var(--sans);font-size:12.5px;margin:0 0 34px}
+.pd-facts div{padding:10px 0;border-bottom:1px solid var(--rule);flex:1 1 150px}
+.pd-facts dt{color:var(--ink3);margin:0 0 2px}
+.pd-facts dd{margin:0;font-weight:500}
+.pd-cta{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 40px}
+.pd-btn{font-family:var(--sans);font-size:13px;font-weight:500;text-decoration:none;padding:8px 15px;border-radius:3px;border:1px solid var(--ruleS);color:var(--ink);background:var(--panel2)}
+.pd-btn:hover{border-color:var(--ink3)}
+.pd-btn.pri{background:var(--blue);border-color:var(--blue);color:var(--onblue)}
+
+/* typography */
+.pd-main h2{font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.005em;margin:54px 0 4px;color:var(--blue)}
+.pd-main h2+h3{margin-top:4px}
+.pd-main h3{font-family:'Merriweather',var(--serif);font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.28;margin:0 0 14px}
+.pd-main h4{font-family:var(--sans);font-size:15px;font-weight:600;margin:26px 0 6px}
+.pd-main p{margin:0 0 16px;max-width:36em}
+.pd-main ul,.pd-main ol{max-width:36em;margin:0 0 16px;padding-left:22px}
+.pd-main li{margin-bottom:7px}
+.pd-main strong{font-weight:600}
+.pd-main a{color:var(--blue)}
+.pd-pull{font-size:22px;line-height:1.42;color:var(--ink);border-left:2px solid var(--violet);padding:2px 0 2px 20px;margin:28px 0;max-width:30em}
+
+/* tables */
+.pd-tablewrap{overflow-x:auto;margin:0 0 22px}
+.pd-main table{border-collapse:collapse;width:100%;min-width:520px;font-family:var(--sans);font-size:13px;line-height:1.45}
+.pd-main th,.pd-main td{border-bottom:1px solid var(--rule);padding:9px 14px 9px 0;text-align:left;vertical-align:top}
+.pd-main th{color:var(--ink3);font-weight:500;border-bottom-color:var(--ruleS);white-space:nowrap}
+.pd-main td:first-child{font-weight:500}
+
+/* figures */
+.pd-fig{margin:26px 0 30px}
+.pd-fig svg{width:100%;height:auto;display:block;border:1px solid var(--rule);border-radius:4px;background:var(--panel)}
+.pd-fig figcaption{font-family:var(--sans);font-size:12px;color:var(--ink3);margin-top:8px;max-width:40em;line-height:1.5}
+
+/* decision blocks */
+.pd-dec{border-top:1px solid var(--ruleS);padding:18px 0 4px;margin-bottom:8px}
+.pd-dec h4{margin-top:0}
+.pd-dec .pd-tradeoff{font-family:var(--sans);font-size:12.5px;color:var(--ink2);background:var(--panel);border-left:2px solid var(--amber);padding:9px 13px;border-radius:0 3px 3px 0;max-width:36em;line-height:1.5}
+.pd-note{font-family:var(--sans);font-size:12.5px;color:var(--ink2);background:var(--panel);border:1px solid var(--rule);border-left:2px solid var(--blue);padding:11px 14px;border-radius:0 3px 3px 0;max-width:36em;margin:0 0 20px}
+
+/* svg text defaults */
+.s-lab{font-family:"Archivo",sans-serif;font-size:12px;font-weight:600;fill:var(--ink)}
+.s-sub{font-family:"Archivo",sans-serif;font-size:10px;fill:var(--ink3)}
+.s-tiny{font-family:"Archivo",sans-serif;font-size:9.5px;fill:var(--ink3)}
+
+@media (max-width:860px){
+  .pd-shell{grid-template-columns:minmax(0,1fr);gap:0;padding:0 18px 70px}
+  .pd-toc{display:none}
+  .pd-main{padding-top:28px}
+  .pd{font-size:16.5px}
+}
+
+.pd a,.pd button{cursor:none}
+.pd-topbar{display:flex; align-items:center; justify-content:space-between; padding:20px 24px; max-width:1100px; margin:0 auto;}
+.pd-logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--blue);font-family:var(--sans);font-weight:700;font-size:0.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.pd-logo-badge:hover{transform:scale(1.12);}
+.pd-home-link{font-size:0.86rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;margin:-6px -10px;border-radius:4px;border:1px solid transparent;transition:transform 0.2s ease,color 0.2s ease,background 0.2s ease,border-color 0.2s ease;}
+.pd-home-link:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--blue);}
+
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--blue);pointer-events:none;z-index:9999;transform:translate(-100px,-100px);}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--blue);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width 0.2s ease,height 0.2s ease,margin 0.2s ease;}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,0.14);}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--blue);pointer-events:none;z-index:9990;opacity:0.5;animation:trail-fade 0.55s ease-out forwards;}
+@keyframes trail-fade{ to{ opacity:0; transform:scale(0.15); } }
+@media (hover:none){ .cur-main,.cur-ring{display:none;} .pd,.pd a,.pd button{cursor:auto;} }
+</style>
+</head>
+<body class="pd">
+
+<div class="cur-main" id="cMain"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<div class="pd-topbar">
+  <a class="pd-logo-badge" href="index.html" aria-label="Back to home">DK</a>
+</div>
+
+<div class="pd-shell">
+
+  <nav class="pd-toc" aria-label="Sections">
+    <a href="#problem">The problem</a>
+    <a href="#why">Why tools miss it</a>
+    <a href="#thesis">Product thesis</a>
+    <a href="#loop">The loop</a>
+    <a href="#decisions">Design decisions</a>
+    <a href="#scope">What I built</a>
+    <a href="#measure">How I'd judge it</a>
+    <a href="#learned">What I'd change</a>
+  </nav>
+
+  <main class="pd-main">
+    <a class="pd-back pd-home-link" href="index.html">&larr; Back to home</a>
+
+    <header class="pd-mast">
+      <h1>Program Desk</h1>
+      <p class="pd-lede">An operating console for technical program managers. Raw workplace signal goes in; a defensible program record and the documents that hang off it come out.</p>
+    </header>
+
+    <dl class="pd-facts">
+      <div><dt>Role</dt><dd>Product design, architecture, build</dd></div>
+      <div><dt>Type</dt><dd>Self-directed prototype</dd></div>
+      <div><dt>Stack</dt><dd>Vanilla JS, LLM extraction, document store</dd></div>
+      <div><dt>State</dt><dd>Working prototype</dd></div>
+    </dl>
+
+    <div class="pd-cta">
+      <a class="pd-btn pri" href="program-desk-prototype.html">Open the prototype</a>
+    </div>
+
+    <h2 id="problem">The problem</h2>
+    <h3>The record of a program lives in the wrong place</h3>
+    <p>A technical program manager's real job is to hold a coherent, current, defensible model of a program in their head, and to be the person who noticed. Everything else - the standups, the trackers, the decks - is instrumentation for that.</p>
+    <p>The instrumentation is badly placed. The moments that change a program almost never happen in the tracker. They happen in a sentence inside a reply-all chain, in a Slack thread that scrolls past, in the ninth minute of a call where a vendor says <em>"that's moved to the October drop"</em>. The tracker is updated afterwards, from memory, by the one person who was paying attention, if they had time that day.</p>
+    <p>So the record decays in a specific and predictable way. Commitments made verbally never get an owner. Risks are logged once at kickoff and never rescored. Schedule slips are recorded as a new date with no note of what caused them, which is why the same milestone slips three times before anyone asks the right question. And the artifacts leadership actually reads - the status report, the exec update - get rewritten from scratch every week, by hand, from the parts of the program the author happened to remember.</p>
+
+    <p class="pd-pull">The work isn't tracking. The work is <em>reconciling</em> - turning scattered signal into one record you'd be willing to defend in a steering committee.</p>
+
+    <h2 id="why">Why existing tools miss it</h2>
+    <h3>Every tool assumes the record already exists</h3>
+    <p>Project tools are excellent at storing a structured record and useless at producing one. Jira will hold your action items beautifully once someone has typed them in. That typing is the entire cost, and it is paid by the most expensive person on the program, at the end of a day when they are already behind.</p>
+    <p>The wave of AI meeting notetakers gets closer - they at least start from the signal - but they stop at summary. A summary of a meeting is a fourth artifact to read, not one fewer. It does not know that the vendor slip you just described is the same risk that was logged in week 4, or that the date it mentions is eight days past a baseline that nobody has re-cut.</p>
+    <p>The gap sits between the two: something that reads the signal <em>and</em> holds the structured record, so it can reconcile one against the other.</p>
+
+    <h2 id="thesis">Product thesis</h2>
+    <h3>One record, fed by signal, defended by a human gate</h3>
+    <p>Program Desk takes raw workplace text - an email chain, a chat export, a meeting transcript, a vendor quote - and decomposes it into the six things a program is actually made of: actions, risks, decisions, dependencies, milestones and money. Each extracted item carries the sentence that produced it. The program manager accepts, edits or discards each one. Nothing enters a log automatically.</p>
+    <p>Once the record exists and is trusted, the documents are close to free. A status report is not a writing task; it is a query against the record, rendered in the shape a steering committee expects. Same for a RAID review, an escalation memo, a PRD, a story map, a cutover runsheet.</p>
+
+    <h2 id="loop">The loop</h2>
+    <h3>Signal, proposal, record, artifact</h3>
+
+    <figure class="pd-fig">
+      <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of the four-stage loop: signal sources feed extraction, which produces proposals reviewed by a human, which populate program logs, which generate documents that become new signal.">
+        <defs>
+          <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g color="var(--ruleS)">
+          <!-- stage boxes -->
+          <g>
+            <rect x="18" y="66" width="140" height="86" rx="3" fill="var(--panel2)" stroke="var(--rule)"/>
+            <text class="s-lab" x="34" y="92">Signal</text>
+            <text class="s-sub" x="34" y="110">Email threads</text>
+            <text class="s-sub" x="34" y="124">Chat exports</text>
+            <text class="s-sub" x="34" y="138">Transcripts</text>
+          </g>
+          <g>
+            <rect x="200" y="66" width="140" height="86" rx="3" fill="var(--panel2)" stroke="var(--rule)"/>
+            <text class="s-lab" x="216" y="92">Extraction</text>
+            <text class="s-sub" x="216" y="110">Typed items with</text>
+            <text class="s-sub" x="216" y="124">source sentence,</text>
+            <text class="s-sub" x="216" y="138">confidence, dates</text>
+          </g>
+          <g>
+            <rect x="382" y="58" width="150" height="102" rx="3" fill="var(--violetW)" stroke="var(--violet)" stroke-width="1.5"/>
+            <text class="s-lab" x="398" y="84" fill="var(--violet)">Review gate</text>
+            <text class="s-sub" x="398" y="102">A person accepts,</text>
+            <text class="s-sub" x="398" y="116">edits or discards</text>
+            <text class="s-sub" x="398" y="130">every proposal.</text>
+            <text class="s-sub" x="398" y="146" fill="var(--violet)">Nothing is automatic.</text>
+          </g>
+          <g>
+            <rect x="574" y="66" width="140" height="86" rx="3" fill="var(--panel2)" stroke="var(--rule)"/>
+            <text class="s-lab" x="590" y="92">Program record</text>
+            <text class="s-sub" x="590" y="110">Actions · Risks</text>
+            <text class="s-sub" x="590" y="124">Decisions · Deps</text>
+            <text class="s-sub" x="590" y="138">Schedule · Budget</text>
+          </g>
+          <g>
+            <rect x="756" y="66" width="126" height="86" rx="3" fill="var(--panel2)" stroke="var(--rule)"/>
+            <text class="s-lab" x="772" y="92">Artifacts</text>
+            <text class="s-sub" x="772" y="110">Status · RAID</text>
+            <text class="s-sub" x="772" y="124">PRD · Story map</text>
+            <text class="s-sub" x="772" y="138">Cutover plan</text>
+          </g>
+          <!-- arrows -->
+          <path d="M158,109 L194,109" stroke="currentColor" fill="none" marker-end="url(#ar)"/>
+          <path d="M340,109 L376,109" stroke="currentColor" fill="none" marker-end="url(#ar)"/>
+          <path d="M532,109 L568,109" stroke="var(--violet)" fill="none" marker-end="url(#ar)" color="var(--violet)"/>
+          <path d="M714,109 L750,109" stroke="currentColor" fill="none" marker-end="url(#ar)"/>
+          <!-- feedback -->
+          <path d="M819,152 L819,200 L88,200 L88,156" stroke="currentColor" fill="none" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+          <text class="s-tiny" x="360" y="216">A status report becomes an email, which becomes signal again</text>
+          <!-- provenance rail -->
+          <text class="s-tiny" x="216" y="44">every item keeps its source sentence from here to the end →</text>
+          <path d="M200,50 L882,50" stroke="var(--rule)" fill="none" stroke-dasharray="2 4"/>
+        </g>
+      </svg>
+      <figcaption>The gate is the load-bearing element. Remove it and this becomes an unauditable tracker that occasionally invents commitments - which is worse than no tracker, because people stop reading it and nobody announces that they have.</figcaption>
+    </figure>
+
+    <h2 id="decisions">Design decisions</h2>
+    <h3>Four calls that shaped the product</h3>
+
+    <div class="pd-dec">
+      <h4>1. Nothing is written to a log without a human accepting it</h4>
+      <p>The obvious version of this product auto-populates the tracker. It demos better and it is the wrong product. A program manager who finds one fabricated commitment in their action log stops trusting the whole log - and, critically, they stop trusting it silently. There is no error state that surfaces; the tool just quietly becomes decoration.</p>
+      <p>So every extracted item lands in a review queue as a <em>proposal</em>, rendered in a distinct colour, carrying the verbatim sentence that produced it and a confidence indicator. Accept, edit or discard. The colour is not decoration: it is the only thing in the interface that says "a machine believes this and a person has not yet agreed".</p>
+      <p class="pd-tradeoff"><strong>Trade-off:</strong> this is real work for the user - roughly ten seconds per item. It caps how much signal one person can process, and it means the product cannot honestly claim to run unattended. I took that cost deliberately: the queue is the thing that makes the record defensible, and a defensible record is the entire value proposition.</p>
+    </div>
+
+    <div class="pd-dec">
+      <h4>2. Provenance travels with the item, permanently</h4>
+      <p>Every record keeps the sentence it came from and the source it came from, and both survive into the generated documents as bracketed item IDs. When a steering committee asks "where did the $14,000 number come from", the answer is one click, not an archaeology exercise in someone's sent folder.</p>
+      <p>This also solves a subtler problem. Extraction quality is impossible to improve if you cannot see what the model saw. Keeping the source sentence means every accepted and every discarded proposal is a labelled training example, for free, as a by-product of normal use.</p>
+      <p class="pd-tradeoff"><strong>Trade-off:</strong> storing verbatim excerpts of email and chat raises the sensitivity of the datastore considerably. It moves the product from "stores metadata about your work" to "stores fragments of your correspondence", with everything that implies for retention, access control and jurisdiction. The architecture document treats this as a first-class constraint rather than a footnote.</p>
+    </div>
+
+    <div class="pd-dec">
+      <h4>3. Two logs nobody asked for</h4>
+      <p>The brief named four trackers: actions, risks, schedule, budget. I added decisions and cross-team dependencies.</p>
+      <p>Dependencies because that is where program slip actually originates. A program rarely fails because its own team was slow; it fails because something owed by another team arrived late, and the four named logs would not have caught it - the risk log might carry a generic "vendor delivery risk" while the specific commitment, its date and how much you believe it goes untracked. Confidence scoring on dependencies is the earliest honest warning a program gets.</p>
+      <p>Decisions because programs relitigate. Week 19 reopens a question settled in week 4, and without a record of who decided what and on what basis, the program pays for the debate twice. A decision log is cheap to keep and expensive to lack.</p>
+      <p class="pd-tradeoff"><strong>Trade-off:</strong> six logs is more surface than four, and every additional log is another thing that can go stale and quietly erode trust in the whole record. The extraction pipeline is what makes this affordable - the marginal cost of a sixth log is a prompt instruction and a table, not a sixth thing for a human to maintain by hand.</p>
+    </div>
+
+    <div class="pd-dec">
+      <h4>4. Documents are queries, not templates</h4>
+      <p>Every one of the 28 document types is generated from the live program record rather than from a blank form. A status report cites the actual overdue action IDs. A budget review computes real variance. Where the record genuinely cannot support a claim, the generator is instructed to write the best-judgement content and mark it <em>assumption</em>, rather than emitting "TBD" or inventing a fact silently.</p>
+      <p>That last instruction matters more than it looks. The failure mode of document generation is not a wrong sentence; it is a confident, plausible, unverifiable sentence sitting between two correct ones. Forcing assumptions to be labelled makes the document's own uncertainty legible to whoever reads it next.</p>
+      <p class="pd-tradeoff"><strong>Trade-off:</strong> generation quality is now bounded by record quality. A thin record produces a thin PRD, and the user may reasonably blame the tool. I decided that was the honest failure - the alternative is a generator that writes a confident document about a program it knows nothing about.</p>
+    </div>
+
+    <h2 id="scope">What I built</h2>
+    <h3>Prototype scope</h3>
+    <div class="pd-tablewrap">
+    <table>
+      <thead><tr><th>Area</th><th>Built</th><th>Deliberately not built</th></tr></thead>
+      <tbody>
+        <tr><td>Ingestion</td><td>Paste-based intake for email, chat, transcript and document text</td><td>Live inbox and calendar polling</td></tr>
+        <tr><td>Extraction</td><td>Typed item extraction with relative-date resolution, confidence, and verbatim provenance</td><td>Entity resolution against a people directory</td></tr>
+        <tr><td>Review</td><td>Accept / edit / discard queue with confidence display</td><td>Bulk accept, keyboard triage</td></tr>
+        <tr><td>Logs</td><td>Six logs with derived exposure scoring, slip calculation and budget variance</td><td>Baseline history and re-baseline narrative</td></tr>
+        <tr><td>Views</td><td>Brief, risk exposure grid, baseline-vs-current timeline, budget rollup</td><td>Gantt with dependency edges</td></tr>
+        <tr><td>Documents</td><td>28 templates generated from the live record, with citation and assumption marking</td><td>Round-trip editing back into the record</td></tr>
+        <tr><td>Query</td><td>Natural-language questions answered from the record only</td><td>Cross-program portfolio queries</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="pd-note">The prototype ships a worked example - an instant-payouts launch for a courier marketplace at week 9 of 20, with a bank partner running late, two pilot states without licensing sign-off, an overdue unowned action and an unowned high-exposure risk. Prototypes demoed on empty state hide exactly the problems that matter, because an empty tracker is well-behaved and a messy one is not.</p>
+
+    <h2 id="measure">How I'd judge it</h2>
+    <h3>Metrics that would actually falsify the thesis</h3>
+    <p>Adoption metrics would flatter this product. Weekly active users and items created both go up if the extraction is merely plausible, which is precisely the failure mode I care about. The measures below are chosen because a bad version of the product would fail them.</p>
+    <div class="pd-tablewrap">
+    <table>
+      <thead><tr><th>Question</th><th>Measure</th><th>What a bad result means</th></tr></thead>
+      <tbody>
+        <tr><td>Is extraction trustworthy?</td><td>Proposal acceptance rate, and edit rate among accepted</td><td>High discard means noise. High <em>edit</em> rate means the model is close but unreliable - worse for trust than obvious errors</td></tr>
+        <tr><td>Does the record stay current?</td><td>Median age of the oldest un-reviewed item in the queue</td><td>A growing backlog means the gate has become a chore and the record is drifting</td></tr>
+        <tr><td>Are documents used or rewritten?</td><td>Share of generated documents exported without edit, versus heavily rewritten</td><td>Heavy rewriting means generation is a first draft at best, and the time saving is illusory</td></tr>
+        <tr><td>Does it catch what people miss?</td><td>Items accepted that the user confirms they had not already tracked elsewhere</td><td>If everything was already known, the product is a nicer tracker, not a new capability</td></tr>
+        <tr><td>Does it change outcomes?</td><td>Time between a slip occurring and it appearing in a status artifact</td><td>The whole thesis is early detection. If this does not shrink, nothing else matters</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="learned">What I'd change</h2>
+    <h3>Three things I got wrong or left open</h3>
+    <p><strong>The review queue needs to be keyboard-first and it is not.</strong> I built it as cards with buttons, which is fine for eleven items and miserable for eighty. Triage interfaces live or die on how fast a practised user can move through them, and mine assumes a mouse. A single-item focused view with accept/edit/skip on three keys would change the ceiling on how much signal one person can process - which is the constraint the whole product design leans on.</p>
+    <p><strong>I modelled a program, not a portfolio.</strong> The data model assumes one program with one record. Most TPMs at the level this is built for run three to six simultaneously, and the interesting question - which two programs are competing for the same dependency - is unanswerable in the current shape. Retrofitting that is a data model change, not a view change, which is why it belongs in the next version rather than a later one.</p>
+    <p><strong>Write-back is the real product and I only built read.</strong> Accepting an action here creates a row in this tool. In practice it should create the ticket in whatever system the team already lives in, and track its status back. Without that, this is a second place to look, and a second place to look is how tools die. It is also by far the hardest piece, which is exactly why a prototype that skips it should say so rather than imply the problem is solved.</p>
+    <div class="pd-cta" style="margin-top:44px">
+      <a class="pd-btn pri" href="program-desk-prototype.html">Open the prototype</a>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  var cMain = document.getElementById('cMain');
+  var cRing = document.getElementById('cRing');
+  var hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain && cRing && hasFinePointer){
+    var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, lastTrailTime = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX; mouseY = e.clientY;
+      cMain.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px)';
+      var now = performance.now();
+      if(now - lastTrailTime > 22){
+        lastTrailTime = now;
+        var trail = document.createElement('div');
+        trail.className = 'cur-trail';
+        trail.style.left = mouseX + 'px';
+        trail.style.top = mouseY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(function(){ trail.remove(); }, 600);
+      }
+    });
+    function ringLoop(){
+      ringX += (mouseX - ringX) * 0.45;
+      ringY += (mouseY - ringY) * 0.45;
+      cRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
+      requestAnimationFrame(ringLoop);
+    }
+    ringLoop();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root{
     --ink:#10131C;
@@ -39,16 +38,34 @@
     line-height:1.6;
   }
   .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- shell + sticky TOC (matches Program Desk layout) ---------- */
+  .shell{max-width:1100px;margin:0 auto;padding:0 24px 40px;display:grid;grid-template-columns:172px minmax(0,1fr);gap:48px;}
+  .toc{position:sticky;top:24px;align-self:start;font-family:'Raleway',sans-serif;font-size:12.5px;padding-top:40px;}
+  .toc a{display:block;color:var(--text-dim);text-decoration:none;padding:3px 0;border-left:2px solid transparent;padding-left:10px;margin-left:-12px;transition:color 0.15s ease,border-color 0.15s ease;}
+  .toc a:hover{color:var(--text);border-left-color:var(--gold);}
+  .main-col{min-width:0;}
+  .main-col .wrap{max-width:none;padding:0;margin:0;}
+  @media (max-width:860px){
+    .shell{grid-template-columns:minmax(0,1fr);gap:0;padding:0 18px 40px;}
+    .toc{display:none;}
+  }
+
+  /* ---------- facts strip (matches Program Desk) ---------- */
+  .facts{display:flex;flex-wrap:wrap;gap:0 34px;font-family:'Raleway',sans-serif;font-size:12.5px;margin:24px 0 8px;}
+  .facts div{padding:10px 0;border-bottom:1px solid var(--border);flex:1 1 150px;}
+  .facts dt{color:var(--text-dim);margin:0 0 2px;}
+  .facts dd{margin:0;font-weight:500;color:var(--text);}
   .mono{font-family:'IBM Plex Mono', monospace;}
   .head{font-family:'Merriweather', serif;}
 
   /* ---------- hero ---------- */
   .hero{
-    background:var(--ink);
+    background:#0f0d0c;
     color:var(--text);
     padding:72px 0 56px;
   }
-  .eyebrow{
+  .hero p.eyebrow{
     color:var(--gold);
     font-size:13px;
     letter-spacing:0.02em;
@@ -86,11 +103,12 @@
   p.body-copy{max-width:680px;color:#d8d4cc;}
   ul.body-list{max-width:680px;padding-left:20px;color:#d8d4cc;}
   ul.body-list li{margin-bottom:8px;}
+  ul.body-list li::marker{color:var(--gold);}
 
   table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E7E3D8;}
   th{
-    background:var(--ink);
-    color:#fff;
+    background:var(--gold);
+    color:#0f0d0c;
     text-align:left;
     padding:10px 14px;
     font-weight:600;
@@ -200,10 +218,10 @@
   .gauge-label{font-size:12.5px;color:var(--text-dim);margin-bottom:4px;}
   .gauge-pct{
     font-family:'IBM Plex Mono', monospace;font-size:28px;font-weight:600;
-    position:relative;top:-42px;text-align:center;
+    margin-top:6px;text-align:center;
   }
   .gauge-tag{
-    margin-top:-30px;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+    margin-top:10px;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   }
   .gauge-foot{font-size:11px;color:var(--text-mute);margin-top:8px;text-align:center;line-height:1.5;}
 
@@ -270,6 +288,12 @@
     <p class="eyebrow mono">PORTFOLIO CASE STUDY</p>
     <h1>CryptoSense AI</h1>
     <p>An AI-powered sentiment analysis concept that turns social, news and on-chain signal into a single investment-likelihood score per cryptocurrency - with a live, mobile-first prototype below.</p>
+    <dl class="facts">
+      <div><dt>Role</dt><dd>Product design, architecture, build</dd></div>
+      <div><dt>Type</dt><dd>Self-directed prototype</dd></div>
+      <div><dt>Stack</dt><dd>Vanilla JS, sentiment scoring, inline SVG charts</dd></div>
+      <div><dt>State</dt><dd>Working prototype</dd></div>
+    </dl>
     <div class="linkrow">
       <a class="btn primary" href="#top" onclick="document.querySelector('.demo-section').scrollIntoView({behavior:'smooth'}); return false;">View the prototype</a>
       <a class="btn ghost" href="cryptosense-ai-prototype.html">Open fullscreen</a>
@@ -278,7 +302,20 @@
   </div>
 </div>
 
-<section>
+<div class="shell">
+  <nav class="toc" aria-label="Sections">
+    <a href="#problem">The problem</a>
+    <a href="#prototype">Live prototype</a>
+    <a href="#scoring">Scoring</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#stack">Tech stack</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#disclaimer">Disclaimer</a>
+  </nav>
+
+  <div class="main-col">
+
+<section id="problem">
   <div class="wrap">
     <h2 class="section-title">The problem</h2>
     <p class="section-sub">Retail crypto investors track a lot of scattered signal with no single place that turns it into a consistent, comparable score across assets.</p>
@@ -292,7 +329,7 @@
   </div>
 </section>
 
-<section class="demo-section">
+<section class="demo-section" id="prototype">
   <div class="wrap">
     <h2 class="section-title">Live prototype</h2>
     <p class="section-sub">Interactive - tap a currency to open its detail view. Data is simulated for this demo; see the disclaimer inside the app.</p>
@@ -304,7 +341,7 @@
   </div>
 </section>
 
-<section>
+<section id="scoring">
   <div class="wrap">
     <h2 class="section-title">Scoring methodology</h2>
     <p class="section-sub">Each currency gets three 0–100 sub-scores, blended into one composite score and mapped to a plain-language label.</p>
@@ -326,7 +363,7 @@
   </div>
 </section>
 
-<section>
+<section id="architecture">
   <div class="wrap">
     <h2 class="section-title">System architecture</h2>
     <p class="section-sub">End-to-end flow from raw source data to the mobile client.</p>
@@ -345,7 +382,7 @@
   </div>
 </section>
 
-<section>
+<section id="stack">
   <div class="wrap">
     <h2 class="section-title">Tech stack</h2>
     <table>
@@ -361,7 +398,7 @@
   </div>
 </section>
 
-<section>
+<section id="roadmap">
   <div class="wrap">
     <h2 class="section-title">Roadmap</h2>
     <table>
@@ -374,7 +411,7 @@
   </div>
 </section>
 
-<section>
+<section id="disclaimer">
   <div class="wrap">
     <h2 class="section-title">Scope and disclaimer</h2>
     <div class="disclaimer-box">
@@ -382,6 +419,9 @@
     </div>
   </div>
 </section>
+
+  </div>
+</div>
 
 <footer>
   <div class="linkrow" style="justify-content:center; margin-top:0;">
@@ -497,7 +537,7 @@ function fmtPrice(p){
 // ---------------------------------------------------------------------
 // Rendering
 // ---------------------------------------------------------------------
-let historyChart=null, forecastChart=null;
+// (chart rendering is inline SVG now - no external chart library needed)
 
 function renderList(filter){
   filter = (filter||"").toLowerCase();
@@ -585,7 +625,7 @@ function openDetail(id){
 
     <div class="chart-block">
       <div class="chart-label"><span>30-day price history</span></div>
-      <div class="chart-box"><canvas id="historyCanvas"></canvas></div>
+      <div class="chart-box" id="historyCanvas"></div>
     </div>
 
     <div class="gauge-card">
@@ -608,7 +648,7 @@ function openDetail(id){
         <span>7-day expected trend</span>
         <span class="mono" style="color:${forecastPct>=0?'var(--green)':'var(--red)'}">${forecastPct>=0?'+':''}${forecastPct}%</span>
       </div>
-      <div class="chart-box"><canvas id="forecastCanvas"></canvas></div>
+      <div class="chart-box" id="forecastCanvas"></div>
     </div>
     <div class="forecast-foot">Model-projected range, not a guarantee. Forecasts assume current sentiment trends continue.</div>
 
@@ -622,36 +662,54 @@ function openDetail(id){
     </div>
   `;
 
-  if(historyChart) historyChart.destroy();
-  if(forecastChart) forecastChart.destroy();
+  document.getElementById("historyCanvas").innerHTML = sparklineSVG(
+    c.history.map(d=>d.price), { color:"#e2711d" }
+  );
 
-  historyChart = new Chart(document.getElementById("historyCanvas"), {
-    type:"line",
-    data:{
-      labels: c.history.map(d=>d.day),
-      datasets:[{data:c.history.map(d=>d.price), borderColor:"#e2711d", borderWidth:2, pointRadius:0, tension:0.3}]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>fmtPrice(ctx.parsed.y)}}},
-      scales:{x:{display:false}, y:{display:false}}
-    }
-  });
+  document.getElementById("forecastCanvas").innerHTML = forecastSVG(c.forecast);
+}
 
-  forecastChart = new Chart(document.getElementById("forecastCanvas"), {
-    type:"line",
-    data:{
-      labels: c.forecast.map(d=> d.day===0 ? "Now" : `+${d.day}d`),
-      datasets:[
-        {data:c.forecast.map(d=>d.price), borderColor:"#e2711d", backgroundColor:"rgba(226,113,29,0.18)", borderWidth:2, pointRadius:0, fill:true, tension:0.3},
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>fmtPrice(ctx.parsed.y)}}},
-      scales:{x:{ticks:{color:"#565E73", font:{size:10}}, grid:{display:false}}, y:{display:false}}
-    }
+function sparklineSVG(prices, opts){
+  opts = opts || {};
+  var w = 400, h = 130, pad = 6;
+  var min = Math.min.apply(null, prices), max = Math.max.apply(null, prices);
+  var range = (max - min) || 1;
+  var stepX = prices.length > 1 ? (w - 2*pad) / (prices.length - 1) : 0;
+  var pts = prices.map(function(p, i){
+    return [pad + i*stepX, h - pad - ((p - min) / range) * (h - 2*pad)];
   });
+  var lineD = pts.map(function(pt, i){ return (i===0?'M':'L') + pt[0].toFixed(1) + ',' + pt[1].toFixed(1); }).join(' ');
+  var fillD = lineD + ' L' + pts[pts.length-1][0].toFixed(1) + ',' + (h-pad) + ' L' + pts[0][0].toFixed(1) + ',' + (h-pad) + ' Z';
+  return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" style="width:100%;height:100%;display:block;">' +
+    '<path d="' + fillD + '" fill="rgba(226,113,29,0.12)" stroke="none"/>' +
+    '<path d="' + lineD + '" fill="none" stroke="' + (opts.color || '#e2711d') + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '</svg>';
+}
+
+function forecastSVG(forecast){
+  var w = 400, h = 130, pad = 6;
+  var allVals = [];
+  forecast.forEach(function(d){
+    allVals.push(d.price);
+    if(d.low != null) allVals.push(d.low);
+    if(d.high != null) allVals.push(d.high);
+  });
+  var min = Math.min.apply(null, allVals), max = Math.max.apply(null, allVals);
+  var range = (max - min) || 1;
+  var stepX = forecast.length > 1 ? (w - 2*pad) / (forecast.length - 1) : 0;
+  function x(i){ return pad + i*stepX; }
+  function y(v){ return h - pad - ((v - min) / range) * (h - 2*pad); }
+
+  var bandTop = forecast.map(function(d,i){ return [x(i), y(d.high != null ? d.high : d.price)]; });
+  var bandBot = forecast.map(function(d,i){ return [x(i), y(d.low != null ? d.low : d.price)]; }).reverse();
+  var bandD = 'M' + bandTop.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' L') +
+    ' L' + bandBot.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' L') + ' Z';
+  var lineD = forecast.map(function(d,i){ return (i===0?'M':'L') + x(i).toFixed(1) + ',' + y(d.price).toFixed(1); }).join(' ');
+
+  return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" style="width:100%;height:100%;display:block;">' +
+    '<path d="' + bandD + '" fill="rgba(226,113,29,0.15)" stroke="none"/>' +
+    '<path d="' + lineD + '" fill="none" stroke="#e2711d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '</svg>';
 }
 
 function sourceRow(label, value){

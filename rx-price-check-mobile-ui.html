@@ -1,6 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rx Price Check — mobile UI reference</title>
+<title>Rx Price Check - mobile UI reference</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -10,8 +11,8 @@
   --ink:#11302B; --ink2:#5C6E68; --ink3:#8A9994;
   --line:#DDE6E2; --line2:#EDF2F0;
   --canvas:#EEF2F0; --surface:#FFFFFF;
-  --action:#0D6E5A; --action-dk:#0A5747;
-  --save-bg:#DDF0E9; --save-ink:#0A5747;
+  --action:#c85f16; --action-dk:#a34d10;
+  --save-bg:#FCE9D9; --save-ink:#a34d10;
   --amber:#8A5300; --amber-bg:#F7ECD9;
   --alert:#8C2F2F;
   --r:14px;
@@ -29,6 +30,11 @@ body{
 }
 button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 
+/* ---------- embed mode (used when framed inside the case study) ---------- */
+body.embed-mode{ padding:0; align-items:flex-start; justify-content:center; background:#20342F; }
+body.embed-mode .rail{ display:none; }
+body.embed-mode .device{ margin:0; }
+
 /* ---------- index rail ---------- */
 .rail{width:236px; flex:0 0 236px; position:sticky; top:38px; color:#CFE0DA}
 .rail h1{font-size:20px; font-weight:800; letter-spacing:-.02em; margin:0 0 2px; color:#fff}
@@ -44,7 +50,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
   color:#6E8C84; padding-top:2px; font-variant-numeric:tabular-nums;
 }
 .rail li button:hover{background:rgba(255,255,255,.06); color:#fff}
-.rail li button[aria-current="true"]{background:#0D6E5A; color:#fff}
+.rail li button[aria-current="true"]{background:#c85f16; color:#fff}
 .rail li button[aria-current="true"]:before{color:#8FD3C1}
 .rail .note{margin-top:22px; font-size:11.5px; line-height:1.6; color:#7C9A92; border-top:1px solid rgba(255,255,255,.12); padding-top:14px}
 
@@ -265,14 +271,14 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 @media (max-width:980px){
   body{flex-direction:column; align-items:center; padding:24px 14px 60px; gap:24px}
   .rail{position:static; width:100%; max-width:390px; flex:none}
-  .device{transform-origin:top center}
+  .device{transform-origin:top center; flex:0 0 auto}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
 </style>
 
 <nav class="rail">
   <h1>Rx Price Check</h1>
-  <p>Mobile UI reference — tap through the flow, or jump to any screen.</p>
+  <p>Mobile UI reference - tap through the flow, or jump to any screen.</p>
   <ol id="rail"></ol>
   <div class="note">390 × 844 pt. Map is a static illustration standing in for the Google Maps SDK; pins carry live price labels.</div>
 </nav>
@@ -295,7 +301,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
       <h2>What does your prescription cost?</h2>
       <p>Search a medication to see your price, plus lower-cost options you can ask your doctor about.</p>
       <div class="searchbox focus">
-        <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="8.7" cy="8.7" r="6.2" stroke="#0D6E5A" stroke-width="1.9"/><path d="M13.3 13.3 17.5 17.5" stroke="#0D6E5A" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="8.7" cy="8.7" r="6.2" stroke="#c85f16" stroke-width="1.9"/><path d="M13.3 13.3 17.5 17.5" stroke="#c85f16" stroke-width="1.9" stroke-linecap="round"/></svg>
         <input id="q" placeholder="Drug name, brand or generic" autocomplete="off">
       </div>
     </div>
@@ -369,7 +375,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         </div>
 
         <div class="aihead">
-          <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 .8l1.9 5.3L16.2 8l-5.3 1.9L9 15.2l-1.9-5.3L1.8 8l5.3-1.9z" fill="#0D6E5A"/><circle cx="15.2" cy="14.4" r="2.1" fill="#0D6E5A" opacity=".45"/></svg>
+          <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 .8l1.9 5.3L16.2 8l-5.3 1.9L9 15.2l-1.9-5.3L1.8 8l5.3-1.9z" fill="#c85f16"/><circle cx="15.2" cy="14.4" r="2.1" fill="#c85f16" opacity=".45"/></svg>
           <h3>3 lower-cost options</h3>
         </div>
         <p class="aisub">Ranked by your cost on the Cascade PPO 1500 formulary. Generic equivalents are listed first.</p>
@@ -382,7 +388,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
           <div class="ar">Same active ingredient as Lipitor, at the same strength. The FDA rates it therapeutically equivalent.</div>
           <div>
             <span class="saveflag">
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#a34d10" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Save $75 a month
             </span>
           </div>
@@ -396,7 +402,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
           <div class="ar">A different statin in the same drug class. Your plan covers it at tier 1.</div>
           <div>
             <span class="saveflag">
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#a34d10" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Save $71.60 a month
             </span>
             <span class="needrx">Needs a new prescription</span>
@@ -411,7 +417,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
           <div class="ar">Same class, lowest-tier coverage. Often chosen when other statins cause muscle aches.</div>
           <div>
             <span class="saveflag">
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#0A5747" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10.5V1.5M6 10.5 2 6.5M6 10.5l4-4" stroke="#a34d10" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Save $70 a month
             </span>
             <span class="needrx">Needs a new prescription</span>
@@ -437,7 +443,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
               <div><div class="an">Zetia + atorvastatin <span class="pill brand">Brand</span></div></div>
               <div class="ap">$96.50<small>per month</small></div>
             </div>
-            <div class="ar">Combination therapy. Listed for completeness — your prescriber would decide if it applies.</div>
+            <div class="ar">Combination therapy. Listed for completeness - your prescriber would decide if it applies.</div>
             <div><span class="saveflag up">$12.50 more a month</span></div>
           </button>
         </div>
@@ -519,7 +525,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
       <div class="pad" style="padding-top:6px">
         <button class="locbtn" onclick="go(5)">
           <span class="li">
-            <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.1" stroke="#0D6E5A" stroke-width="1.8"/><circle cx="10" cy="10" r="7" stroke="#0D6E5A" stroke-width="1.5" opacity=".5"/><path d="M10 .8v2.4M10 16.8v2.4M.8 10h2.4M16.8 10h2.4" stroke="#0D6E5A" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.1" stroke="#c85f16" stroke-width="1.8"/><circle cx="10" cy="10" r="7" stroke="#c85f16" stroke-width="1.5" opacity=".5"/><path d="M10 .8v2.4M10 16.8v2.4M.8 10h2.4M16.8 10h2.4" stroke="#c85f16" stroke-width="1.8" stroke-linecap="round"/></svg>
           </span>
           <span style="flex:1">
             <span class="lt" style="display:block">Use my current location</span>
@@ -530,7 +536,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="or">or enter an address</div>
 
         <div class="searchbox focus">
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 18.5s6.3-5.6 6.3-10.3A6.3 6.3 0 0 0 3.7 8.2C3.7 12.9 10 18.5 10 18.5z" stroke="#0D6E5A" stroke-width="1.7" stroke-linejoin="round"/><circle cx="10" cy="8" r="2.3" stroke="#0D6E5A" stroke-width="1.7"/></svg>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 18.5s6.3-5.6 6.3-10.3A6.3 6.3 0 0 0 3.7 8.2C3.7 12.9 10 18.5 10 18.5z" stroke="#c85f16" stroke-width="1.7" stroke-linejoin="round"/><circle cx="10" cy="8" r="2.3" stroke="#c85f16" stroke-width="1.7"/></svg>
           <input value="4100 Legacy" readonly style="color:var(--ink)">
         </div>
 
@@ -772,7 +778,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 
         <div class="disclaim" style="margin-top:12px">
           <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex:0 0 auto;margin-top:1px"><circle cx="9" cy="9" r="7.6" stroke="#5C6E68" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#5C6E68" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <div>A 90-day supply here is <b>$18.00</b> — $6.00 a month instead of $9.00.</div>
+          <div>A 90-day supply here is <b>$18.00</b> - $6.00 a month instead of $9.00.</div>
         </div>
 
         <div class="sectlabel">Hours</div>
@@ -803,8 +809,8 @@ const SCREENS = [
   "Lower-cost alternatives",
   "Strength, form and supply",
   "Add or detect location",
-  "Pharmacy prices — list",
-  "Pharmacy prices — map",
+  "Pharmacy prices - list",
+  "Pharmacy prices - map",
   "Pharmacy detail"
 ];
 const rail = document.getElementById('rail');
@@ -954,4 +960,9 @@ selectPin(0);
 /* search box → results */
 const q = document.getElementById('q');
 q.addEventListener('keydown', e=>{ if(e.key==='Enter') go(2); });
+
+/* embed mode: hide the reference rail when framed with ?embed=1 */
+if(new URLSearchParams(location.search).get('embed') === '1'){
+  document.body.classList.add('embed-mode');
+}
 </script>

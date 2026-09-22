@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rx Price Check — case study</title>
+<title>Rx Price Check - case study</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +91,7 @@ h2{font-family:var(--serif); font-size:32px; font-weight:600; letter-spacing:-.0
 /* ---- device embed ---- */
 .demo{display:flex; justify-content:center; padding:36px 0 12px}
 .device-shell{width:390px; max-width:100%; border-radius:40px; background:#000000; padding:11px; box-shadow:0 30px 70px rgba(11,26,23,.28)}
-.device-shell iframe{width:100%; height:760px; border:0; border-radius:30px; background:#1c1815; display:block}
+.device-shell iframe{width:100%; height:844px; border:0; border-radius:30px; background:#1c1815; display:block}
 .demo-caption{text-align:center; font-size:13px; color:var(--ink2); margin-top:14px}
 .demo-caption a{font-weight:700}
 
@@ -155,7 +155,7 @@ footer .flinks a{text-decoration:none}
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <p class="kicker">Case study — health benefits</p>
+        <p class="kicker">Case study - health benefits</p>
         <h1>Making a prescription's real price legible before you get to the counter</h1>
         <p class="dek">A mobile tool that turns "what will this cost me" into an answer with three parts: your price, a cheaper alternative worth asking your doctor about, and the nearest pharmacy that actually has it at that price.</p>
         <div class="linkrow">
@@ -181,8 +181,8 @@ footer .flinks a{text-decoration:none}
       <p class="label">The problem</p>
       <h2>The sticker price and your price are rarely the same number</h2>
       <div class="prose">
-        <p>A member searching for a drug's price usually finds a list price that has nothing to do with what they'll pay — their real cost depends on formulary tier, deductible progress, and which pharmacy they walk into. Tools modeled on general drug-price lookups answer the wrong question.</p>
-        <p>This is a personal project: search a drug, see cost-sensible alternatives with generic and brand clearly separated, configure the exact strength and form, then find where nearby to actually fill it — with price attached to the pharmacy, not buried in a table underneath it.</p>
+        <p>A member searching for a drug's price usually finds a list price that has nothing to do with what they'll pay - their real cost depends on formulary tier, deductible progress, and which pharmacy they walk into. Tools modeled on general drug-price lookups answer the wrong question.</p>
+        <p>This is a personal project: search a drug, see cost-sensible alternatives with generic and brand clearly separated, configure the exact strength and form, then find where nearby to actually fill it - with price attached to the pharmacy, not buried in a table underneath it.</p>
       </div>
     </div>
     <div>
@@ -195,7 +195,7 @@ footer .flinks a{text-decoration:none}
   <div class="wrap">
     <p class="label">Approach</p>
     <h2>Five screens, one decision at a time</h2>
-    <p class="lede">Each step in the flow asks the member for exactly one new piece of information — the drug, then which version, then the dose and form, then where — so the price at the end reflects a fully specified choice rather than an average.</p>
+    <p class="lede">Each step in the flow asks the member for exactly one new piece of information - the drug, then which version, then the dose and form, then where - so the price at the end reflects a fully specified choice rather than an average.</p>
     <div class="flow">
       <div class="fstep"><div class="fn">01</div><div class="ft">Search</div><div class="fd">Typeahead across brand, generic and misspellings</div></div>
       <div class="fstep"><div class="fn">02</div><div class="ft">Alternatives</div><div class="fd">Lower- and higher-cost options, generic vs. brand marked</div></div>
@@ -210,10 +210,10 @@ footer .flinks a{text-decoration:none}
   <div class="wrap">
     <p class="label">Prototype</p>
     <h2>Click through the flow</h2>
-    <p class="lede">Fully interactive — same file that ships alongside this page. The map view uses an illustrated basemap standing in for the Google Maps SDK; the price behavior on the pins is real.</p>
+    <p class="lede">Fully interactive - same file that ships alongside this page. The map view uses an illustrated basemap standing in for the Google Maps SDK; the price behavior on the pins is real.</p>
     <div class="demo">
       <div class="device-shell">
-        <iframe src="rx-price-check-mobile-ui.html" loading="lazy" title="Rx Price Check interactive prototype"></iframe>
+        <iframe src="rx-price-check-mobile-ui.html?embed=1" loading="lazy" title="Rx Price Check interactive prototype"></iframe>
       </div>
     </div>
     <p class="demo-caption">Not rendering? <a href="rx-price-check-mobile-ui.html" target="_blank" rel="noopener">Open the prototype directly</a>.</p>
@@ -224,7 +224,7 @@ footer .flinks a{text-decoration:none}
   <div class="wrap">
     <p class="label">System design</p>
     <h2>What has to be true for the AI panel to be trustworthy</h2>
-    <p class="lede">The riskiest part of this product is the alternatives panel — it has to suggest cheaper drugs without ever making a clinical call. The design splits that into a deterministic retrieval step and a model that can only rank and explain, never invent.</p>
+    <p class="lede">The riskiest part of this product is the alternatives panel - it has to suggest cheaper drugs without ever making a clinical call. The design splits that into a deterministic retrieval step and a model that can only rank and explain, never invent.</p>
 
     <div class="arch">
       <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
@@ -248,7 +248,7 @@ footer .flinks a{text-decoration:none}
         <rect class="b" x="264" y="24" width="170" height="70" rx="9"/>
         <text class="bt" x="278" y="47">Candidate generation</text>
         <text class="bs" x="278" y="63">RxNorm · Orange Book</text>
-        <text class="bs" x="278" y="76">formulary rules — no LLM</text>
+        <text class="bs" x="278" y="76">formulary rules - no LLM</text>
 
         <path class="ln" d="M200 135 H434 V108"/>
         <rect class="b" x="264" y="108" width="170" height="70" rx="9"/>
@@ -270,7 +270,7 @@ footer .flinks a{text-decoration:none}
 
         <circle class="acc" cx="446" cy="220" r="4"/>
         <text class="bt" x="20" y="224">Guardrail</text>
-        <text class="bs" x="20" y="240" style="font-size:12px">Everything the model can suggest is a real, dispensable, on-formulary product from our own data —</text>
+        <text class="bs" x="20" y="240" style="font-size:12px">Everything the model can suggest is a real, dispensable, on-formulary product from our own data -</text>
         <text class="bs" x="20" y="256" style="font-size:12px">the model narrows and explains a set it did not create, and out-of-set responses fall back to rules.</text>
       </svg>
     </div>
@@ -281,15 +281,15 @@ footer .flinks a{text-decoration:none}
     </div>
     <div class="dec">
       <div class="dh"><span class="dnum">02</span><h3>Class-level suppression for high-risk drugs</h3></div>
-      <p>Narrow-therapeutic-index drugs, biologics, and controlled substances only ever show a generic-equivalent alternative — never a different drug in the same class. That suppression list needs pharmacist sign-off, reviewed quarterly.</p>
+      <p>Narrow-therapeutic-index drugs, biologics, and controlled substances only ever show a generic-equivalent alternative - never a different drug in the same class. That suppression list needs pharmacist sign-off, reviewed quarterly.</p>
     </div>
     <div class="dec">
       <div class="dh"><span class="dnum">03</span><h3>Google Maps never sees a drug name</h3></div>
-      <p>Drug + member + location together is PHI. The BFF enforces an outbound allowlist so only an address or coordinate pair ever reaches Google — no medication, no identifier, no price.</p>
+      <p>Drug + member + location together is PHI. The BFF enforces an outbound allowlist so only an address or coordinate pair ever reaches Google - no medication, no identifier, no price.</p>
     </div>
     <div class="dec">
       <div class="dh"><span class="dnum">04</span><h3>Prices are labeled by how sure we are</h3></div>
-      <p>A real-time benefit check, a plan-design estimate, and a cash price are three different numbers and the interface never blurs them together — the estimate chip is not decorative, it's a claim about confidence.</p>
+      <p>A real-time benefit check, a plan-design estimate, and a cash price are three different numbers and the interface never blurs them together - the estimate chip is not decorative, it's a claim about confidence.</p>
     </div>
   </div>
 </section>
@@ -301,7 +301,7 @@ footer .flinks a{text-decoration:none}
     <div class="qlist">
       <div class="qitem">
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.6" stroke="#8a8074" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#8a8074" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <p>Two dropdowns for strength and form can produce combinations that don't exist as a real product — is a flat list of dispensable products actually clearer?</p>
+        <p>Two dropdowns for strength and form can produce combinations that don't exist as a real product - is a flat list of dispensable products actually clearer?</p>
       </div>
       <div class="qitem">
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.6" stroke="#8a8074" stroke-width="1.5"/><path d="M9 8.2v4.4M9 5.4v.9" stroke="#8a8074" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -316,7 +316,7 @@ footer .flinks a{text-decoration:none}
 </section>
 
 <footer class="wrap">
-  <div class="fnote">Rx Price Check — case study. Prototype and system design doc included in this project folder.</div>
+  <div class="fnote">Rx Price Check - case study. Prototype and system design doc included in this project folder.</div>
   <div class="flinks">
     <a href="rx-price-check-mobile-ui.html">Open prototype</a>
     <a href="rx-price-check-system-design.html">System design doc</a>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rx Price Check — system design</title>
+<title>Rx Price Check - system design</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,7 +81,7 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
 </div>
 
 <div class="wrap doc">
-<h1>Rx Price Check — System Design</h1>
+<h1>Rx Price Check - System Design</h1>
 <p><strong>Version</strong> 0.1 (draft for review) · <strong>Scope</strong> Mobile web + native in-app tool · <strong>Owner</strong> TBD</p>
 <hr />
 <h2>1. What we're building</h2>
@@ -182,7 +182,7 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
 │ + vector idx │  └───────────────┘ └────────────┘ └─────────────┘
 └──────────────┘
         ▲
-        │  retrieval only — candidate set is deterministic
+        │  retrieval only - candidate set is deterministic
 ┌───────┴────────────────────┐
 │ LLM (BAA-covered endpoint) │  ranks + explains. Never invents drugs.
 └────────────────────────────┘
@@ -200,10 +200,10 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
 <li><strong>Response:</strong> collapses to <em>drug concept</em>, not NDC. "Atorvastatin" is one result, not 40 package sizes.</li>
 </ul>
 <p>Latency budget: p95 ≤ 120 ms.</p>
-<h3>4.2 Alternatives Service — the AI layer</h3>
+<h3>4.2 Alternatives Service - the AI layer</h3>
 <p>This is the part most likely to go wrong, so the design deliberately limits what the model is allowed to do.</p>
 <p><strong>Two-stage: deterministic retrieval, then model ranking.</strong></p>
-<p><strong>Stage 1 — candidate generation (no LLM).</strong> Given the searched RXCUI and the member's plan:</p>
+<p><strong>Stage 1 - candidate generation (no LLM).</strong> Given the searched RXCUI and the member's plan:</p>
 <table>
 <thead>
 <tr>
@@ -226,19 +226,19 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
 </tr>
 <tr>
 <td>Different form/strength</td>
-<td>Same ingredient, cheaper package (e.g. two 20 mg vs one 40 mg — flag only, never advise splitting)</td>
+<td>Same ingredient, cheaper package (e.g. two 20 mg vs one 40 mg - flag only, never advise splitting)</td>
 </tr>
 <tr>
 <td>Higher-cost</td>
-<td>Same class, higher member cost — shown for context, collapsed by default</td>
+<td>Same class, higher member cost - shown for context, collapsed by default</td>
 </tr>
 </tbody>
 </table>
 <p>Everything in the candidate set is a real, dispensable, on-market product from our own KB. The model cannot add to this set.</p>
-<p><strong>Stage 2 — LLM ranking and explanation.</strong> The model receives the candidate list plus structured cost data and returns, per candidate: a rank, a one-sentence plain-language reason, and a <code>requiresNewPrescription</code> flag. The prompt is constrained to a JSON schema; responses that fail schema validation or that reference an RXCUI outside the candidate set are rejected and we fall back to a rules-only ordering (cost ascending, generic-equivalent first).</p>
+<p><strong>Stage 2 - LLM ranking and explanation.</strong> The model receives the candidate list plus structured cost data and returns, per candidate: a rank, a one-sentence plain-language reason, and a <code>requiresNewPrescription</code> flag. The prompt is constrained to a JSON schema; responses that fail schema validation or that reference an RXCUI outside the candidate set are rejected and we fall back to a rules-only ordering (cost ascending, generic-equivalent first).</p>
 <p><strong>Guardrails, all enforced outside the model:</strong></p>
 <ul>
-<li>Suppression list by drug class: narrow-therapeutic-index drugs (warfarin, levothyroxine, lithium, some AEDs), biologics/biosimilars where substitution is state-regulated, and controlled substances never show <em>therapeutic</em> alternatives — generic-equivalent only.</li>
+<li>Suppression list by drug class: narrow-therapeutic-index drugs (warfarin, levothyroxine, lithium, some AEDs), biologics/biosimilars where substitution is state-regulated, and controlled substances never show <em>therapeutic</em> alternatives - generic-equivalent only.</li>
 <li>No dosing, titration, or tapering language in output. A regex + classifier pass rejects any generated sentence containing dose instructions.</li>
 <li>Every alternatives panel ships with a persistent line: <em>Prices and options only. Talk to your prescriber before changing any medication.</em></li>
 <li>The model never sees member identifiers, claims history, diagnoses, or address. It sees: drug concepts, formulary tier, and de-identified cost figures.</li>
@@ -252,17 +252,17 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
 <li><strong>Estimated plan price.</strong> Fallback when RTPB is unavailable or times out: computed from formulary tier + benefit design + accumulators. Labeled <em>estimate</em>.</li>
 <li><strong>Cash / discount price.</strong> Non-insurance price feeds. Shown when it beats the plan price, with a warning that cash purchases may not count toward the deductible.</li>
 </ol>
-<p>RTPB calls are fanned out per pharmacy, capped at the 15 nearest in-network pharmacies, with a 1.5 s budget and partial rendering — the list paints with distances first and prices fill in.</p>
+<p>RTPB calls are fanned out per pharmacy, capped at the 15 nearest in-network pharmacies, with a 1.5 s budget and partial rendering - the list paints with distances first and prices fill in.</p>
 <p>Accumulator state changes; prices are cached at most 15 minutes and always stamped with "as of."</p>
 <h3>4.4 Pharmacy Network Service + Google Maps</h3>
 <ul>
 <li><strong>Network roster</strong> (in-network, preferred, 90-day retail, mail order) is ours, keyed by NCPDP pharmacy ID.</li>
-<li><strong>Geocoding:</strong> Google Geocoding API converts the member's typed address to lat/lng. Autocomplete uses the Places Autocomplete API with session tokens (billing is per session, not per keystroke — this matters, it's roughly a 10× cost difference).</li>
+<li><strong>Geocoding:</strong> Google Geocoding API converts the member's typed address to lat/lng. Autocomplete uses the Places Autocomplete API with session tokens (billing is per session, not per keystroke - this matters, it's roughly a 10× cost difference).</li>
 <li><strong>Nearby resolution:</strong> we do <em>not</em> use Places Nearby Search to find pharmacies. We query our own roster with a PostGIS radius search, then enrich with Place Details (hours, phone, photo) matched by NCPDP → Place ID mapping maintained offline.</li>
 <li><strong>Distance:</strong> Distance Matrix API for driving/walking time on the visible set only (batched, ≤ 25 destinations per call). Straight-line distance renders immediately; travel time fills in.</li>
 <li><strong>Map render:</strong> Maps SDK for Android/iOS, Maps JavaScript API on web, with a custom style (POI density turned down so our pins dominate). Price-label markers are custom advanced markers.</li>
 </ul>
-<p><strong>Cost control:</strong> Autocomplete session tokens, a 300 ms debounce, radius search served from our own DB, Distance Matrix only for what's on screen, and a per-member daily quota. Map tiles are the largest line item — cache aggressively and avoid re-initializing the map on tab switches.</p>
+<p><strong>Cost control:</strong> Autocomplete session tokens, a 300 ms debounce, radius search served from our own DB, Distance Matrix only for what's on screen, and a per-member daily quota. Map tiles are the largest line item - cache aggressively and avoid re-initializing the map on tab switches.</p>
 <p><strong>PHI boundary:</strong> member identifiers, drug names, and prices are never sent to Google. We send an address string or a lat/lng, nothing else. This is stated in the privacy copy.</p>
 <h3>4.5 Member Context Service</h3>
 <p>Eligibility, plan design, formulary ID, deductible and OOP-max accumulators, saved addresses, saved medications. Every read is audit-logged.</p>
@@ -299,9 +299,9 @@ tr:nth-child(even) td{background:rgba(226,113,29,0.05);}
   &quot;asOf&quot;: &quot;2026-09-13T14:22:05Z&quot;
 }
 </code></pre>
-<p><code>reasonSource</code> is <code>LLM_RANKED</code> or <code>RULES_FALLBACK</code> — logged and used to monitor fallback rate.</p>
+<p><code>reasonSource</code> is <code>LLM_RANKED</code> or <code>RULES_FALLBACK</code> - logged and used to monitor fallback rate.</p>
 <h3><code>GET /v1/drugs/{rxcui}/configurations</code></h3>
-<p>Returns available strengths, dose forms, and package quantities for the concept, so the two dropdowns are populated from real dispensable NDCs rather than a static list. Selecting a strength filters the form options and vice versa — the client must handle empty intersections (e.g. 80 mg has no oral suspension).</p>
+<p>Returns available strengths, dose forms, and package quantities for the concept, so the two dropdowns are populated from real dispensable NDCs rather than a static list. Selecting a strength filters the form options and vice versa - the client must handle empty intersections (e.g. 80 mg has no oral suspension).</p>
 <h3><code>POST /v1/prices/pharmacies</code></h3>
 <pre><code class="language-json">{
   &quot;ndc&quot;: &quot;00093505698&quot;,
@@ -367,7 +367,7 @@ MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
 <li><strong>HIPAA.</strong> Drug + member + location together is PHI. All services inside the covered-entity boundary; BAA required with the LLM vendor, the RTPB intermediary, and any discount-price partner.</li>
 <li><strong>LLM data handling.</strong> Zero-retention endpoint, no training on inputs. Prompts carry no member identifiers, no diagnosis, no address. Prompt and response are logged to a PHI-classified store for audit with 90-day retention.</li>
 <li><strong>Google Maps.</strong> Receives an address or coordinates only. Never a drug name, member ID, or price. Enforced at the BFF by an outbound field allowlist, not by convention.</li>
-<li><strong>Location consent.</strong> OS permission prompt is preceded by an in-app explainer ("we use your location only to find nearby pharmacies"). Location is held in memory for the session and persisted only if the member saves it as an address. Denial path is a plain address field — never a dead end.</li>
+<li><strong>Location consent.</strong> OS permission prompt is preceded by an in-app explainer ("we use your location only to find nearby pharmacies"). Location is held in memory for the session and persisted only if the member saves it as an address. Denial path is a plain address field - never a dead end.</li>
 <li><strong>Transport &amp; storage.</strong> TLS 1.3, field-level encryption for accumulators and quotes, mTLS between internal services.</li>
 <li><strong>Audit.</strong> Every eligibility and price read logged with member, actor, timestamp, purpose.</li>
 <li><strong>Data minimization.</strong> The BFF strips unrendered fields before responding. The client caches nothing sensitive to disk.</li>
@@ -426,7 +426,7 @@ MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
 <hr />
 <h2>11. Accessibility</h2>
 <ul>
-<li>WCAG 2.2 AA. Contrast ≥ 4.5:1 for all price text; savings never communicated by color alone — always paired with a "Save $X" label and an icon.</li>
+<li>WCAG 2.2 AA. Contrast ≥ 4.5:1 for all price text; savings never communicated by color alone - always paired with a "Save $X" label and an icon.</li>
 <li>Dropdowns use native pickers on mobile, not custom overlays.</li>
 <li>Map has a fully equivalent list view; the segmented control is the accessible escape hatch, and screen readers get the list by default.</li>
 <li>Prices announced as "nine dollars" not "9.00".</li>
@@ -436,7 +436,7 @@ MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
 <hr />
 <h2>12. Analytics</h2>
 <p>Instrument: search submitted, zero-result searches (drives the synonym dictionary), alternative card tapped, alternative type tapped (generic-equivalent vs. class switch), configurator changes, location method chosen, list/map toggle, pin tapped, pharmacy detail opened, "call pharmacy" tapped, AI panel helpfulness vote, fallback-to-rules rate, RTPB timeout rate.</p>
-<p>Track estimated savings surfaced vs. a proxy for savings realized (subsequent claims for the suggested alternative) — that's the number that justifies the tool.</p>
+<p>Track estimated savings surfaced vs. a proxy for savings realized (subsequent claims for the suggested alternative) - that's the number that justifies the tool.</p>
 <hr />
 <h2>13. Rollout</h2>
 <table>
@@ -453,7 +453,7 @@ MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
 </tr>
 <tr>
 <td>1</td>
-<td>Alternatives service in shadow mode — generate, log, pharmacist-audit, don't display.</td>
+<td>Alternatives service in shadow mode - generate, log, pharmacist-audit, don't display.</td>
 </tr>
 <tr>
 <td>2</td>
@@ -472,7 +472,7 @@ MemberContext     memberId, planId, formularyId, accumulators, savedAddresses[]
 <hr />
 <h2>14. Open questions</h2>
 <ul>
-<li>Which RTPB path — direct PBM APIs, or Surescripts as a single integration? Coverage vs. integration cost.</li>
+<li>Which RTPB path - direct PBM APIs, or Surescripts as a single integration? Coverage vs. integration cost.</li>
 <li>Do we show cash/discount prices that beat the plan price? It helps the member and hurts deductible accrual. Needs a plan-level policy decision.</li>
 <li>Mail-order: a peer row in the pharmacy list, or a separate module? It has no distance, which breaks the list's sort model.</li>
 <li>Is the strength/form configurator better as two dropdowns or as a single list of dispensable products? Dropdowns can produce invalid combinations; a flat list can be long. Prototype both.</li>

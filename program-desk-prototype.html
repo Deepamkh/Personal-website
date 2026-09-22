@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Program Desk</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E6E9E3; --panel:#F4F6F1; --panel2:#FAFBF8;
+  --ink:#1B211E; --ink2:#4A544F; --ink3:#7C857F;
+  --rule:#C6CCC2; --ruleS:#A9B1A5;
+  --blue:#23485F; --blueW:#DDE6EB; --onblue:#F7F9F5;
+  --green:#35734A; --amber:#8E6410; --red:#9E3630;
+  --violet:#57468C; --violetW:#E9E5F4;
+  --shadow:0 1px 0 rgba(27,33,30,.06);
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141916; --panel:#1C221E; --panel2:#232A25;
+    --ink:#E4E8E2; --ink2:#A6AFA7; --ink3:#78827A;
+    --rule:#2E3630; --ruleS:#414A43;
+    --blue:#8FB9D4; --blueW:#1B2A33; --onblue:#101613;
+    --green:#6FB884; --amber:#D8A63E; --red:#E0736B;
+    --violet:#A796E0; --violetW:#241F35;
+    --shadow:0 1px 0 rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141916; --panel:#1C221E; --panel2:#232A25;
+  --ink:#E4E8E2; --ink2:#A6AFA7; --ink3:#78827A;
+  --rule:#2E3630; --ruleS:#414A43;
+  --blue:#8FB9D4; --blueW:#1B2A33; --onblue:#101613;
+  --green:#6FB884; --amber:#D8A63E; --red:#E0736B;
+  --violet:#A796E0; --violetW:#241F35;
+  --shadow:0 1px 0 rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  height:100%;margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:13.5px;line-height:1.5;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit;font-variant-numeric:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- shell ---------- */
+.app{height:100%;display:flex;flex-direction:column;min-height:0}
+.topbar{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding:11px 18px 10px;border-bottom:1px solid var(--rule);background:var(--panel);
+}
+.brandmark{display:flex;align-items:baseline;gap:9px}
+.brandmark b{font-size:15px;font-weight:700;letter-spacing:-.015em}
+.brandmark span{font-size:11.5px;color:var(--ink3)}
+.progline{display:flex;align-items:baseline;gap:10px;margin-left:auto;font-size:12px;color:var(--ink2);flex-wrap:wrap}
+.ragdot{width:8px;height:8px;border-radius:50%;display:inline-block;vertical-align:baseline}
+.rag-green{background:var(--green)} .rag-amber{background:var(--amber)} .rag-red{background:var(--red)}
+
+/* intake spine */
+.spine{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid var(--rule);background:var(--panel2)}
+.spine input{
+  flex:1;min-width:0;background:transparent;border:0;border-bottom:1px dashed var(--ruleS);
+  padding:5px 2px;font-size:13px;color:var(--ink)
+}
+.spine input::placeholder{color:var(--ink3)}
+.spine input:focus{outline:none;border-bottom-color:var(--blue)}
+
+.body{flex:1;display:grid;grid-template-columns:186px minmax(0,1fr) 336px;min-height:0}
+
+/* rail */
+.rail{border-right:1px solid var(--rule);background:var(--panel);overflow-y:auto;padding:10px 0 24px}
+.railgroup{padding:12px 16px 4px;font-size:11px;color:var(--ink3);letter-spacing:.01em}
+.grouphead{margin:18px 0 7px;font-size:12px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--ruleS);padding-bottom:4px}
+.navitem{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  background:none;border:0;padding:6px 16px;cursor:pointer;color:var(--ink2);font-size:13px;
+  border-left:2px solid transparent;
+}
+.navitem:hover{color:var(--ink);background:var(--panel2)}
+.navitem[aria-current="true"]{color:var(--ink);font-weight:600;border-left-color:var(--blue);background:var(--panel2)}
+.navitem .ct{margin-left:auto;font-size:11.5px;color:var(--ink3);font-weight:400}
+.navitem .ct.warn{color:var(--red);font-weight:600}
+
+/* main */
+.main{overflow-y:auto;min-width:0;padding:20px 22px 60px}
+.viewhead{margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-.015em}
+.viewsub{margin:0 0 18px;color:var(--ink2);max-width:66ch}
+
+/* drawer */
+.drawer{border-left:1px solid var(--rule);background:var(--panel);overflow-y:auto;min-width:0;padding-bottom:40px}
+.drawerhead{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--rule);padding:12px 16px;z-index:2}
+.drawerhead h2{margin:0;font-size:13px;font-weight:600}
+.drawerhead p{margin:3px 0 0;font-size:11.5px;color:var(--ink3)}
+
+/* ---------- ledger ---------- */
+.ledgerwrap{overflow-x:auto;border-top:1px solid var(--ruleS);margin-bottom:8px}
+.ledger{min-width:100%;width:max-content}
+.lrow{display:grid;align-items:baseline;gap:12px;padding:8px 4px;border-bottom:1px solid var(--rule)}
+.lhead{border-bottom:1px solid var(--ruleS);padding-bottom:5px;font-size:11.5px;color:var(--ink3)}
+.lbody .lrow{cursor:pointer}
+.lbody .lrow:hover{background:var(--panel2)}
+.lcell{min-width:0;overflow-wrap:anywhere}
+.lcell.num{text-align:right}
+.ref{color:var(--ink3);font-size:12px;font-weight:500}
+.ttl{font-weight:500}
+.sub{display:block;font-size:11.5px;color:var(--ink3);font-weight:400;margin-top:1px}
+.chip{display:inline-block;padding:1px 7px;border:1px solid currentColor;border-radius:9px;font-size:11px;font-weight:500;white-space:nowrap}
+.t-green{color:var(--green)} .t-amber{color:var(--amber)} .t-red{color:var(--red)}
+.t-blue{color:var(--blue)} .t-mute{color:var(--ink3)} .t-violet{color:var(--violet)}
+.empty{padding:26px 4px;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.empty b{display:block;color:var(--ink2);font-weight:600;margin-bottom:3px}
+
+/* ---------- controls ---------- */
+.btn{
+  background:var(--panel2);border:1px solid var(--ruleS);color:var(--ink);
+  padding:5px 11px;border-radius:3px;cursor:pointer;font-size:12.5px;font-weight:500;
+}
+.btn:hover{border-color:var(--ink3)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:var(--onblue)}
+.btn.pri:hover{opacity:.9}
+.btn.sm{padding:3px 8px;font-size:11.5px}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink2);padding:3px 6px}
+.btn.ghost:hover{color:var(--ink);border-color:var(--rule)}
+.btn.danger{color:var(--red);border-color:var(--rule)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.field{display:block;margin-bottom:12px}
+.field>span{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:3px}
+.inp,textarea.inp,select.inp{
+  width:100%;background:var(--panel2);border:1px solid var(--ruleS);border-radius:3px;
+  padding:6px 8px;font-size:13px;color:var(--ink)
+}
+textarea.inp{resize:vertical;min-height:90px;line-height:1.55}
+.inp:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px var(--blueW)}
+.seg{display:flex;border:1px solid var(--ruleS);border-radius:3px;overflow:hidden}
+.seg button{background:var(--panel2);border:0;border-right:1px solid var(--rule);padding:4px 10px;cursor:pointer;font-size:12px;color:var(--ink2)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--onblue);font-weight:600}
+
+/* ---------- panels & stats ---------- */
+.panel{border:1px solid var(--rule);background:var(--panel);border-radius:4px;padding:14px 16px;margin-bottom:16px}
+.panel>h3{margin:0 0 10px;font-size:13px;font-weight:600}
+.statline{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--ruleS);margin:0 0 20px}
+.stat{flex:1 1 128px;padding:9px 14px 10px 0;border-bottom:1px solid var(--rule)}
+.stat b{display:block;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.stat span{font-size:11.5px;color:var(--ink3)}
+.meter{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.hairnote{font-size:11.5px;color:var(--ink3);margin:6px 0 0}
+
+/* program masthead */
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:4px}
+.masthead h1{margin:0;font-size:27px;font-weight:700;letter-spacing:-.025em;line-height:1.15}
+.masthead p{margin:5px 0 0;color:var(--ink2);max-width:62ch}
+.weekbar{height:3px;background:var(--rule);margin:12px 0 0;position:relative}
+.weekbar i{position:absolute;inset:0 auto 0 0;background:var(--blue)}
+.weekbar b{position:absolute;top:-1px;bottom:-1px;width:2px;background:var(--red)}
+
+/* ---------- proposals ---------- */
+.prop{border-bottom:1px solid var(--rule);padding:11px 16px;border-left:2px solid var(--violet)}
+.prop .kind{font-size:11px;color:var(--violet);font-weight:600;margin-bottom:2px}
+.prop .ptitle{font-weight:500;margin-bottom:3px}
+.prop .quote{font-family:var(--serif);font-size:12.5px;color:var(--ink2);border-left:2px solid var(--rule);padding-left:8px;margin:6px 0 8px}
+.prop .meta{font-size:11.5px;color:var(--ink3);margin-bottom:8px}
+.conf{display:inline-flex;gap:2px;vertical-align:middle;margin-left:6px}
+.conf i{width:11px;height:3px;background:var(--rule)}
+.conf i.on{background:var(--violet)}
+
+/* ---------- document surface ---------- */
+.doc{font-family:var(--serif);font-size:15.5px;line-height:1.62;max-width:72ch;color:var(--ink)}
+.doc h1{font-family:var(--sans);font-size:22px;font-weight:700;letter-spacing:-.02em;margin:0 0 12px;line-height:1.2}
+.doc h2{font-family:var(--sans);font-size:15px;font-weight:600;margin:26px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--rule)}
+.doc h3{font-family:var(--sans);font-size:13px;font-weight:600;margin:18px 0 5px}
+.doc p{margin:0 0 11px}
+.doc ul,.doc ol{margin:0 0 12px;padding-left:22px}
+.doc li{margin-bottom:4px}
+.doc table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:12.5px;margin:0 0 14px}
+.doc th,.doc td{border-bottom:1px solid var(--rule);padding:6px 9px 6px 0;text-align:left;vertical-align:top}
+.doc th{color:var(--ink3);font-weight:500;border-bottom-color:var(--ruleS)}
+.doc hr{border:0;border-top:1px solid var(--rule);margin:22px 0}
+.doc code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--panel);padding:1px 4px;border-radius:2px}
+
+.tmplgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(174px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.tmpl{background:var(--panel);border:0;text-align:left;padding:10px 12px;cursor:pointer;color:var(--ink)}
+.tmpl:hover{background:var(--panel2)}
+.tmpl[aria-pressed="true"]{background:var(--blueW)}
+.tmpl b{display:block;font-size:12.5px;font-weight:600;margin-bottom:2px}
+.tmpl span{font-size:11.5px;color:var(--ink3);line-height:1.35;display:block}
+
+/* ---------- modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,14,12,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px 16px;z-index:40;overflow-y:auto}
+.modal{background:var(--paper);border:1px solid var(--ruleS);border-radius:5px;width:min(560px,100%);padding:18px 20px 20px;box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.modal h3{margin:0 0 14px;font-size:15px;font-weight:600}
+.modal .row.end{justify-content:flex-end;margin-top:16px}
+
+/* ---------- misc ---------- */
+.thinking{color:var(--ink3);font-size:12.5px;display:flex;align-items:center;gap:7px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--violet);animation:p 1.1s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:.25}50%{opacity:1}}
+.banner{border:1px solid var(--ruleS);border-left:2px solid var(--amber);background:var(--panel);padding:9px 12px;border-radius:3px;font-size:12.5px;color:var(--ink2);margin-bottom:14px}
+.mobileonly{display:none}
+.timeline{display:grid;gap:5px;margin-top:4px}
+.tlrow{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,3fr);gap:12px;align-items:center;font-size:12.5px}
+.tltrack{position:relative;height:16px;background:var(--panel);border:1px solid var(--rule);border-radius:2px}
+.tlbar{position:absolute;top:2px;bottom:2px;border-radius:1px;opacity:.85}
+.tlnow{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--red)}
+
+@media (max-width:1080px){ .body{grid-template-columns:168px minmax(0,1fr)} .drawer{display:none} .mobileonly{display:inline-flex} }
+@media (max-width:720px){
+  .body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .rail{border-right:0;border-bottom:1px solid var(--rule);display:flex;overflow-x:auto;padding:0;gap:0}
+  .railgroup{display:none}
+  .navitem{border-left:0;border-bottom:2px solid transparent;white-space:nowrap;padding:9px 12px}
+  .navitem[aria-current="true"]{border-bottom-color:var(--blue)}
+  .navitem .ct{margin-left:5px}
+  .main{padding:16px 14px 70px}
+  .topbar{padding:10px 14px}
+  .spine{padding:7px 14px}
+  .masthead h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div style="background:var(--paper); padding:10px 14px; border-bottom:1px solid var(--rule);">
+  <a href="program-desk-case-study.html" style="font-family:'Archivo',system-ui,sans-serif; font-size:12.5px; color:var(--ink3); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Back to case study
+  </a>
+</div>
+<div class="app">
+  <header class="topbar">
+    <div class="brandmark"><b>Program Desk</b><span>technical program management</span></div>
+    <div class="progline" id="progline"></div>
+  </header>
+
+  <div class="spine">
+    <input id="spineInput" placeholder="Paste a thread, transcript or chat log here - or type a question about the program" aria-label="Intake">
+    <button class="btn pri" id="spineGo">Read it</button>
+    <button class="btn mobileonly" id="mobProps">Queue</button>
+  </div>
+
+  <div class="body">
+    <nav class="rail" id="rail" aria-label="Sections"></nav>
+    <main class="main" id="main"></main>
+    <aside class="drawer" id="drawer">
+      <div class="drawerhead">
+        <h2>Review queue</h2>
+        <p>Nothing enters a log until you accept it.</p>
+      </div>
+      <div id="propList"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Program Desk - a TPM operating console.
+   Signals in → structured proposals → human-accepted logs → documents out.
+   ============================================================ */
+
+/* ---------- capabilities (design for absence) ---------- */
+let DB=null, SAMPLE=null, USER=null, DOWNLOADS=null, ME=null;
+let DEMO=false;                       // true when hosted outside claude.ai: canned data, canned AI
+const canAI=()=>!!SAMPLE||DEMO;
+
+/* ---------- state ---------- */
+const S={
+  view:'brief',
+  program:null,
+  actions:[], risks:[], decisions:[], deps:[], milestones:[], budget:[],
+  proposals:[], docs:[], signals:[],
+  busy:false, docDraft:null, docType:'status', askAnswer:'', filter:'open'
+};
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,txt)=>{const n=document.createElement(t); if(c)n.className=c; if(txt!=null)n.textContent=txt; return n;};
+const uid=p=>p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>new Date().toISOString().slice(0,10);
+const dnum=s=>{const t=Date.parse(s); return isNaN(t)?null:t;};
+const days=(a,b)=>{const x=dnum(a),y=dnum(b); return (x==null||y==null)?null:Math.round((x-y)/864e5);};
+const money=n=>{const v=Number(n)||0; return (v<0?'−':'')+'$'+Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0});};
+const fdate=s=>{const t=dnum(s); if(t==null)return '-';
+  return new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric'});};
+const overdue=r=>r.status!=='Done'&&dnum(r.due)!=null&&dnum(r.due)<dnum(today());
+
+/* ============================================================
+   Log definitions - one spec drives table, form and rollups
+   ============================================================ */
+const LOGS={
+  actions:{
+    label:'Action items', coll:'actions', prefix:'A', title:'Action items',
+    blurb:'Every commitment made in a meeting, thread or chat - with the sentence that created it.',
+    sortKey:r=>dnum(r.due)??9e15,
+    cols:[
+      {k:'ref',   label:'ID',       w:'52px'},
+      {k:'title', label:'Action',   w:'minmax(220px,2.4fr)', main:true, subKey:'notes'},
+      {k:'owner', label:'Owner',    w:'110px'},
+      {k:'due',   label:'Due',      w:'80px', type:'date'},
+      {k:'priority',label:'Priority',w:'74px', type:'enum', opts:['P0','P1','P2','P3']},
+      {k:'status',label:'Status',   w:'106px', type:'status', opts:['Not started','In progress','Blocked','Done']}
+    ],
+    extra:[{k:'notes',label:'Notes',type:'text'},{k:'workstream',label:'Workstream'}],
+    tone:v=>({'Done':'green','In progress':'blue','Blocked':'red','Not started':'mute'}[v]||'mute'),
+    isOpen:r=>r.status!=='Done'
+  },
+  risks:{
+    label:'Risk log', coll:'risks', prefix:'R', title:'Risk log',
+    blurb:'Scored by exposure. A risk without a named owner and a trigger date is a wish.',
+    sortKey:r=>-expo(r),
+    cols:[
+      {k:'ref',label:'ID',w:'52px'},
+      {k:'title',label:'Risk',w:'minmax(220px,2.4fr)',main:true,subKey:'mitigation'},
+      {k:'probability',label:'Prob',w:'64px',type:'enum',opts:['Low','Medium','High']},
+      {k:'impact',label:'Impact',w:'70px',type:'enum',opts:['Low','Medium','High']},
+      {k:'_expo',label:'Exposure',w:'80px',type:'expo'},
+      {k:'owner',label:'Owner',w:'110px'},
+      {k:'status',label:'Status',w:'104px',type:'status',opts:['Open','Mitigating','Accepted','Closed','Realized']}
+    ],
+    extra:[{k:'mitigation',label:'Mitigation',type:'text'},{k:'trigger',label:'Trigger / review date',type:'date'},{k:'contingency',label:'Contingency',type:'text'}],
+    tone:v=>({'Closed':'green','Mitigating':'blue','Accepted':'mute','Realized':'red','Open':'amber'}[v]||'amber'),
+    isOpen:r=>r.status!=='Closed'
+  },
+  decisions:{
+    label:'Decision log', coll:'decisions', prefix:'D', title:'Decision log',
+    blurb:'What was decided, by whom, on what basis - so it is not relitigated in week 19.',
+    sortKey:r=>-(dnum(r.date)??0),
+    cols:[
+      {k:'ref',label:'ID',w:'52px'},
+      {k:'title',label:'Decision',w:'minmax(220px,2.6fr)',main:true,subKey:'rationale'},
+      {k:'decidedBy',label:'Decided by',w:'120px'},
+      {k:'date',label:'Date',w:'80px',type:'date'},
+      {k:'status',label:'Standing',w:'110px',type:'status',opts:['Proposed','Agreed','Reversible','Locked','Superseded']}
+    ],
+    extra:[{k:'rationale',label:'Rationale',type:'text'},{k:'alternatives',label:'Alternatives considered',type:'text'}],
+    tone:v=>({'Agreed':'green','Locked':'blue','Proposed':'amber','Superseded':'mute','Reversible':'mute'}[v]||'mute'),
+    isOpen:r=>r.status==='Proposed'
+  },
+  deps:{
+    label:'Dependencies', coll:'deps', prefix:'X', title:'Cross-team dependencies',
+    blurb:'What you need, from whom, by when - and how confident you are that it lands.',
+    sortKey:r=>dnum(r.neededBy)??9e15,
+    cols:[
+      {k:'ref',label:'ID',w:'52px'},
+      {k:'title',label:'What we need',w:'minmax(200px,2.2fr)',main:true,subKey:'notes'},
+      {k:'provider',label:'From',w:'130px'},
+      {k:'neededBy',label:'Needed by',w:'88px',type:'date'},
+      {k:'confidence',label:'Confidence',w:'92px',type:'enum',opts:['Low','Medium','High']},
+      {k:'status',label:'Status',w:'104px',type:'status',opts:['Requested','Committed','At risk','Delivered','Blocked']}
+    ],
+    extra:[{k:'notes',label:'Notes',type:'text'},{k:'blocks',label:'Blocks which milestone'}],
+    tone:v=>({'Delivered':'green','Committed':'blue','At risk':'amber','Blocked':'red','Requested':'mute'}[v]||'mute'),
+    isOpen:r=>r.status!=='Delivered'
+  },
+  milestones:{
+    label:'Schedule', coll:'milestones', prefix:'M', title:'Schedule & milestones',
+    blurb:'Baseline against current. Slip is measured, not felt.',
+    sortKey:r=>dnum(r.current)??9e15,
+    cols:[
+      {k:'ref',label:'ID',w:'52px'},
+      {k:'title',label:'Milestone',w:'minmax(200px,2.4fr)',main:true,subKey:'owner'},
+      {k:'baseline',label:'Baseline',w:'86px',type:'date'},
+      {k:'current',label:'Current',w:'86px',type:'date'},
+      {k:'_slip',label:'Slip',w:'64px',type:'slip'},
+      {k:'status',label:'Status',w:'104px',type:'status',opts:['On track','At risk','Late','Done']}
+    ],
+    extra:[{k:'owner',label:'Owner'},{k:'exitCriteria',label:'Exit criteria',type:'text'}],
+    tone:v=>({'Done':'green','On track':'green','At risk':'amber','Late':'red'}[v]||'mute'),
+    isOpen:r=>r.status!=='Done'
+  },
+  budget:{
+    label:'Budget', coll:'budget', prefix:'B', title:'Budget log',
+    blurb:'Planned, committed, actual. Variance is the only number leadership reads.',
+    sortKey:r=>-(Number(r.planned)||0),
+    cols:[
+      {k:'ref',label:'ID',w:'52px'},
+      {k:'title',label:'Line item',w:'minmax(180px,2.2fr)',main:true,subKey:'category'},
+      {k:'planned',label:'Planned',w:'96px',type:'money'},
+      {k:'committed',label:'Committed',w:'96px',type:'money'},
+      {k:'actual',label:'Actual',w:'96px',type:'money'},
+      {k:'_var',label:'Variance',w:'100px',type:'variance'}
+    ],
+    extra:[{k:'category',label:'Category'},{k:'vendor',label:'Vendor / cost centre'},{k:'notes',label:'Notes',type:'text'}],
+    tone:()=> 'mute',
+    isOpen:()=>true
+  }
+};
+const expo=r=>{const m={Low:1,Medium:2,High:3}; return (m[r.probability]||1)*(m[r.impact]||1);};
+const expoTone=n=>n>=6?'red':n>=3?'amber':'green';
+
+/* ============================================================
+   Document template library
+   ============================================================ */
+const DOC_GROUPS=[
+ {name:'Product & requirements', items:[
+  {id:'prd',name:'PRD',hint:'Problem, users, requirements, success metrics',outline:'Summary; Problem & evidence; Goals and explicit non-goals; Target users and JTBD; Requirements table (ID, requirement, priority MoSCoW, rationale); UX flow narrative; Success metrics with baseline and target; Dependencies; Risks; Open questions; Launch criteria.'},
+  {id:'brd',name:'BRD',hint:'Business case, scope, benefits',outline:'Business context; Opportunity and cost of inaction; Objectives tied to company goals; In scope / out of scope table; Stakeholders and sign-off; Business requirements (numbered, testable); Benefit model with assumptions; Cost and resourcing; Constraints and assumptions; Approval block.'},
+  {id:'stories',name:'User stories',hint:'INVEST stories with Gherkin criteria',outline:'Group by epic. Each story: ID, "As a <persona> I want <capability> so that <outcome>", acceptance criteria in Given/When/Then, size (S/M/L), dependencies, definition of done. Flag any story that fails INVEST and say why.'},
+  {id:'storymap',name:'User story map',hint:'Backbone, walking skeleton, releases',outline:'Row 1 the backbone: user activities left to right in time order. Row 2 user tasks under each activity. Then release slices - Walking skeleton / Release 1 / Release 2 / Later - as a markdown table with activities as columns. Close with what each slice proves and what it defers.'},
+  {id:'epic',name:'Epic brief',hint:'One epic, sized and sequenced',outline:'Epic name; hypothesis; in/out of scope; child stories list; sizing; sequencing constraints; measurement.'},
+  {id:'techspec',name:'Technical design',hint:'Architecture, interfaces, trade-offs',outline:'Context and constraints; Proposed design; Component responsibilities; Interface contracts; Data model changes; Failure modes and rollback; Alternatives considered with why-not; Security and privacy review; Migration plan; Test strategy; Open questions.'},
+  {id:'acceptance',name:'Acceptance pack',hint:'Testable criteria per requirement',outline:'Table per requirement: ID, criterion, how verified, who signs off, evidence artefact.'}
+ ]},
+ {name:'Program governance', items:[
+  {id:'charter',name:'Program charter',hint:'Mandate, scope, governance',outline:'Mandate and sponsor; Objectives and key results; Scope boundaries; Org chart and RACI summary; Operating cadence; Decision rights and escalation path; Budget envelope; Success and exit criteria.'},
+  {id:'status',name:'Status report',hint:'RAG, progress, risks, asks',outline:'Header line with overall RAG and the one-sentence reason. Then: Progress since last report; Next period commitments; Schedule position with slip; Top risks with owner and mitigation; Dependencies at risk; Budget position; Decisions needed from leadership, each with a date. Keep it under one page and lead with the ask.'},
+  {id:'exec',name:'Executive update',hint:'Five lines a VP will actually read',outline:'Maximum 250 words. Bottom line up front. What changed. What I need from you, with a by-when. No jargon, no status theatre.'},
+  {id:'raid',name:'RAID review',hint:'Risks, assumptions, issues, dependencies',outline:'Four tables - Risks (with exposure score), Assumptions (with validation date and owner), Issues (active, with impact), Dependencies (with confidence). End with the three items that need airtime this week.'},
+  {id:'adr',name:'Decision record',hint:'ADR format',outline:'Title; Status; Date; Context; Decision; Consequences (positive and negative); Alternatives considered; Reversibility and cost to reverse; Who was consulted.'},
+  {id:'escalation',name:'Escalation memo',hint:'Framed for a decision, not a vent',outline:'What is blocked and since when; Business impact quantified; What has already been tried; The specific decision or resource requested; The date after which the impact compounds; Recommended option with rationale.'},
+  {id:'raci',name:'RACI matrix',hint:'Who decides, who does, who watches',outline:'Markdown table: rows are workstreams or deliverables, columns are named roles, cells are R/A/C/I. Exactly one A per row. Flag any row with zero or multiple accountables.'},
+  {id:'stakeholder',name:'Stakeholder map',hint:'Influence, interest, engagement plan',outline:'Table: stakeholder, role, influence (H/M/L), interest (H/M/L), current stance, desired stance, engagement move, cadence, owner. Then a short paragraph on the two relationships that most need work.'},
+  {id:'capacity',name:'Capacity plan',hint:'Demand against people you actually have',outline:'Demand by workstream in person-weeks; Supply by team with named constraints; Gap table; Three options to close the gap with trade-offs; Recommendation.'},
+  {id:'budgetreview',name:'Budget review',hint:'Variance with explanation',outline:'Summary table: planned, committed, actual, variance, variance %. Then variance drivers, forecast to complete, reallocation requests, and burn-rate commentary.'}
+ ]},
+ {name:'Meetings & communication', items:[
+  {id:'agenda',name:'Meeting agenda',hint:'Timeboxed, with decisions named',outline:'Purpose in one line; Desired outcomes; Pre-read; Timeboxed items with owner and the decision each item must produce; Parking lot. Never an agenda item without an owner.'},
+  {id:'minutes',name:'Notes → actions',hint:'Decisions and commitments only',outline:'Attendees; Decisions made (with rationale); Actions table (owner, action, due); Open questions with who will answer; Items explicitly deferred.'},
+  {id:'comms',name:'Communication plan',hint:'Audience, message, channel, cadence',outline:'Table: audience, what they need to know, channel, cadence, owner, first send date. Then escalation comms protocol for bad news.'},
+  {id:'announcement',name:'Change announcement',hint:'Internal or customer-facing',outline:'What is changing; When; Who is affected; What they must do and by when; What happens if they do nothing; Where to get help; FAQ of five likely questions.'},
+  {id:'kickoff',name:'Kickoff outline',hint:'Slide-by-slide skeleton',outline:'Per slide: title, the single point, and the supporting evidence. Cover why now, scope, team, plan, risks, operating model, and the first two weeks.'}
+ ]},
+ {name:'Delivery, launch & operations', items:[
+  {id:'launch',name:'Launch readiness',hint:'Go/no-go checklist with owners',outline:'Checklist grouped by Engineering, Data, Support, Legal, Comms, Ops. Each row: item, owner, status, evidence link, blocking yes/no. Then the go/no-go criteria and named decision maker.'},
+  {id:'cutover',name:'Cutover plan',hint:'Hour-by-hour runsheet',outline:'Pre-cutover checks with sign-offs; Hour-by-hour runsheet table (T-time, step, owner, duration, verification, rollback trigger); Comms checkpoints; Success verification; Abort criteria.'},
+  {id:'rollback',name:'Rollback plan',hint:'Triggers, steps, verification',outline:'Rollback triggers with thresholds; Decision owner; Step-by-step reversal; Data reconciliation; Verification; Customer comms; Time budget per step.'},
+  {id:'testplan',name:'Test plan',hint:'Scope, environments, exit criteria',outline:'Scope and out of scope; Test types and coverage targets; Environments and data; Entry and exit criteria; Defect triage protocol and severity definitions; Schedule; Roles.'},
+  {id:'runbook',name:'Operational runbook',hint:'For whoever is on call at 3am',outline:'Service overview; Dashboards and alerts; Common failure modes with symptom → diagnosis → fix; Escalation ladder with names and hours; Routine maintenance; Known issues.'},
+  {id:'postmortem',name:'Postmortem',hint:'Blameless, with contributing factors',outline:'Summary; Impact quantified; Timeline in UTC; Contributing factors (not a single root cause); What went well; What was lucky; Action items with owners and dates; Detection and prevention improvements. Blameless language throughout.'},
+  {id:'depbrief',name:'Dependency brief',hint:'One page to send the providing team',outline:'What we need and the precise interface; Why, in their terms; Needed-by date and what it unblocks; What we will do to make it easy; Escalation path if the date slips; Contact.'}
+ ]}
+];
+const ALL_DOCS=DOC_GROUPS.flatMap(g=>g.items);
+const docById=id=>ALL_DOCS.find(d=>d.id===id);
+
+/* ============================================================
+   Persistence - db when granted, memory otherwise
+   ============================================================ */
+const COLLS=['actions','risks','decisions','deps','milestones','budget','proposals','docs','signals'];
+
+async function boot(){
+  render();
+  try{ DB=await claude.use('db'); }catch(e){}
+  try{ SAMPLE=await claude.use('sample'); }catch(e){}
+  try{ USER=await claude.use('user'); }catch(e){}
+  try{ DOWNLOADS=await claude.use('downloads'); }catch(e){}
+  if(USER){ try{ ME=await USER.me(); }catch(e){} }
+
+  if(DB){
+    DB.doc('program/current').onSnapshot(snap=>{ S.program=snap.data()||null; render(); },()=>{});
+    COLLS.forEach(c=>{
+      DB.collection(c).onSnapshot(snap=>{
+        S[c]=snap.docs.map(d=>({id:d.id,...(d.data()||{})}));
+        render();
+      },()=>{});
+    });
+  }else{
+    // No platform storage: this is the portfolio build. Load the worked example
+    // so the loop can be exercised end to end.
+    DEMO=true;
+    S.program=SEED.program;
+    Object.keys(SEED.logs).forEach(k=>{ S[k]=SEED.logs[k].map((r,i)=>({id:k+i,...r})); });
+    render();
+  }
+}
+
+async function put(coll,rec){
+  const id=rec.id||uid(coll);
+  const {id:_,...data}=rec;
+  if(DB){ try{ await DB.doc(coll+'/'+id).set(data); return id; }catch(e){} }
+  S[coll]=[...S[coll].filter(r=>r.id!==id),{id,...data}];
+  render(); return id;
+}
+async function patch(coll,id,data){
+  if(DB){ try{ await DB.doc(coll+'/'+id).update(data); return; }catch(e){} }
+  S[coll]=S[coll].map(r=>r.id===id?{...r,...data}:r); render();
+}
+async function drop(coll,id){
+  if(DB){ try{ await DB.doc(coll+'/'+id).delete(); return; }catch(e){} }
+  S[coll]=S[coll].filter(r=>r.id!==id); render();
+}
+async function saveProgram(p){
+  S.program={...S.program,...p};
+  if(DB){ try{ await DB.doc('program/current').set(S.program); return; }catch(e){} }
+  render();
+}
+function nextRef(coll){
+  const pre=LOGS[coll].prefix;
+  const n=S[coll].reduce((m,r)=>{const v=parseInt(String(r.ref||'').replace(/\D/g,''),10); return isNaN(v)?m:Math.max(m,v);},0);
+  return pre+'-'+String(n+1).padStart(2,'0');
+}
+
+/* ============================================================
+   Program context for the model
+   ============================================================ */
+function contextBlock(depth){
+  const p=S.program||{};
+  const lines=[
+    'PROGRAM: '+(p.name||'Untitled'),
+    'GOAL: '+(p.goal||'not stated'),
+    'PHASE: '+(p.phase||'-')+'  |  WEEK '+(p.week||1)+' of '+(p.weeks||12)+'  |  OVERALL RAG: '+(p.rag||'Green'),
+    p.stakeholders?('STAKEHOLDERS: '+p.stakeholders):'',
+    p.constraints?('CONSTRAINTS: '+p.constraints):'',
+    p.tenets?('OPERATING PRINCIPLES: '+p.tenets):''
+  ].filter(Boolean);
+  if(depth==='light') return lines.join('\n');
+
+  const tbl=(name,rows,fn)=>rows.length?('\n'+name+':\n'+rows.slice(0,24).map(fn).join('\n')):'';
+  return lines.join('\n')
+    +tbl('OPEN ACTIONS',S.actions.filter(r=>r.status!=='Done'),r=>`- [${r.ref}] ${r.title} - ${r.owner||'unassigned'}, due ${r.due||'no date'}, ${r.status}${overdue(r)?' (OVERDUE)':''}`)
+    +tbl('RISKS',S.risks.filter(r=>r.status!=='Closed'),r=>`- [${r.ref}] ${r.title} - P:${r.probability} I:${r.impact} exposure ${expo(r)}, owner ${r.owner||'unassigned'}, ${r.status}. Mitigation: ${r.mitigation||'none recorded'}`)
+    +tbl('MILESTONES',S.milestones,r=>`- [${r.ref}] ${r.title} - baseline ${r.baseline||'?'}, current ${r.current||'?'}, slip ${days(r.current,r.baseline)??'?'}d, ${r.status}`)
+    +tbl('DEPENDENCIES',S.deps.filter(r=>r.status!=='Delivered'),r=>`- [${r.ref}] ${r.title} from ${r.provider||'?'} by ${r.neededBy||'?'} - ${r.status}, confidence ${r.confidence||'?'}`)
+    +tbl('DECISIONS',S.decisions,r=>`- [${r.ref}] ${r.title} - ${r.decidedBy||'?'} on ${r.date||'?'}, ${r.status}`)
+    +tbl('BUDGET',S.budget,r=>`- [${r.ref}] ${r.title}: planned ${money(r.planned)}, committed ${money(r.committed)}, actual ${money(r.actual)}, variance ${money((Number(r.actual)||0)-(Number(r.planned)||0))}`);
+}
+
+/* ============================================================
+   Extraction
+   ============================================================ */
+const EXTRACT_SCHEMA=`{
+  "summary": "one or two sentences on what this signal contains",
+  "sentiment": "Green" | "Amber" | "Red",
+  "items": [{
+    "kind": "action"|"risk"|"decision"|"dependency"|"milestone"|"budget"|"question",
+    "title": "short imperative or noun phrase",
+    "owner": "person named, or empty",
+    "due": "YYYY-MM-DD or empty",
+    "confidence": 0.0-1.0,
+    "quote": "at most 15 words copied from the input that justifies this item",
+    "probability": "Low|Medium|High",
+    "impact": "Low|Medium|High",
+    "mitigation": "",
+    "provider": "team the dependency is owed by",
+    "neededBy": "YYYY-MM-DD",
+    "decidedBy": "",
+    "rationale": "",
+    "date": "YYYY-MM-DD",
+    "baseline": "YYYY-MM-DD",
+    "current": "YYYY-MM-DD",
+    "amount": 0,
+    "category": "",
+    "notes": ""
+  }]
+}`;
+
+async function runExtract(text,source){
+  if(DEMO) return demoExtract(text,source);
+  if(!SAMPLE){ flash('Extraction is unavailable in this view. You can still add items by hand.'); return; }
+  S.busy='extract'; render();
+  const prompt=
+`You are the extraction engine behind a technical program manager's tracker. You read raw workplace signal and turn it into trackable records. You are precise and you never invent a commitment that was not made.
+
+Program context so you can resolve names, dates and references:
+${contextBlock('light')}
+Today's date is ${today()}.
+
+SIGNAL SOURCE: ${source}
+--- BEGIN SIGNAL ---
+${text.slice(0,24000)}
+--- END SIGNAL ---
+
+Extract every trackable item. Rules:
+- An "action" needs someone doing something. If no owner was named, leave owner empty rather than guessing.
+- A "risk" is a future condition that would hurt if it occurred. Something already broken is an action or an issue, not a risk.
+- A "decision" is a choice that was actually settled, not one being debated.
+- A "dependency" is work owed by a team outside this program.
+- Resolve relative dates ("end of next week", "before the offsite") into YYYY-MM-DD using today's date. If you cannot, leave empty.
+- "question" is for genuinely unresolved open questions worth tracking.
+- confidence reflects how clearly the signal supports the item. Below 0.5 means you are inferring.
+- Omit fields that do not apply to the kind. Do not pad.
+- If the signal contains nothing trackable, return an empty items array.
+
+Respond with ONLY a JSON object in exactly this shape, no prose and no markdown fences:
+${EXTRACT_SCHEMA}`;
+
+  try{
+    const data=await SAMPLE.json(prompt,{modelTier:'default',cache:false});
+    const items=Array.isArray(data.items)?data.items:[];
+    const sigId=await put('signals',{source,summary:data.summary||'',sentiment:data.sentiment||'',
+      excerpt:text.slice(0,400),at:new Date().toISOString(),count:items.length});
+    for(const it of items){
+      await put('proposals',{...it,signal:sigId,source,at:new Date().toISOString()});
+    }
+    S.busy=false;
+    if(!items.length) flash('Read it - nothing trackable in there.');
+    else flash(items.length+' item'+(items.length===1?'':'s')+' waiting in the review queue.');
+    render();
+  }catch(e){
+    S.busy=false;
+    flash(sampleError(e));
+    render();
+  }
+}
+
+function sampleError(e){
+  const c=e&&e.code;
+  if(c==='not_granted') return 'This view is not allowed to ask Claude, so extraction is off. Manual entry still works.';
+  if(c==='rate_limited') return 'Too many requests at once. Give it a minute.';
+  if(c==='cancelled') return 'Stopped.';
+  return 'That did not go through: '+((e&&e.message)||'unknown error');
+}
+
+/* proposal → log record */
+const KIND_MAP={action:'actions',risk:'risks',decision:'decisions',dependency:'deps',milestone:'milestones',budget:'budget',question:'actions'};
+const confLevel=v=>typeof v==='string'&&v?v:(Number(v)>=.75?'High':Number(v)>=.4?'Medium':'Low');
+function toRecord(p){
+  const coll=KIND_MAP[p.kind]; if(!coll) return null;
+  const base={ref:nextRef(coll),title:p.title||'Untitled',source:p.source||'',quote:p.quote||'',
+    createdAt:new Date().toISOString(),acceptedBy:(ME&&ME.id)||''};
+  if(coll==='actions') return [coll,{...base,title:p.kind==='question'?('Resolve: '+(p.title||'open question')):base.title,
+    owner:p.owner||'',due:p.due||'',priority:p.kind==='question'?'P2':(p.priority||'P2'),status:'Not started',notes:p.notes||''}];
+  if(coll==='risks')   return [coll,{...base,probability:p.probability||'Medium',impact:p.impact||'Medium',owner:p.owner||'',status:'Open',mitigation:p.mitigation||'',trigger:p.due||''}];
+  if(coll==='decisions')return [coll,{...base,decidedBy:p.decidedBy||p.owner||'',date:p.date||today(),status:'Agreed',rationale:p.rationale||''}];
+  if(coll==='deps')    return [coll,{...base,provider:p.provider||'',neededBy:p.neededBy||p.due||'',confidence:confLevel(p.confidence),status:'Requested',notes:p.notes||''}];
+  if(coll==='milestones')return [coll,{...base,baseline:p.baseline||p.date||'',current:p.current||p.date||'',status:'On track',owner:p.owner||''}];
+  if(coll==='budget')  return [coll,{...base,planned:Number(p.amount)||0,committed:0,actual:0,category:p.category||''}];
+  return null;
+}
+async function acceptProposal(p){
+  const made=toRecord(p);
+  if(!made){ await drop('proposals',p.id); return; }
+  await put(made[0],made[1]);
+  await drop('proposals',p.id);
+}
+
+/* ============================================================
+   Document generation
+   ============================================================ */
+async function generateDoc(typeId,brief){
+  if(!SAMPLE&&!DEMO){ flash('Document generation is unavailable in this view.'); return; }
+  const t=docById(typeId); if(!t) return;
+  if(DEMO) return demoDoc(t);
+  S.busy='doc'; S.docDraft={type:typeId,title:t.name,body:''}; render();
+
+  const prompt=
+`You are a staff technical program manager writing a ${t.name} for a real program. Write it as a working document, not a template with placeholders. Where the program record below gives you a fact, use it and cite the item ID in brackets like [R-03]. Where it does not, write the best-judgement content a competent TPM would write and mark it clearly as *assumption* so a human can correct it. Never write "TBD" where a reasonable default exists.
+
+=== PROGRAM RECORD ===
+${contextBlock('full')}
+=== END RECORD ===
+
+${brief?('Additional instruction from the program manager:\n'+brief+'\n'):''}
+Structure to follow:
+${t.outline}
+
+Output GitHub-flavoured Markdown only. Start with a single # heading. Use tables wherever the content is tabular. Be specific, concise and decision-oriented. No preamble, no closing commentary, no markdown code fences around the whole document.`;
+
+  try{
+    await SAMPLE(prompt,{modelTier:'complex',cache:false,onText:({text})=>{
+      S.docDraft.body=text;
+      const t2=$('#docBody'); if(t2) t2.innerHTML=md(text);
+    }});
+    S.busy=false; render();
+  }catch(e){
+    S.busy=false;
+    if(e&&e.text){ S.docDraft.body=e.text; }
+    flash(sampleError(e)); render();
+  }
+}
+
+async function askProgram(q){
+  if(DEMO) return demoAsk(q);
+  if(!SAMPLE){ flash('Asking is unavailable in this view.'); return; }
+  S.busy='ask'; S.askAnswer=''; S.view='brief'; render();
+  const prompt=
+`You are the program manager's analyst. Answer the question using ONLY the program record below. If the record does not contain the answer, say exactly what is missing and which log should hold it. Cite item IDs in brackets. Be brief - a few sentences or a short list.
+
+=== PROGRAM RECORD ===
+${contextBlock('full')}
+=== END RECORD ===
+
+QUESTION: ${q}`;
+  try{
+    await SAMPLE(prompt,{modelTier:'default',onText:({text})=>{
+      S.askAnswer=text; const n=$('#askOut'); if(n) n.innerHTML=md(text);
+    }});
+    S.busy=false; render();
+  }catch(e){ S.busy=false; S.askAnswer=sampleError(e); render(); }
+}
+
+/* ============================================================
+   Tiny markdown renderer
+   ============================================================ */
+function md(src){
+  const s=String(src||'');
+  const esc=x=>x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=x=>esc(x)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+  const lines=s.split('\n'); const out=[]; let i=0;
+  const isRow=l=>/^\s*\|.*\|\s*$/.test(l);
+  while(i<lines.length){
+    const l=lines[i];
+    if(/^\s*$/.test(l)){ i++; continue; }
+    if(/^\s*(---|\*\*\*|___)\s*$/.test(l)){ out.push('<hr>'); i++; continue; }
+    const h=l.match(/^(#{1,4})\s+(.*)$/);
+    if(h){ const lv=Math.min(h[1].length,3); out.push(`<h${lv}>${inline(h[2])}</h${lv}>`); i++; continue; }
+    if(isRow(l)&&isRow(lines[i+1]||'')&&/^[\s|:-]+$/.test(lines[i+1])){
+      const cells=r=>r.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+      const head=cells(l); i+=2; const rows=[];
+      while(i<lines.length&&isRow(lines[i])){ rows.push(cells(lines[i])); i++; }
+      out.push('<table><thead><tr>'+head.map(c=>`<th>${inline(c)}</th>`).join('')+'</tr></thead><tbody>'
+        +rows.map(r=>'<tr>'+r.map(c=>`<td>${inline(c)}</td>`).join('')+'</tr>').join('')+'</tbody></table>');
+      continue;
+    }
+    if(/^\s*([-*+])\s+/.test(l)){
+      const items=[]; while(i<lines.length&&/^\s*([-*+])\s+/.test(lines[i])){ items.push(lines[i].replace(/^\s*[-*+]\s+/,'')); i++; }
+      out.push('<ul>'+items.map(x=>`<li>${inline(x)}</li>`).join('')+'</ul>'); continue;
+    }
+    if(/^\s*\d+[.)]\s+/.test(l)){
+      const items=[]; while(i<lines.length&&/^\s*\d+[.)]\s+/.test(lines[i])){ items.push(lines[i].replace(/^\s*\d+[.)]\s+/,'')); i++; }
+      out.push('<ol>'+items.map(x=>`<li>${inline(x)}</li>`).join('')+'</ol>'); continue;
+    }
+    const para=[]; while(i<lines.length&&!/^\s*$/.test(lines[i])&&!/^\s*(#{1,4}\s|[-*+]\s|\d+[.)]\s|\|)/.test(lines[i])){ para.push(lines[i]); i++; }
+    out.push(`<p>${inline(para.join(' '))}</p>`);
+  }
+  return out.join('');
+}
+
+/* ============================================================
+   Render
+   ============================================================ */
+let toast=null,toastT=null;
+function flash(msg){ toast=msg; clearTimeout(toastT); toastT=setTimeout(()=>{toast=null;render();},5200); render(); }
+
+function render(){
+  renderTop(); renderRail(); renderDrawer();
+  const m=$('#main'); m.replaceChildren();
+  if(toast){ const b=el('div','banner',toast); m.appendChild(b); }
+  ({brief:vBrief,intake:vIntake,docs:vDocs,setup:vSetup}[S.view]||vLog)(m);
+}
+
+function renderTop(){
+  const p=S.program||{}; const n=$('#progline'); n.replaceChildren();
+  if(!p.name) return;
+  const dot=el('span','ragdot rag-'+String(p.rag||'Green').toLowerCase());
+  n.append(dot,el('span',null,(p.rag||'Green')+' · '+(p.phase||'-')),
+    el('span',null,'Week '+(p.week||1)+' of '+(p.weeks||12)),
+    el('span',null,p.name));
+  if(DEMO) n.append(el('span','t-violet','· portfolio build - scripted responses'));
+  else if(!SAMPLE) n.append(el('span','t-amber','· AI features unavailable in this view'));
+}
+
+const NAV=[
+  {g:'Program'},{id:'brief',label:'Brief'},{id:'intake',label:'Intake'},
+  {g:'Logs'},{id:'actions',label:'Actions'},{id:'risks',label:'Risks'},{id:'milestones',label:'Schedule'},
+  {id:'budget',label:'Budget'},{id:'deps',label:'Dependencies'},{id:'decisions',label:'Decisions'},
+  {g:'Output'},{id:'docs',label:'Documents'},{id:'setup',label:'Setup'}
+];
+function counts(id){
+  if(!LOGS[id]) return null;
+  const open=S[id].filter(LOGS[id].isOpen).length;
+  const bad=id==='actions'?S.actions.filter(overdue).length
+          :id==='risks'?S.risks.filter(r=>r.status!=='Closed'&&expo(r)>=6).length
+          :id==='milestones'?S.milestones.filter(r=>r.status==='Late').length
+          :id==='deps'?S.deps.filter(r=>r.status==='At risk'||r.status==='Blocked').length:0;
+  return {open,bad};
+}
+function renderRail(){
+  const r=$('#rail'); r.replaceChildren();
+  NAV.forEach(item=>{
+    if(item.g){ r.appendChild(el('div','railgroup',item.g)); return; }
+    const b=el('button','navitem'); b.type='button';
+    b.setAttribute('aria-current',String(S.view===item.id));
+    b.appendChild(el('span',null,item.label));
+    const c=counts(item.id);
+    if(c){ const s=el('span','ct'+(c.bad?' warn':''),c.bad?String(c.bad)+'!':String(c.open)); b.appendChild(s); }
+    if(item.id==='docs'&&S.docs.length) b.appendChild(el('span','ct',String(S.docs.length)));
+    b.onclick=()=>{S.view=item.id;render();$('#main').scrollTop=0;};
+    r.appendChild(b);
+  });
+}
+
+function renderDrawer(){
+  const w=$('#propList'); w.replaceChildren();
+  const sub=$('.drawerhead p');
+  sub.textContent=S.proposals.length?(S.proposals.length+' item'+(S.proposals.length===1?'':'s')+' proposed from signal'):'Nothing enters a log until you accept it.';
+  if(S.busy==='extract'){ const t=el('div','prop'); t.appendChild(thinking('Reading the signal')); w.appendChild(t); }
+  if(!S.proposals.length&&S.busy!=='extract'){
+    const e=el('div','empty'); e.style.padding='22px 16px';
+    e.appendChild(el('b',null,'Queue is clear'));
+    e.appendChild(el('span',null,'Paste a thread or transcript into the bar above and everything trackable lands here first.'));
+    w.appendChild(e); return;
+  }
+  S.proposals.forEach(p=>{
+    const c=el('div','prop');
+    c.appendChild(el('div','kind',(p.kind||'item')+(p.source?' · from '+p.source:'')));
+    c.appendChild(el('div','ptitle',p.title||'Untitled'));
+    if(p.quote) c.appendChild(el('div','quote','“'+p.quote+'”'));
+    const bits=[p.owner&&('Owner '+p.owner),p.due&&('Due '+fdate(p.due)),p.provider&&('From '+p.provider),
+      p.probability&&('P '+p.probability+' / I '+p.impact),p.amount&&money(p.amount)].filter(Boolean);
+    const meta=el('div','meta',bits.join('  ·  ')||' ');
+    const cf=Math.round((Number(p.confidence)||0)*4);
+    const conf=el('span','conf'); conf.title='Model confidence';
+    for(let i=0;i<4;i++) conf.appendChild(el('i',i<cf?'on':''));
+    meta.appendChild(conf); c.appendChild(meta);
+    const row=el('div','row');
+    const a=el('button','btn sm pri','Accept'); a.onclick=()=>acceptProposal(p);
+    const e=el('button','btn sm','Edit first'); e.onclick=()=>openEditor(KIND_MAP[p.kind]||'actions',(toRecord(p)||[])[1],()=>drop('proposals',p.id));
+    const d=el('button','btn sm ghost','Discard'); d.onclick=()=>drop('proposals',p.id);
+    row.append(a,e,d); c.appendChild(row);
+    if(p.kind==='question'){ const q=el('div','meta','Open question - accepting files it as an action to resolve.'); c.appendChild(q); }
+    w.appendChild(c);
+  });
+}
+function thinking(label){
+  const d=el('div','thinking'); d.append(el('span','pulse'),el('span',null,label+'…'));
+  return d;
+}
+
+/* ---------- Brief ---------- */
+function vBrief(m){
+  const p=S.program||{};
+  const head=el('div','masthead');
+  head.appendChild(el('h1',null,p.name||'Set up your program'));
+  head.appendChild(el('p',null,p.goal||'Open Setup to name the program and its goal - everything generated downstream reads from it.'));
+  const wb=el('div','weekbar'); const pct=Math.min(100,((p.week||1)/(p.weeks||12))*100);
+  const i=el('i'); i.style.width=pct+'%'; wb.appendChild(i);
+  head.appendChild(wb);
+  head.appendChild(el('p','hairnote','Week '+(p.week||1)+' of '+(p.weeks||12)+' · '+(p.phase||'-')));
+  m.appendChild(head);
+
+  const od=S.actions.filter(overdue).length;
+  const hotRisk=S.risks.filter(r=>r.status!=='Closed'&&expo(r)>=6).length;
+  const slip=S.milestones.reduce((mx,r)=>Math.max(mx,days(r.current,r.baseline)||0),0);
+  const plan=S.budget.reduce((a,r)=>a+(Number(r.planned)||0),0);
+  const act=S.budget.reduce((a,r)=>a+(Number(r.actual)||0),0);
+  const stats=el('div','statline');
+  [['Open actions',S.actions.filter(r=>r.status!=='Done').length,od?od+' overdue':'all current',od?'red':'mute'],
+   ['Live risks',S.risks.filter(r=>r.status!=='Closed').length,hotRisk?hotRisk+' at high exposure':'none critical',hotRisk?'red':'mute'],
+   ['Worst slip',slip+'d',slip>0?'against baseline':'holding baseline',slip>5?'red':slip>0?'amber':'green'],
+   ['Dependencies at risk',S.deps.filter(r=>r.status==='At risk'||r.status==='Blocked').length,'of '+S.deps.length+' tracked','mute'],
+   ['Budget consumed',plan?Math.round(act/plan*100)+'%':'-',money(act)+' of '+money(plan),act>plan?'red':'mute']
+  ].forEach(([lab,val,sub,tone])=>{
+    const s=el('div','stat'); const b=el('b',null,String(val)); if(tone!=='mute') b.className='t-'+tone;
+    s.append(b,el('span',null,lab+' · '+sub)); stats.appendChild(s);
+  });
+  m.appendChild(stats);
+
+  /* ask */
+  const ask=el('div','panel');
+  ask.appendChild(el('h3',null,'Ask the program record'));
+  const ar=el('div','row');
+  const ai=el('input','inp'); ai.placeholder='e.g. what is most likely to make us miss national launch?'; ai.style.flex='1';
+  const ab=el('button','btn','Ask'); ab.disabled=!canAI();
+  const go=()=>{ if(ai.value.trim()) askProgram(ai.value.trim()); };
+  ab.onclick=go; ai.onkeydown=e=>{if(e.key==='Enter')go();};
+  ar.append(ai,ab); ask.appendChild(ar);
+  if(S.busy==='ask') ask.appendChild(thinking('Reading the logs'));
+  if(S.askAnswer){ const o=el('div','doc'); o.id='askOut'; o.style.marginTop='10px'; o.innerHTML=md(S.askAnswer); ask.appendChild(o); }
+  m.appendChild(ask);
+
+  /* attention */
+  const att=el('div','panel');
+  att.appendChild(el('h3',null,'Needs you this week'));
+  const items=[
+    ...S.actions.filter(overdue).map(r=>['Overdue',r.ref+' '+r.title,(r.owner||'unassigned')+' · was due '+fdate(r.due),'red','actions']),
+    ...S.risks.filter(r=>r.status!=='Closed'&&expo(r)>=6).map(r=>['High exposure',r.ref+' '+r.title,'exposure '+expo(r)+' · '+(r.owner||'no owner'),'red','risks']),
+    ...S.deps.filter(r=>r.status==='At risk'||r.status==='Blocked').map(r=>['Dependency',r.ref+' '+r.title,(r.provider||'?')+' · needed '+fdate(r.neededBy),'amber','deps']),
+    ...S.milestones.filter(r=>r.status==='At risk'||r.status==='Late').map(r=>['Schedule',r.ref+' '+r.title,(days(r.current,r.baseline)||0)+'d slip','amber','milestones']),
+    ...S.risks.filter(r=>r.status!=='Closed'&&!r.owner).map(r=>['No owner',r.ref+' '+r.title,'risk with nobody accountable','amber','risks'])
+  ];
+  if(!items.length){ const e=el('div','empty'); e.appendChild(el('b',null,'Nothing is on fire'));
+    e.appendChild(el('span',null,'No overdue actions, no high-exposure risks, no dependency in trouble.')); att.appendChild(e); }
+  else{
+    const wrap=el('div','ledgerwrap'); const led=el('div','ledger'); const body=el('div','lbody');
+    items.slice(0,12).forEach(([tag,title,sub,tone,view])=>{
+      const r=el('div','lrow'); r.style.gridTemplateColumns='104px minmax(0,1fr)';
+      const c1=el('div','lcell'); c1.appendChild(el('span','chip t-'+tone,tag));
+      const c2=el('div','lcell'); const t=el('div','ttl',title); t.appendChild(el('span','sub',sub)); c2.appendChild(t);
+      r.append(c1,c2); r.onclick=()=>{S.view=view;render();};
+      body.appendChild(r);
+    });
+    led.appendChild(body); wrap.appendChild(led); att.appendChild(wrap);
+  }
+  m.appendChild(att);
+
+  /* quick doc shortcuts */
+  const q=el('div','panel');
+  q.appendChild(el('h3',null,'Produce something'));
+  const qr=el('div','row');
+  [['status','Status report'],['exec','Executive update'],['raid','RAID review'],['agenda','Meeting agenda'],['escalation','Escalation memo']]
+   .forEach(([id,lab])=>{ const b=el('button','btn',lab); b.disabled=!canAI();
+     b.onclick=()=>{S.docType=id;S.view='docs';render();generateDoc(id,'');}; qr.appendChild(b); });
+  q.appendChild(qr);
+  q.appendChild(el('p','hairnote','Each one is written from the live logs, not from a blank template.'));
+  m.appendChild(q);
+
+  /* recent signals */
+  if(S.signals.length){
+    const sg=el('div','panel'); sg.appendChild(el('h3',null,'Signal history'));
+    S.signals.slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,6).forEach(s=>{
+      const r=el('div','lrow'); r.style.gridTemplateColumns='minmax(0,1fr) 120px';
+      const c1=el('div','lcell'); const t=el('div','ttl',s.summary||'(no summary)');
+      t.appendChild(el('span','sub',s.source+' · '+new Date(s.at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})));
+      c1.appendChild(t);
+      const c2=el('div','lcell'); c2.appendChild(el('span','chip t-'+(s.sentiment==='Red'?'red':s.sentiment==='Amber'?'amber':'green'),s.count+' items'));
+      r.append(c1,c2); sg.appendChild(r);
+    });
+    m.appendChild(sg);
+  }
+}
+
+/* ---------- Intake ---------- */
+function vIntake(m){
+  m.appendChild(el('h2','viewhead','Intake'));
+  m.appendChild(el('p','viewsub','Paste the raw thing - a forwarded email chain, a Slack export, a meeting transcript, a vendor quote. It gets decomposed into actions, risks, decisions, dependencies, milestones and budget lines, each carrying the sentence that produced it. Nothing lands in a log until you accept it.'));
+
+  const p=el('div','panel');
+  const srcLab=el('label','field'); srcLab.appendChild(el('span',null,'Source'));
+  const seg=el('div','seg'); let src='Email thread';
+  ['Email thread','Chat / Slack','Meeting transcript','Document','Other'].forEach(s=>{
+    const b=el('button',null,s); b.type='button'; b.setAttribute('aria-pressed',String(s===src));
+    b.onclick=()=>{src=s;[...seg.children].forEach(c=>c.setAttribute('aria-pressed',String(c.textContent===s)));};
+    seg.appendChild(b);
+  });
+  srcLab.appendChild(seg); p.appendChild(srcLab);
+
+  const ta=el('textarea','inp'); ta.rows=14; ta.id='intakeText';
+  ta.placeholder='Paste here.\n\nWorks best with the raw text - sender names, timestamps and quoted replies all help resolve owners and dates.';
+  const f=el('label','field'); f.appendChild(el('span',null,'Raw signal')); f.appendChild(ta); p.appendChild(f);
+
+  const row=el('div','row');
+  const go=el('button','btn pri','Read it'); go.disabled=!canAI()||S.busy==='extract';
+  go.onclick=()=>{ if(ta.value.trim().length<20){flash('Give it a bit more to work with.');return;} runExtract(ta.value,src); };
+  const demo=el('button','btn','Load a sample thread');
+  demo.onclick=()=>{ta.value=SAMPLE_THREAD;};
+  row.append(go,demo);
+  if(S.busy==='extract') row.appendChild(thinking('Reading'));
+  p.appendChild(row);
+  if(DEMO) p.appendChild(el('p','hairnote','Portfolio build: extraction replays a recorded result for the sample thread rather than calling a model. The hosted build sends the pasted text to Claude and parses structured JSON back. Everything else on this page - the review gate, the logs, editing, scoring - is the real code.'));
+  else if(!SAMPLE) p.appendChild(el('p','hairnote','This view did not receive permission to ask Claude, so extraction is unavailable. Manual entry in each log still works.'));
+  m.appendChild(p);
+
+  const conn=el('div','panel');
+  conn.appendChild(el('h3',null,'Connected sources'));
+  conn.appendChild(el('p','hairnote','Continuous ingestion from mail, chat and meeting recorders is the next build. For now the same pipeline runs on pasted text, which is enough to judge extraction quality before wiring anything to a live inbox.'));
+  const wrap=el('div','ledgerwrap'); const led=el('div','ledger');
+  [['Email','Thread-aware; follows quoted replies to find the original commitment','Paste'],
+   ['Chat','Channel digests, thread resolution, @mention ownership','Paste'],
+   ['Meetings','Transcript in, decisions and actions out, speaker-attributed','Paste'],
+   ['Tickets','Two-way sync so an accepted action becomes a ticket','Planned'],
+   ['Docs & wikis','Watch a spec for scope changes that nobody flagged','Planned'],
+   ['Finance','Pull committed spend against the budget log','Planned']
+  ].forEach(([a,b,c])=>{
+    const r=el('div','lrow'); r.style.gridTemplateColumns='120px minmax(0,1fr) 84px';
+    r.append(el('div','lcell ttl',a),el('div','lcell',b));
+    const s=el('div','lcell'); s.appendChild(el('span','chip t-'+(c==='Paste'?'green':'mute'),c==='Paste'?'Live':'Planned'));
+    r.appendChild(s); led.appendChild(r);
+  });
+  wrap.appendChild(led); conn.appendChild(wrap);
+  m.appendChild(conn);
+}
+
+/* ---------- generic log view ---------- */
+function vLog(m){
+  const key=S.view, L=LOGS[key]; if(!L){ S.view='brief'; return vBrief(m); }
+  m.appendChild(el('h2','viewhead',L.title));
+  m.appendChild(el('p','viewsub',L.blurb));
+
+  const bar=el('div','row'); bar.style.marginBottom='12px';
+  const add=el('button','btn pri','Add '+L.label.replace(/s$/,'').toLowerCase());
+  add.onclick=()=>openEditor(key,{ref:nextRef(key)});
+  bar.appendChild(add);
+  const seg=el('div','seg');
+  [['open','Open'],['all','All']].forEach(([v,lab])=>{
+    const b=el('button',null,lab); b.type='button'; b.setAttribute('aria-pressed',String(S.filter===v));
+    b.onclick=()=>{S.filter=v;render();}; seg.appendChild(b);
+  });
+  bar.appendChild(seg);
+  if(key==='risks'||key==='milestones'||key==='budget'){
+    const g=el('button','btn',key==='budget'?'Budget review':key==='risks'?'RAID review':'Status report');
+    g.disabled=!canAI();
+    const id=key==='budget'?'budgetreview':key==='risks'?'raid':'status';
+    g.onclick=()=>{S.docType=id;S.view='docs';render();generateDoc(id,'');};
+    bar.appendChild(g);
+  }
+  m.appendChild(bar);
+
+  let rows=S[key].slice();
+  if(S.filter==='open') rows=rows.filter(L.isOpen);
+  rows.sort((a,b)=>L.sortKey(a)-L.sortKey(b));
+
+  const gt=L.cols.map(c=>c.w).join(' ');
+  const wrap=el('div','ledgerwrap'); const led=el('div','ledger');
+  const head=el('div','lrow lhead'); head.style.gridTemplateColumns=gt;
+  L.cols.forEach(c=>{ const d=el('div','lcell'+(['money','variance','slip','expo'].includes(c.type)?' num':''),c.label); head.appendChild(d); });
+  led.appendChild(head);
+
+  const body=el('div','lbody');
+  if(!rows.length){
+    const e=el('div','empty'); e.appendChild(el('b',null,'Nothing here yet'));
+    e.appendChild(el('span',null,'Add one by hand, or paste a thread into the bar at the top and accept what comes back.'));
+    body.appendChild(e);
+  }
+  rows.forEach(r=>{
+    const tr=el('div','lrow'); tr.style.gridTemplateColumns=gt;
+    L.cols.forEach(c=>tr.appendChild(cell(r,c,L,key)));
+    tr.onclick=()=>openEditor(key,r);
+    body.appendChild(tr);
+  });
+  led.appendChild(body); wrap.appendChild(led); m.appendChild(wrap);
+
+  if(key==='budget') budgetRoll(m);
+  if(key==='milestones') timeline(m);
+  if(key==='risks') riskGrid(m);
+}
+
+function cell(r,c,L,key){
+  const d=el('div','lcell');
+  const v=r[c.k];
+  if(c.k==='ref'){ d.className+=''; d.appendChild(el('span','ref',v||'-')); return d; }
+  if(c.main){
+    const t=el('div','ttl',r.title||'Untitled');
+    const sub=[r[c.subKey],r.quote?'“'+r.quote+'”':''].filter(Boolean).join(' - ');
+    if(sub) t.appendChild(el('span','sub',sub));
+    d.appendChild(t); return d;
+  }
+  if(c.type==='status'){
+    const b=el('button','chip t-'+L.tone(v)); b.type='button'; b.textContent=v||'-';
+    b.style.cursor='pointer'; b.title='Click to advance';
+    b.onclick=e=>{ e.stopPropagation();
+      const i=c.opts.indexOf(v); patch(key,r.id,{status:c.opts[(i+1)%c.opts.length]}); };
+    d.appendChild(b); return d;
+  }
+  if(c.type==='date'){ d.textContent=fdate(v); if(c.k==='due'&&overdue(r)) d.className+=' t-red'; return d; }
+  if(c.type==='money'){ d.className+=' num'; d.textContent=money(v); return d; }
+  if(c.type==='expo'){ const n=expo(r); d.className+=' num'; d.appendChild(el('span','chip t-'+expoTone(n),String(n))); return d; }
+  if(c.type==='slip'){ const n=days(r.current,r.baseline); d.className+=' num';
+    d.textContent=n==null?'-':(n>0?'+'+n+'d':n+'d'); if(n>0)d.className+=' t-red'; else if(n<0)d.className+=' t-green'; return d; }
+  if(c.type==='variance'){ const n=(Number(r.actual)||0)-(Number(r.planned)||0); d.className+=' num t-'+(n>0?'red':n<0?'green':'mute');
+    d.textContent=(n>0?'+':'')+money(n); return d; }
+  if(c.type==='enum'&&(c.k==='probability'||c.k==='impact'||c.k==='confidence')){
+    d.appendChild(el('span','chip t-'+(v==='High'?(c.k==='confidence'?'green':'red'):v==='Low'?(c.k==='confidence'?'red':'mute'):'amber'),v||'-')); return d; }
+  if(c.k==='owner'||c.k==='decidedBy'||c.k==='provider'){ d.textContent=v||'-'; if(!v) d.className+=' t-amber'; return d; }
+  d.textContent=v==null||v===''?'-':String(v); return d;
+}
+
+function budgetRoll(m){
+  const plan=S.budget.reduce((a,r)=>a+(Number(r.planned)||0),0);
+  const com=S.budget.reduce((a,r)=>a+(Number(r.committed)||0),0);
+  const act=S.budget.reduce((a,r)=>a+(Number(r.actual)||0),0);
+  const p=el('div','panel'); p.appendChild(el('h3',null,'Rollup'));
+  const mt=el('div','meter');
+  const a=el('i'); a.style.width=Math.min(100,plan?act/plan*100:0)+'%'; a.style.background='var(--blue)';
+  const b=el('i'); b.style.width=Math.min(100-(plan?act/plan*100:0),plan?com/plan*100:0)+'%'; b.style.background='var(--ink3)';
+  mt.append(a,b); p.appendChild(mt);
+  p.appendChild(el('p','hairnote','Actual '+money(act)+' · committed '+money(com)+' · planned '+money(plan)
+    +' · remaining '+money(plan-act-com)+(plan&&act>plan?' - over plan':'')));
+  m.appendChild(p);
+}
+function timeline(m){
+  const rows=S.milestones.filter(r=>dnum(r.current)!=null);
+  if(!rows.length) return;
+  const all=rows.flatMap(r=>[dnum(r.baseline),dnum(r.current)]).filter(x=>x!=null).concat([Date.now()]);
+  const min=Math.min(...all), max=Math.max(...all), span=Math.max(1,max-min);
+  const p=el('div','panel'); p.appendChild(el('h3',null,'Baseline against current'));
+  const tl=el('div','timeline');
+  rows.sort((x,y)=>(dnum(x.current)||0)-(dnum(y.current)||0)).forEach(r=>{
+    const row=el('div','tlrow');
+    row.appendChild(el('div',null,r.ref+' '+r.title));
+    const tr=el('div','tltrack');
+    const bl=dnum(r.baseline), cu=dnum(r.current);
+    if(bl!=null&&cu!=null&&cu!==bl){
+      const bar=el('div','tlbar');
+      bar.style.left=((Math.min(bl,cu)-min)/span*100)+'%';
+      bar.style.width=Math.max(1.2,(Math.abs(cu-bl)/span*100))+'%';
+      bar.style.background=cu>bl?'var(--red)':'var(--green)';
+      tr.appendChild(bar);
+    }
+    if(cu!=null){ const dot=el('div','tlbar'); dot.style.left=((cu-min)/span*100)+'%'; dot.style.width='3px';
+      dot.style.background='var(--blue)'; tr.appendChild(dot); }
+    const now=el('div','tlnow'); now.style.left=((Date.now()-min)/span*100)+'%'; tr.appendChild(now);
+    row.appendChild(tr); tl.appendChild(row);
+  });
+  p.appendChild(tl);
+  p.appendChild(el('p','hairnote','Blue marks the current date for each milestone; the bar is the distance it has moved from baseline. The red hairline is today.'));
+  m.appendChild(p);
+}
+function riskGrid(m){
+  const live=S.risks.filter(r=>r.status!=='Closed'); if(!live.length) return;
+  const lv=['Low','Medium','High'];
+  const p=el('div','panel'); p.appendChild(el('h3',null,'Exposure grid'));
+  const g=el('div'); g.style.display='grid'; g.style.gridTemplateColumns='72px repeat(3,1fr)'; g.style.gap='1px';
+  g.style.background='var(--rule)'; g.style.border='1px solid var(--rule)';
+  const cellBox=(txt,bg)=>{const d=el('div',null,txt); d.style.background=bg||'var(--panel2)'; d.style.padding='7px 9px'; d.style.fontSize='12px'; return d;};
+  g.appendChild(cellBox('','var(--panel)'));
+  lv.forEach(x=>g.appendChild(cellBox('Impact '+x,'var(--panel)')));
+  [...lv].reverse().forEach(pr=>{
+    g.appendChild(cellBox('Prob '+pr,'var(--panel)'));
+    lv.forEach(im=>{
+      const hits=live.filter(r=>r.probability===pr&&r.impact===im);
+      const sc=({Low:1,Medium:2,High:3}[pr])*({Low:1,Medium:2,High:3}[im]);
+      const d=cellBox(hits.map(r=>r.ref).join('  ')||'·');
+      d.style.color=hits.length?('var(--'+({red:'red',amber:'amber',green:'green'}[expoTone(sc)])+')'):'var(--ink3)';
+      d.style.fontWeight=hits.length?'600':'400';
+      d.title=hits.map(r=>r.ref+' '+r.title).join('\n');
+      g.appendChild(d);
+    });
+  });
+  p.appendChild(g); m.appendChild(p);
+}
+
+/* ---------- Documents ---------- */
+function vDocs(m){
+  m.appendChild(el('h2','viewhead','Document studio'));
+  m.appendChild(el('p','viewsub','Every template is written from the live program record, with item IDs cited inline. Anything the record cannot support is marked as an assumption rather than quietly invented.'));
+
+  DOC_GROUPS.forEach(g=>{
+    m.appendChild(el('div','grouphead',g.name));
+    const grid=el('div','tmplgrid');
+    g.items.forEach(t=>{
+      const b=el('button','tmpl'); b.type='button'; b.setAttribute('aria-pressed',String(S.docType===t.id));
+      b.appendChild(el('b',null,t.name)); b.appendChild(el('span',null,t.hint));
+      b.onclick=()=>{S.docType=t.id;render();};
+      grid.appendChild(b);
+    });
+    m.appendChild(grid);
+  });
+
+  const t=docById(S.docType);
+  const p=el('div','panel');
+  p.appendChild(el('h3',null,'Generate: '+(t?t.name:'-')));
+  const f=el('label','field'); f.appendChild(el('span',null,'Anything specific to steer it (optional)'));
+  const ta=el('textarea','inp'); ta.rows=2; ta.id='docBrief';
+  ta.placeholder='e.g. audience is the steering committee, keep it to one page, lead with the vendor decision';
+  f.appendChild(ta); p.appendChild(f);
+  const row=el('div','row');
+  const g=el('button','btn pri','Write it'); g.disabled=!canAI()||S.busy==='doc';
+  g.onclick=()=>generateDoc(S.docType,ta.value.trim());
+  row.appendChild(g);
+  if(S.busy==='doc') row.appendChild(thinking('Writing'));
+  p.appendChild(row);
+  m.appendChild(p);
+
+  if(S.docDraft){
+    const d=el('div','panel');
+    const bar=el('div','row'); bar.style.marginBottom='10px';
+    const save=el('button','btn','Save to library');
+    save.onclick=async()=>{ await put('docs',{type:S.docDraft.type,title:S.docDraft.title,body:S.docDraft.body,
+      at:new Date().toISOString(),by:(ME&&ME.id)||''}); flash('Saved.'); };
+    const copy=el('button','btn','Copy markdown');
+    copy.onclick=()=>{ navigator.clipboard?.writeText(S.docDraft.body).then(()=>flash('Copied.'),()=>flash('Copy blocked by the browser.')); };
+    bar.append(save,copy);
+    if(DOWNLOADS){ const dl=el('button','btn','Download .md');
+      dl.onclick=async()=>{ try{ await DOWNLOADS.save({filename:S.docDraft.type+'-'+today()+'.md',data:S.docDraft.body}); }catch(e){ flash('Download declined.'); } };
+      bar.appendChild(dl); }
+    d.appendChild(bar);
+    const body=el('div','doc'); body.id='docBody'; body.innerHTML=md(S.docDraft.body||'');
+    if(!S.docDraft.body&&S.busy==='doc') body.appendChild(thinking('Thinking'));
+    d.appendChild(body); m.appendChild(d);
+  }
+
+  if(S.docs.length){
+    const lib=el('div','panel'); lib.appendChild(el('h3',null,'Library'));
+    S.docs.slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).forEach(doc=>{
+      const r=el('div','lrow'); r.style.gridTemplateColumns='minmax(0,1fr) 150px 70px'; r.style.cursor='pointer';
+      const c1=el('div','lcell'); const t2=el('div','ttl',doc.title);
+      t2.appendChild(el('span','sub',(doc.body||'').replace(/[#*|`]/g,'').slice(0,110)+'…')); c1.appendChild(t2);
+      const c2=el('div','lcell',new Date(doc.at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}));
+      c2.className+=' t-mute';
+      const c3=el('div','lcell'); const del=el('button','btn sm ghost danger','Delete');
+      del.onclick=e=>{e.stopPropagation();drop('docs',doc.id);}; c3.appendChild(del);
+      r.append(c1,c2,c3);
+      r.onclick=()=>{S.docDraft={type:doc.type,title:doc.title,body:doc.body};render();$('#main').scrollTop=0;};
+      lib.appendChild(r);
+    });
+    m.appendChild(lib);
+  }
+}
+
+/* ---------- Setup ---------- */
+function vSetup(m){
+  m.appendChild(el('h2','viewhead','Program setup'));
+  m.appendChild(el('p','viewsub','This is the context every generated document reads from. Ten minutes here is the difference between a usable PRD and a generic one.'));
+  const p=S.program||{};
+  const panel=el('div','panel');
+  const mk=(k,label,type,opts)=>{
+    const f=el('label','field'); f.appendChild(el('span',null,label));
+    let n;
+    if(type==='text'){ n=el('textarea','inp'); n.rows=3; }
+    else if(type==='select'){ n=el('select','inp'); opts.forEach(o=>{const op=el('option',null,o);op.value=o;n.appendChild(op);}); }
+    else { n=el('input','inp'); if(type) n.type=type; }
+    n.value=p[k]??''; n.onchange=()=>saveProgram({[k]:n.type==='number'?Number(n.value):n.value});
+    f.appendChild(n); return f;
+  };
+  panel.append(
+    mk('name','Program name'),
+    mk('goal','Goal - what is true when this is done'),
+    mk('phase','Phase','select',['Discovery','Planning','Build','Hardening','Launch','Hypercare','Closed']),
+    mk('rag','Overall RAG','select',['Green','Amber','Red'])
+  );
+  const two=el('div','row');
+  const w1=mk('week','Current week','number'); const w2=mk('weeks','Total weeks','number');
+  w1.style.flex='1'; w2.style.flex='1'; two.append(w1,w2); panel.appendChild(two);
+  panel.append(
+    mk('stakeholders','Stakeholders - name, role, what they care about','text'),
+    mk('constraints','Hard constraints - dates, budget ceiling, compliance, headcount','text'),
+    mk('tenets','Operating principles - how this program makes trade-offs','text')
+  );
+  m.appendChild(panel);
+
+  const d=el('div','panel'); d.appendChild(el('h3',null,'Data'));
+  d.appendChild(el('p','hairnote',DB
+    ? 'Logs are stored with the artifact and shared with everyone who can open it. Your own drafts stay private to you.'
+    : 'Portfolio build: the worked example lives in memory. Edits persist until you reload. The hosted build writes to a shared document store.'));
+  const r=el('div','row');
+  const seed=el('button','btn','Load the demo program');
+  seed.onclick=()=>seedDemo();
+  const clear=el('button','btn danger','Clear all data');
+  clear.onclick=async()=>{ if(!confirm('Delete the program record and every log entry?'))return;
+    for(const c of COLLS){ for(const rec of S[c].slice()) await drop(c,rec.id); }
+    await saveProgram({name:'Untitled program',goal:'',rag:'Green',week:1,weeks:12,phase:'Planning',stakeholders:'',constraints:'',tenets:''});
+    flash('Cleared.'); };
+  r.append(seed,clear); d.appendChild(r);
+  m.appendChild(d);
+
+  const rm=el('div','panel'); rm.appendChild(el('h3',null,'On the build list'));
+  const wrap=el('div','ledgerwrap'); const led=el('div','ledger');
+  [['Live connectors','Mail, chat and meeting-recorder ingestion on a schedule rather than paste'],
+   ['Ticket sync','An accepted action becomes a ticket, and its status flows back here'],
+   ['Digest & nudges','A morning digest, and a private nudge to the owner of anything about to go red'],
+   ['Baseline history','Every re-baseline kept, so slip has a narrative and not just a number'],
+   ['Portfolio roll-up','One RAG across many programs, with shared-dependency detection'],
+   ['Capacity model','Demand in person-weeks against the people you actually have'],
+   ['Goal linkage','Milestones tied to OKRs so status answers "so what"'],
+   ['Meeting-cost view','Attendee-hours priced against the budget log'],
+   ['Audit trail','Who accepted what, from which sentence, at what time']
+  ].forEach(([a,b])=>{
+    const row=el('div','lrow'); row.style.gridTemplateColumns='minmax(140px,1fr) minmax(0,2.2fr)';
+    row.append(el('div','lcell ttl',a),el('div','lcell t-mute',b)); led.appendChild(row);
+  });
+  wrap.appendChild(led); rm.appendChild(wrap); m.appendChild(rm);
+}
+
+/* ---------- editor modal ---------- */
+function openEditor(coll,rec,afterSave){
+  const L=LOGS[coll]; if(!L) return;
+  const data={...(rec||{})}; if(!data.ref) data.ref=nextRef(coll);
+  const scrim=el('div','scrim');
+  const box=el('div','modal');
+  box.appendChild(el('h3',null,(rec&&rec.id?'Edit ':'New ')+L.label.replace(/s$/,'').toLowerCase()+' · '+data.ref));
+  const fields=[{k:'title',label:'Title'},...L.cols.filter(c=>!c.main&&c.k!=='ref'&&!c.k.startsWith('_')),...(L.extra||[])];
+  fields.forEach(c=>{
+    const f=el('label','field'); f.appendChild(el('span',null,c.label));
+    let n;
+    if(c.type==='text'){ n=el('textarea','inp'); n.rows=2; }
+    else if(c.type==='enum'||c.type==='status'){ n=el('select','inp');
+      ['',...(c.opts||[])].forEach(o=>{const op=el('option',null,o||'-');op.value=o;n.appendChild(op);}); }
+    else if(c.type==='date'){ n=el('input','inp'); n.type='date'; }
+    else if(c.type==='money'){ n=el('input','inp'); n.type='number'; n.step='1'; }
+    else { n=el('input','inp'); }
+    n.value=data[c.k]??''; n.oninput=()=>{ data[c.k]=(c.type==='money')?Number(n.value||0):n.value; };
+    n.onchange=n.oninput;
+    f.appendChild(n); box.appendChild(f);
+  });
+  if(data.quote){ const q=el('div','field'); q.appendChild(el('span',null,'Traced to'));
+    q.appendChild(el('div','quote','“'+data.quote+'”'+(data.source?' - '+data.source:''))); box.appendChild(q); }
+
+  const row=el('div','row end');
+  if(rec&&rec.id){ const del=el('button','btn danger','Delete');
+    del.onclick=()=>{drop(coll,rec.id);close();}; row.appendChild(del); }
+  const cancel=el('button','btn','Cancel'); cancel.onclick=()=>close();
+  const save=el('button','btn pri','Save');
+  save.onclick=async()=>{ if(!data.title||!String(data.title).trim()){flash('It needs a title.');return;}
+    await put(coll,data); if(afterSave) await afterSave(); close(); };
+  row.append(cancel,save); box.appendChild(row);
+  scrim.appendChild(box);
+  scrim.onclick=e=>{ if(e.target===scrim) close(); };
+  function close(){ scrim.remove(); document.removeEventListener('keydown',onKey); }
+  function onKey(e){ if(e.key==='Escape') close(); }
+  document.addEventListener('keydown',onKey);
+  document.body.appendChild(scrim);
+  box.querySelector('.inp')?.focus();
+}
+
+/* ---------- sample thread for the demo ---------- */
+const SAMPLE_THREAD=`From: Lena Ortiz <lena@relay.example>
+To: Payouts Program <payouts@relay.example>
+Cc: Tomás Reyes, Aisha Bello, Grant Whitfield, Mei Tanaka
+Date: Fri, 18 Sep 2026 17:05
+Subject: Re: Instant payouts - Northbank certification and the pilot states
+
+Closing the loop on this afternoon's review so it's written down.
+
+Tomás heard back from Northbank: their push-to-card rail is not
+certified for our volume tier until 2 November. We had been planning on
+19 October. The five-state pilot starts on 26 October, so as it stands
+we'd be launching the pilot on a rail that isn't certified for us.
+
+Two ways through it. We run the pilot on the lower volume tier with a
+hard daily cap, or we slip the pilot. Mei, can you model the lower-tier
+cost by Thursday? I want it before exec review on the 29th.
+Back-of-envelope it's about 11 cents more per payout, so somewhere near
+$14,000 over the pilot window.
+
+We also agreed we are not adding a second bank partner for launch.
+Tomás made a good case for it as a hedge, but the room's view was that
+another integration eight weeks out is more risk than it removes. That
+one's my call and it's made.
+
+Two more:
+- The fraud model shadow run has slipped again, 21 September to
+  2 October. That's the third move. Aisha, I need the real constraint,
+  not a new date - by Wednesday please.
+- Counsel still hasn't confirmed licensing coverage for Washington and
+  New York. If we don't have it by 9 October the pilot drops to three
+  states. Grant is chasing.
+
+National launch stays at 16 November for now. Baseline was 9 November.
+
+Lena`;
+
+/* ---------- demo seed (written through the same API as real data) ---------- */
+async function seedDemo(){
+  await saveProgram({...SEED.program});
+  if(DEMO){
+    Object.keys(SEED.logs).forEach(k=>{ S[k]=SEED.logs[k].map((r,i)=>({id:k+i,...r})); });
+    S.proposals=[]; S.signals=[]; render();
+  }
+  flash('Demo program loaded. Try pasting the sample thread in Intake.');
+}
+
+/* ============================================================
+   Portfolio build - worked example + recorded responses.
+   Used only when the page is served outside claude.ai, i.e. when there
+   is no platform storage and no model to call. Everything except the
+   two functions below is the same code the hosted build runs.
+   ============================================================ */
+const SEED={
+  program:{name:'Instant payouts launch',
+    goal:'Let 180,000 active couriers cash out earnings to a debit card in under 30 minutes, live nationally by 16 November, with fraud loss held under 8 basis points.',
+    phase:'Build',rag:'Amber',week:9,weeks:20,
+    stakeholders:'Lena Ortiz (VP Courier Experience, sponsor - owns the launch date); Tomás Reyes (payments engineering lead); Aisha Bello (risk & fraud - owns the loss ceiling); Grant Whitfield (legal - owns state licensing); Mei Tanaka (finance - owns fees and treasury); Dev Patel (courier support); Northbank (bank partner).',
+    constraints:'National launch by 16 November; holiday code freeze begins 20 November. Fraud loss ceiling 8 bps of payout volume. No state goes live without licensing coverage confirmed by counsel. Budget ceiling $2.1M. App releases cut every other Tuesday with a 7-day store review buffer.',
+    tenets:'Launch fewer states safely rather than all states riskily. Fraud controls ship before volume, never after. A partner date is not a plan until it is confirmed in writing.'},
+  logs:{
+    actions:[
+      {ref:'A-01',title:'Finalise the courier-facing fee disclosure copy',owner:'Grant Whitfield',due:'2026-09-24',priority:'P1',status:'In progress',notes:'Must be in the 29 Sep app release to make the pilot.'},
+      {ref:'A-02',title:'Book support training sessions for the payouts launch',owner:'',due:'2026-09-17',priority:'P2',status:'Not started',notes:'Unowned since the 1 Sep planning review. Feeds X-02.'},
+      {ref:'A-03',title:'Load test the payout ledger at three times peak Friday volume',owner:'Tomás Reyes',due:'2026-10-09',priority:'P2',status:'Not started',notes:'Gate criterion for national launch.'}
+    ],
+    risks:[
+      {ref:'R-01',title:'Holiday code freeze leaves four days of float after national launch',probability:'Medium',impact:'High',owner:'',status:'Open',mitigation:'',trigger:'2026-11-09'},
+      {ref:'R-02',title:'Support contact volume exceeds staffed capacity in launch week',probability:'Medium',impact:'Medium',owner:'Dev Patel',status:'Open',mitigation:'Temporary staffing request with vendor; self-service failure recovery in scope.',trigger:'2026-10-20'},
+      {ref:'R-03',title:'Card networks revise push-to-card interchange rules in Q4',probability:'Low',impact:'High',owner:'Mei Tanaka',status:'Accepted',mitigation:'Fee model has a 15% margin buffer; monitoring network bulletins.',trigger:'2026-11-01'}
+    ],
+    milestones:[
+      {ref:'M-01',title:'Payout ledger code complete',baseline:'2026-09-30',current:'2026-09-30',status:'On track',owner:'Tomás Reyes',exitCriteria:'Ledger reconciles against a full day of simulated settlement files with zero unexplained deltas.'},
+      {ref:'M-02',title:'Employee courier dogfood',baseline:'2026-10-12',current:'2026-10-19',status:'At risk',owner:'Lena Ortiz',exitCriteria:'300 employee payouts, every failure resolved, fee disclosure signed off.'},
+      {ref:'M-03',title:'Five-state pilot live',baseline:'2026-10-26',current:'2026-10-26',status:'At risk',owner:'Lena Ortiz',exitCriteria:'Fraud loss under 8 bps over 14 days; support contacts under 8 per 1,000 payouts.'},
+      {ref:'M-04',title:'Hypercare exit',baseline:'2026-12-11',current:'2026-12-11',status:'On track',owner:'Tomás Reyes',exitCriteria:'Three consecutive weeks inside every launch metric; on-call handed to business-as-usual.'}
+    ],
+    deps:[
+      {ref:'X-01',title:'Debit card tokenisation SDK update in the courier app',provider:'Mobile Platform',neededBy:'2026-10-06',confidence:'High',status:'Committed',notes:'Slotted into the 6 Oct release train.',blocks:'M-02'},
+      {ref:'X-02',title:'Support macros and escalation path for payout failures',provider:'Courier Support',neededBy:'2026-10-20',confidence:'Medium',status:'Requested',notes:'Depends on support training being scheduled (A-02).',blocks:'M-03'},
+      {ref:'X-03',title:'Treasury pre-funding of the settlement account',provider:'Finance',neededBy:'2026-10-14',confidence:'Medium',status:'At risk',notes:'Funding amount depends on which volume tier the pilot runs on.',blocks:'M-03'}
+    ],
+    decisions:[
+      {ref:'D-01',title:'Pilot payouts capped at $500 per courier per day',decidedBy:'Aisha Bello',date:'2026-09-08',status:'Locked',rationale:'Keeps worst-case fraud exposure inside the 8 bps ceiling at pilot volume.',alternatives:'$1,000 cap for a better read on real behaviour.'}
+    ],
+    budget:[
+      {ref:'B-01',title:'Bank partner integration and platform fees',planned:780000,committed:780000,actual:260000,category:'Partner',vendor:'Northbank'},
+      {ref:'B-02',title:'Payments engineering (contract)',planned:520000,committed:460000,actual:301000,category:'Services',vendor:'Kestrel Engineering'},
+      {ref:'B-03',title:'Fraud model vendor licence',planned:240000,committed:240000,actual:120000,category:'Software',vendor:'Sentinel Risk'},
+      {ref:'B-04',title:'State licensing and legal review',planned:180000,committed:150000,actual:96000,category:'Legal'},
+      {ref:'B-05',title:'Contingency reserve',planned:220000,committed:0,actual:0,category:'Reserve',notes:'11% of plan.'}
+    ]
+  }
+};
+
+/* The recorded extraction: what the hosted build returned for the sample thread. */
+const RECORDED=[
+ {kind:'decision',title:'Do not add a second bank partner for launch',decidedBy:'Lena Ortiz',date:'2026-09-18',confidence:.95,
+  quote:'another integration eight weeks out is more risk than it removes',
+  rationale:'A second integration this close to launch was judged to add more risk than it hedges.'},
+ {kind:'risk',title:'Bank partner rail is certified only after the pilot starts',probability:'High',impact:'High',owner:'Tomás Reyes',confidence:.93,
+  quote:'not certified for our volume tier until 2 November',
+  mitigation:'Run the pilot on the lower volume tier under a hard daily cap, pending costing.'},
+ {kind:'risk',title:'Licensing unconfirmed in Washington and New York; pilot shrinks to three states',probability:'High',impact:'High',owner:'Grant Whitfield',confidence:.9,
+  quote:"If we don't have it by 9 October the pilot drops to three states",due:'2026-10-09',
+  mitigation:'Counsel being chased; prepare courier comms for a three-state fallback.'},
+ {kind:'action',title:'Model the cost of running the pilot on the lower volume tier',owner:'Mei Tanaka',due:'2026-09-24',confidence:.94,
+  quote:'can you model the lower-tier cost by Thursday',notes:'Needed before the 29 Sep exec review.'},
+ {kind:'action',title:'Surface the real constraint behind the fraud shadow-run slip',owner:'Aisha Bello',due:'2026-09-23',confidence:.9,
+  quote:'I need the real constraint, not a new date',notes:'Third slip on this milestone.'},
+ {kind:'action',title:'Chase counsel on Washington and New York licensing coverage',owner:'Grant Whitfield',due:'',confidence:.7,
+  quote:'Grant is chasing',notes:'Owner inferred from the sentence; no date was stated, so none was set.'},
+ {kind:'milestone',title:'Fraud model shadow run',baseline:'2026-09-21',current:'2026-10-02',confidence:.93,
+  quote:'slipped again, 21 September to 2 October'},
+ {kind:'milestone',title:'National launch',baseline:'2026-11-09',current:'2026-11-16',confidence:.86,
+  quote:'National launch stays at 16 November for now'},
+ {kind:'dependency',title:'Push-to-card certification at our volume tier',provider:'Northbank (bank partner)',neededBy:'2026-10-19',confidence:.88,
+  quote:'We had been planning on 19 October',notes:'Partner has committed only to 2 November.'},
+ {kind:'budget',title:'Higher per-payout fees on the lower volume tier (pilot window)',amount:14000,category:'Payment fees',confidence:.6,
+  quote:'somewhere near $14,000 over the pilot window',notes:'Back-of-envelope, about 11 cents per payout. Not a partner quote. Unbudgeted.'},
+ {kind:'question',title:'Run the pilot on the lower tier with a daily cap, or slip the pilot?',confidence:.82,
+  quote:'run the pilot on the lower volume tier with a hard daily cap'}
+];
+
+function demoExtract(text,source){
+  const t=String(text);
+  if(!/Northbank|push-to-card|payout|Relay/i.test(t)){
+    flash('This build replays one recorded extraction - the sample thread. Load it with the button below to watch the pipeline run.');
+    return;
+  }
+  S.busy='extract'; render();
+  setTimeout(async()=>{
+    await put('signals',{source,summary:'Post-review wrap-up from the program sponsor. Bank partner certification slip, two unlicensed pilot states, a third schedule slip, one decision recorded, and a fee estimate.',
+      sentiment:'Red',excerpt:t.slice(0,400),at:new Date().toISOString(),count:RECORDED.length});
+    for(const it of RECORDED) await put('proposals',{...it,source,at:new Date().toISOString()});
+    S.busy=false;
+    flash(RECORDED.length+' items waiting in the review queue. Accept, edit or discard each one - nothing has entered a log yet.');
+    render();
+  },1400);
+}
+
+const RECORDED_DOCS={
+status:`# Instant payouts launch - status report
+Week 9 of 20 · Reporting date 21 September 2026
+
+**Overall: Amber.** National launch still holds at 16 November, but the bank partner's certification now lands after the pilot starts, and two of the five pilot states have no licensing sign-off.
+
+## Position
+| Dimension | State | Note |
+| --- | --- | --- |
+| Schedule | Amber | Dogfood has moved 12 → 19 Oct [M-02]. The fraud shadow run has moved three times. National launch sits 7 days past baseline. |
+| Scope | Amber | The pilot drops from five states to three if licensing is not confirmed by 9 October. |
+| Budget | Green | 40% consumed at 45% elapsed. Contingency untouched [B-05]. |
+| Risk | Red | Two high-exposure risks from this week's review, plus one unowned [R-01]. |
+
+## Progress since last report
+- Pilot cap locked at $500 per courier per day [D-01], keeping worst-case fraud exposure inside the 8 bps ceiling.
+- Tokenisation SDK committed by Mobile Platform for the 6 October release train [X-01].
+- Fee disclosure copy is in final legal review [A-01].
+
+## What moved against us
+Northbank's push-to-card rail will not be certified for our volume tier until 2 November. We had planned on 19 October, and the five-state pilot starts 26 October. That leaves two options: run the pilot on the lower volume tier under a hard daily cap, or slip the pilot. Costing is due 24 September.
+
+Separately, counsel has not confirmed licensing coverage for Washington and New York. If it is still unconfirmed on 9 October the pilot runs in three states. The schedule impact is smaller than the certification issue, but it shrinks the sample the fraud model is being judged on.
+
+## Decisions needed from exec review
+1. **Approve running the pilot on the lower volume tier** (~$14,000 in additional fees, drawn from contingency) - needed on 29 September, otherwise the pilot slips and takes most of the float before national launch with it.
+2. **Confirm a three-state pilot is an acceptable fallback** - needed by 9 October so courier comms for the dropped states can be pulled in time.
+
+## Asks
+- An owner for [R-01]. The holiday freeze leaves four days to fix anything found at launch, and nobody is planning for that window.
+- An owner for [A-02]. Support training is overdue and unassigned, and [X-02] depends on it.
+
+*Assumption: the $14,000 figure is a back-of-envelope estimate from the 18 September review - about 11 cents per payout - not a Northbank quote. It is carried at low confidence until the costing closes.*`,
+
+storymap:`# Instant payouts - user story map
+
+## Backbone: what a courier does, left to right
+| Set up | Earn | Cash out | Track | Resolve |
+| --- | --- | --- | --- | --- |
+| Add a debit card | See earnings accrue in real time | Choose instant or standard | See payout status | Report a missing payout |
+| Verify identity | See what is eligible to cash out | See the fee before confirming | Get a notification on arrival | Get a plain-language failure reason |
+| Accept fee terms | See the daily limit | Confirm with one tap | View payout history | Retry to a different card |
+
+## Release slices
+
+### Walking skeleton - employee dogfood
+- Add one debit card through the tokenisation SDK [X-01]
+- Instant payout with the fee shown before confirmation
+- A ledger entry per payout, reconciled against the partner settlement file
+- Failures surfaced to support and resolved by hand
+
+*Proves:* money moves end to end and the ledger reconciles against what the bank says happened.
+*Defers:* limits, notifications, self-service recovery.
+
+### Release 1 - five-state pilot
+- Daily cap of $500 per courier enforced [D-01]
+- Fraud model scoring every payout and blocking above threshold
+- Payout status and a notification on arrival
+- Support macros for the six most common failures [X-02]
+
+*Proves:* fraud loss stays inside 8 bps with real couriers at real volume.
+*Defers:* the national volume tier, self-service retry.
+
+### Release 2 - national launch
+- Volume-tier rail once the bank partner certifies it
+- Self-service retry to a different card
+- Payout history and downloadable statements
+- State-by-state enablement behind licensing flags
+
+### Later
+- Scheduled automatic payouts
+- Payout to a bank account rather than a card
+- Earnings advance before a shift completes
+
+## Notes
+The pilot deliberately runs under a hard daily cap. That is not a workaround for the certification slip - it is how the fraud model gets judged on real behaviour before volume can hide its misses.`,
+
+prd:`# Instant payout failure recovery - PRD
+
+## Summary
+When an instant payout fails, the courier sees a generic error and the money sits in limbo until support resolves it by hand. This document specifies a recovery flow that tells the courier what happened, returns the money to a known state, and lets them retry without contacting anyone.
+
+## Problem
+In the 10 September dogfood rehearsal, 1 in 37 test payouts failed - mostly expired cards and bank-side declines. Every failure needed a support agent to find the ledger entry, confirm the funds had reversed, and tell the courier. Median resolution was 3 hours 40 minutes. For a courier cashing out on a Friday, that money is often rent.
+
+## Goals
+- A courier whose payout fails knows why within 60 seconds, in plain language.
+- Funds are always in exactly one visible state: available, in flight, or delivered.
+- Most failures are resolved by the courier without a support contact.
+
+## Non-goals
+- Preventing failures. Card validation is a separate workstream.
+- Recovering payouts blocked by the fraud model. Those follow the risk review path on purpose.
+
+## Users
+| User | Job to be done | Today |
+| --- | --- | --- |
+| Courier | Get my money, or know exactly where it is | Generic error, then waits for support |
+| Support agent | Resolve a payout question in one contact | Ledger lookup plus manual confirmation |
+| Risk analyst | Tell an ordinary failure apart from a fraud signal | Both arrive in one queue |
+
+## Requirements
+| ID | Requirement | Priority | Rationale |
+| --- | --- | --- | --- |
+| RQ-1 | Map every bank-partner decline code to a courier-readable reason | Must | The error message is the product |
+| RQ-2 | Return failed funds to the available balance within 5 minutes | Must | Limbo is what generates the contact |
+| RQ-3 | Offer retry to the same or a different card from the failure screen | Must | Most failures are card problems the courier can fix |
+| RQ-4 | Limit retries to 3 per payout per hour | Must | Repeated declines are a fraud signal and a fee cost |
+| RQ-5 | Show payout state and failure reason to support in one view | Should | One-contact resolution |
+| RQ-6 | Route fraud-model blocks to a separate path with no retry | Should | Keeps recovery from becoming a bypass |
+| RQ-7 | Notify the courier when funds are returned | Could | Closes the loop without them checking |
+
+## Success metrics
+| Metric | Baseline | Target |
+| --- | --- | --- |
+| Time from failure to the courier knowing why | 3 h 40 m | < 60 seconds |
+| Failed payouts resolved without a support contact | 0% | > 70% |
+| Support contacts per 1,000 payouts | ~27 | < 8 |
+
+## Dependencies
+- The complete decline-code list from Northbank, including codes they rarely emit
+- Support macros and escalation path [X-02]
+
+## Risks
+- *Assumption:* Northbank returns declined funds to the settlement account within minutes. If reversals are batched daily, RQ-2 means fronting the balance ourselves, which is a treasury decision [X-03], not a product one.
+
+## Launch criteria
+Exercised in the five-state pilot [M-03] with deliberately expired test cards, and every failure resolved without a support contact.`
+};
+
+function demoDoc(t){
+  const body=RECORDED_DOCS[t.id] || ('# '+t.name+'\n\nThis build ships three recorded outputs - the status report, the user story map and a PRD. The hosted build writes all '+ALL_DOCS.length+' from the live program record.\n\nFor reference, this is the structure the generator is given for a '+t.name+':\n\n- '+t.outline.split(';').map(x=>x.trim()).filter(Boolean).join('\n- ')+'\n');
+  S.busy='doc'; S.docDraft={type:t.id,title:t.name,body:''}; render();
+  let i=0;
+  const step=()=>{
+    i=Math.min(body.length,i+Math.ceil(body.length/70));
+    S.docDraft.body=body.slice(0,i);
+    const n=$('#docBody'); if(n) n.innerHTML=md(S.docDraft.body);
+    if(i<body.length) setTimeout(step,28); else { S.busy=false; render(); }
+  };
+  setTimeout(step,500);
+}
+
+function demoAsk(q){
+  S.busy='ask'; S.askAnswer=''; S.view='brief'; render();
+  const body=`National launch on 16 November is exposed on three fronts, in order of how much they can move it:
+
+1. **Bank partner certification.** Northbank's volume-tier rail is not certified until 2 November - after the pilot starts. Running the pilot on the lower tier protects the date at a cost of roughly $14,000; slipping the pilot eats most of the float before launch.
+2. **The fraud shadow run.** It has moved three times with no named constraint. The pilot cannot start without it, and one more slip lands it on top of the pilot start date.
+3. **The unowned freeze risk.** [R-01] scores 6 and has no owner. The holiday code freeze on 20 November leaves four days to fix anything found at launch, and nobody is planning for that window.
+
+The item with the worst ratio of impact to effort is the third: assigning an owner costs nothing and it is the only one of the three you can close today.
+
+*This build replays one recorded answer. The hosted build sends the live logs to Claude and answers whatever you ask.*`;
+  let i=0;
+  const step=()=>{
+    i=Math.min(body.length,i+Math.ceil(body.length/60));
+    S.askAnswer=body.slice(0,i);
+    const n=$('#askOut'); if(n) n.innerHTML=md(S.askAnswer); else render();
+    if(i<body.length) setTimeout(step,26); else { S.busy=false; render(); }
+  };
+  setTimeout(step,600);
+}
+
+/* ---------- spine ---------- */
+$('#spineGo').onclick=()=>{
+  const v=$('#spineInput').value.trim(); if(!v) return;
+  if(v.length<160&&/\?$/.test(v)){ askProgram(v); $('#spineInput').value=''; return; }
+  if(v.length<40){ flash('That is short. If it is a question, end it with a question mark; otherwise paste more.'); return; }
+  runExtract(v,'Pasted'); $('#spineInput').value='';
+};
+$('#spineInput').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#spineGo').click(); } };
+$('#mobProps').onclick=()=>{ const d=$('#drawer'); d.style.display=d.style.display==='block'?'':'block';
+  d.style.position='fixed'; d.style.inset='auto 0 0 0'; d.style.maxHeight='62vh'; d.style.zIndex='30';
+  d.style.borderTop='1px solid var(--ruleS)'; d.style.paddingBottom='env(safe-area-inset-bottom,0px)'; };
+
+boot();
+</script>
+</body>
+</html>
