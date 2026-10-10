@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deepam Khirwar - Product &amp; Technical Program Manager</title>
+<title>Deepam Khirwar - Senior Product &amp; Technical Program Manager</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -752,32 +752,6 @@
     .more-work-grid{ grid-template-columns:1fr; }
   }
 
-  /* ---------- PRINCIPLES ---------- */
-  .principles-grid{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:28px;
-  }
-  .principle{
-    padding:30px;
-    background:#2b2a28;
-    border-radius:12px;
-    opacity:0;
-    transform:translateY(16px) rotate(0deg) scale(1);
-    transition:opacity 0.55s ease, transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    box-shadow:0 12px 24px rgba(255,255,255,0.1);
-    cursor:none;
-  }
-  .principles-grid.in-view .principle:nth-child(1){ transition-delay:0.02s; }
-  .principles-grid.in-view .principle:nth-child(2){ transition-delay:0.1s; }
-  .principles-grid.in-view .principle:nth-child(3){ transition-delay:0.18s; }
-  .principles-grid.in-view .principle:nth-child(4){ transition-delay:0.26s; }
-  .principles-grid.in-view .principle{ opacity:1; transform:translateY(0) rotate(0deg) scale(1); }
-  .principle:nth-child(odd):hover{ background:#37312a; transform:translateY(0) rotate(-3deg) scale(1.04); box-shadow:0 16px 30px rgba(226,113,29,0.35); }
-  .principle:nth-child(even):hover{ background:#37312a; transform:translateY(0) rotate(3deg) scale(1.04); box-shadow:0 16px 30px rgba(226,113,29,0.35); }
-  .principle h3{ font-size:1.12rem; margin-bottom:10px; color:#ffffff; }
-  .principle p{ margin:0; color:#d8d4cc; font-size:0.96rem; }
-  @media (max-width:640px){ .principles-grid{ grid-template-columns:1fr; } }
 
   /* ---------- EXPERIENCE ---------- */
   /* ---------- EXPERIENCE CARDS ---------- */
@@ -963,7 +937,6 @@
       <a href="#top" class="logo-badge" aria-label="Back to top">DK</a>
       <nav class="topbar-nav">
         <a href="#programs">Programs</a>
-        <a href="#how-i-work">How I work</a>
         <a href="#experience">Experience</a>
         <a href="#personal-projects">Personal Projects</a>
         <a href="#contact">Contact</a>
@@ -978,11 +951,11 @@
     <div class="wrap hero-inner">
       <div class="hero-name">Deepam Khirwar</div>
       <div class="hero-roles">
-        <span class="role-badge role-badge-a">Product Manager</span>
-        <span class="role-badge role-badge-b">Technical Program Manager</span>
+        <span class="role-badge role-badge-a">Senior Product Manager</span>
+        <span class="role-badge role-badge-b">Senior Technical Program Manager</span>
       </div>
       <h1 id="hero-headline">Platforms ship because someone owns the path between strategy and delivery.</h1>
-      <p>I'm Deepam Khirwar. For 10+ years I've defined what enterprise platforms should do and run the programs that get them there on time - across healthcare, fintech, and SaaS, for organizations serving 5M+ people.</p>
+      <p>I'm Deepam Khirwar. For 10+ years I've defined what enterprise platforms should do and run the programs that get them there on time - across healthcare, fintech, SaaS, and BPaaS, for organizations serving 5M+ people.</p>
       <div class="hero-links">
         <a class="btn btn-primary" href="#programs">Read the case studies</a>
         <a class="btn btn-secondary" href="mailto:Deepamkhirwar2406@gmail.com">Get in touch</a>
@@ -1012,23 +985,23 @@
     <div class="nums-grid" id="nums-grid">
       <div class="n-item">
         <span class="n-val" data-target="5" data-suffix="M+">0</span>
-        <div class="n-label">People<br>Reached</div>
+        <div class="n-label">Users<br>Reached</div>
       </div>
       <div class="n-item">
         <span class="n-val" data-target="10" data-suffix="+">0</span>
         <div class="n-label">Years<br>Shipping</div>
       </div>
       <div class="n-item">
-        <span class="n-val" data-target="15" data-suffix="+">0</span>
-        <div class="n-label">Teams<br>Aligned</div>
+        <span class="n-val" data-target="60" data-suffix="%">0</span>
+        <div class="n-label">Efficiency<br>Gain</div>
+      </div>
+      <div class="n-item">
+        <span class="n-val" data-target="40" data-suffix="%">0</span>
+        <div class="n-label">Data Latency<br>Cut</div>
       </div>
       <div class="n-item">
         <span class="n-val" data-target="2" data-prefix="$" data-suffix="M+">0</span>
         <div class="n-label">Risk<br>Avoided</div>
-      </div>
-      <div class="n-item">
-        <span class="n-val" data-target="45" data-suffix="%">0</span>
-        <div class="n-label">Escalations<br>Cut</div>
       </div>
     </div>
   </section>
@@ -1113,6 +1086,20 @@
 
         <article class="mp-card">
           <div class="mp-co">Cognizant Technology Solutions</div>
+          <div class="mp-title">Acquisition funnel root-cause analysis</div>
+          <p class="mp-desc">Directed the analytics strategy behind a major funnel investigation, using SQL root-cause analysis to pinpoint 3 critical drop-off points and shape the executive prioritization decision.</p>
+          <div class="mp-tags"><span class="mp-tag">3 Drop-offs Found</span><span class="mp-tag">+10% Users Recovered</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Cognizant Technology Solutions</div>
+          <div class="mp-title">Snowflake near real-time analytics</div>
+          <p class="mp-desc">Built Snowflake-based data ingestion and transformation pipelines that enabled near real-time analytics and sped up product decisions.</p>
+          <div class="mp-tags"><span class="mp-tag">-40% Reporting Latency</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Cognizant Technology Solutions</div>
           <div class="mp-title">Salesforce partner onboarding platform</div>
           <p class="mp-desc">Led delivery of a Salesforce-integrated onboarding and case management platform with external healthcare partners.</p>
           <div class="mp-tags"><span class="mp-tag">-60% Manual Processing</span><span class="mp-tag">-35% SLA Response</span></div>
@@ -1123,6 +1110,13 @@
           <div class="mp-title">AI-assisted requirements workflow</div>
           <p class="mp-desc">Introduced an AI-assisted requirements documentation workflow, reclaiming a full sprint of engineering capacity per quarter.</p>
           <div class="mp-tags"><span class="mp-tag">-35% Spec Turnaround</span></div>
+        </article>
+
+        <article class="mp-card">
+          <div class="mp-co">Blue Shield of California</div>
+          <div class="mp-title">Regulatory and compliance delivery</div>
+          <p class="mp-desc">Delivered 8 regulatory and compliance programs across Engineering, Legal, Operations, and Product while managing 200+ user stories per quarter.</p>
+          <div class="mp-tags"><span class="mp-tag">100% On-Time</span><span class="mp-tag">$2M Exposure Avoided</span></div>
         </article>
 
         <article class="mp-card">
@@ -1157,19 +1151,6 @@
     </section>
 
 
-    <section id="how-i-work">
-      <div class="section-head">
-        <h2>How I work</h2>
-        <p>Four principles that show up in every program above.</p>
-      </div>
-      <div class="principles-grid" id="principles-grid">
-        <div class="principle"><h3>Start with the moment, not the roadmap</h3><p>Find where a problem actually shows up for the person living it before scoping a solution around it.</p></div>
-        <div class="principle"><h3>Governance should be the fastest path</h3><p>The frameworks that stick are the ones built with the people who'll use them, not handed down to them.</p></div>
-        <div class="principle"><h3>Data should settle arguments, not start them</h3><p>Pull the number before the opinion - it changes which conversations are even worth having.</p></div>
-        <div class="principle"><h3>Escalate by exception</h3><p>Blockers get surfaced the day they appear, not saved for the next status meeting.</p></div>
-      </div>
-    </section>
-
     <section id="experience">
       <div class="section-head">
         <h2>Experience</h2>
@@ -1179,10 +1160,10 @@
       <div class="exp-grid" id="exp-grid">
         <article class="e-card">
           <div class="e-date">Aug 2021 – Present</div>
-          <div class="e-title">Product Manager / Technical Program Manager</div>
+          <div class="e-title">Senior Product Manager / Senior Technical Program Manager</div>
           <div class="e-co">Cognizant Technology Solutions &middot; Healthcare</div>
           <p class="e-desc">Own product strategy and program governance for enterprise healthcare platforms serving 4M+ members, including a 0-to-1 pharmacy transparency platform and an org-wide AI governance framework.</p>
-          <div class="e-wins"><span class="e-win">4M+ Members</span><span class="e-win">AI Governance</span><span class="e-win">15+ Teams</span></div>
+          <div class="e-wins"><span class="e-win">4M+ Members</span><span class="e-win">AI Governance</span><span class="e-win">15+ Teams</span><span class="e-win">-40% Reporting Latency</span><span class="e-win">-60% Manual Processing</span></div>
         </article>
 
         <article class="e-card">
@@ -1290,6 +1271,26 @@
           <a class="pp-secondary" href="program-desk-prototype.html" target="_blank" rel="noopener">View the interactive prototype</a>
         </div>
       </div>
+
+      <div class="pp-card" id="pp-card-parents" style="margin-top:28px;">
+        <span class="pp-tag">Personal Project &middot; Product &amp; Systems Design</span>
+        <h3 class="pp-title">Parents' Paperwork</h3>
+        <p class="pp-desc">A self-directed personal project: a shared mobile app that helps adult children, often living abroad, run their retired parents' yearly paperwork in India. Pension, tax, bank, insurance and benefit rules become one family calendar with step-by-step guides. Includes a full case study, a system design write-up covering the rules engine and privacy model, and a fully interactive prototype.</p>
+        <div class="pp-links">
+          <a class="btn btn-primary" href="parents-paperwork-case-study.html">Explore more</a>
+          <a class="pp-secondary" href="parents-paperwork-app.html" target="_blank" rel="noopener">View the interactive prototype</a>
+        </div>
+      </div>
+
+      <div class="pp-card" id="pp-card-wayfare" style="margin-top:28px;">
+        <span class="pp-tag">Personal Project &middot; Product &amp; Interaction Design</span>
+        <h3 class="pp-title">Wayfare</h3>
+        <p class="pp-desc">A self-directed personal project: a mobile travel app that puts discovery, attraction details, weather and trip planning behind one interactive NASA-imagery globe. Includes a full case study with market positioning, a system design write-up covering the globe rendering pipeline, live open-data mode and production architecture, and a fully interactive prototype.</p>
+        <div class="pp-links">
+          <a class="btn btn-primary" href="wayfare-case-study.html">Explore more</a>
+          <a class="pp-secondary" href="wayfare-prototype.html">View the interactive prototype</a>
+        </div>
+      </div>
     </section>
 
   </div>
@@ -1348,7 +1349,7 @@
       requestAnimationFrame(ringLoop);
     }
     ringLoop();
-    var hoverables = document.querySelectorAll('a, button, .case, .n-item, .mp-card, .e-card, .principle, .pp-card');
+    var hoverables = document.querySelectorAll('a, button, .case, .n-item, .mp-card, .e-card, .pp-card');
     hoverables.forEach(function(el){
       el.addEventListener('mouseenter', function(){ cRing.classList.add('hover'); });
       el.addEventListener('mouseleave', function(){ cRing.classList.remove('hover'); });
@@ -1401,9 +1402,9 @@
     window.addEventListener('resize', resizeWaveCanvas);
 
     var waveLines = [
-      { amplitude: 22, wavelength: 260, speed: 0.010, yFactor: 0.62, color: 'rgba(226,113,29,0.16)', lineWidth: 2 },
-      { amplitude: 32, wavelength: 340, speed: 0.007, yFactor: 0.74, color: 'rgba(226,113,29,0.10)', lineWidth: 2 },
-      { amplitude: 16, wavelength: 200, speed: 0.014, yFactor: 0.85, color: 'rgba(226,113,29,0.08)', lineWidth: 1.5 }
+      { amplitude: 22, wavelength: 260, speed: 0.004, yFactor: 0.62, color: 'rgba(226,113,29,0.16)', lineWidth: 2 },
+      { amplitude: 32, wavelength: 340, speed: 0.003, yFactor: 0.74, color: 'rgba(226,113,29,0.10)', lineWidth: 2 },
+      { amplitude: 16, wavelength: 200, speed: 0.006, yFactor: 0.85, color: 'rgba(226,113,29,0.08)', lineWidth: 1.5 }
     ];
     var t = 0;
     function drawWaves(){
@@ -1495,20 +1496,6 @@
   window.addEventListener('scroll', updateTimelineFill, { passive: true });
   window.addEventListener('resize', updateTimelineFill);
   updateTimelineFill();
-
-  // Principles grouped stagger reveal
-  var principlesGrid = document.getElementById('principles-grid');
-  if(principlesGrid){
-    var pObserver = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          principlesGrid.classList.add('in-view');
-          pObserver.disconnect();
-        }
-      });
-    }, { threshold: 0.25 });
-    pObserver.observe(principlesGrid);
-  }
 
   // Experience / education table reveal
   var tlItems = document.querySelectorAll('.e-card, .mp-card, .pp-card');
