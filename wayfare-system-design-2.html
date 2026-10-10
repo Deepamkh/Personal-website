@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wayfare: System Design</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#e2711d;--accent-dk:#c85f16;--ink:#f5efe6;--paper:#0f0d0c;--panel:#1c1815;--muted:#b9ada0;--line:#33291f;--body:#d8d4cc}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Raleway',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;cursor:none}
+a,button{cursor:none}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-color:var(--accent)}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.bar{max-width:760px;margin:0 auto;padding:16px 24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:15px}
+.bar a{color:var(--muted);text-decoration:none}
+.bar a:hover{color:var(--ink)}
+.bar a[aria-current]{color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent)}
+.bar a.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--accent);font-family:'Merriweather',serif;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .3s ease;margin-right:6px}
+.bar a.logo-badge:hover{transform:scale(1.12);color:var(--accent)}
+.bar a.home{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:.86rem;padding:6px 10px;border-radius:4px;border:1px solid transparent;transition:transform .2s ease,color .2s ease,background .2s ease,border-color .2s ease}
+.bar a.home:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--accent)}
+.hero{max-width:760px;margin:0 auto;padding:40px 24px 48px}
+.hero h1{font-family:'Merriweather',Georgia,serif;font-size:clamp(32px,6vw,48px);line-height:1.14;letter-spacing:-0.01em;margin:0 0 14px;color:#fff}
+.hero p{margin:0;color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:16px 24px 72px}
+h2{font-family:'Merriweather',Georgia,serif;font-size:26px;line-height:1.25;color:#fff;margin:48px 0 12px;padding-top:12px;border-top:3px solid var(--accent);display:inline-block}
+p,li{max-width:68ch;color:var(--body)}
+strong{color:#fff}
+li::marker{color:var(--accent)}
+.table{overflow-x:auto;margin:16px 0 20px;border:2px solid #000;border-radius:10px;background:var(--panel);box-shadow:5px 5px 0 #000}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--body)}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:rgba(226,113,29,.05)}
+th{background:var(--accent);color:#0f0d0c;font-weight:700}
+th:empty{display:none}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85em;background:#2b2a28;color:var(--accent);padding:1px 5px;border-radius:4px}
+pre{background:#000;color:#e6e0d6;padding:16px;border-radius:10px;border:2px solid #000;box-shadow:5px 5px 0 var(--line);overflow-x:auto;font-size:13.5px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit}
+.fig{background:#fff;border:2px solid #000;border-radius:10px;padding:12px;margin:16px 0;overflow-x:auto;box-shadow:5px 5px 0 #000}
+.fig svg{display:block;width:100%;min-width:560px;height:auto}
+footer{max-width:760px;margin:0 auto;padding:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;transform:translate(-100px,-100px)}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--accent);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width .2s ease,height .2s ease,margin .2s ease}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,.14)}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9990;opacity:.5;animation:trail-fade .55s ease-out forwards}
+@keyframes trail-fade{to{opacity:0;transform:scale(.15)}}
+@media (hover:none){.cur-main,.cur-ring{display:none}body,a,button{cursor:auto}}
+
+h3{font-family:'Merriweather',Georgia,serif;font-size:19px;line-height:1.3;color:#fff;margin:26px 0 8px}
+.note{background:var(--panel);border:2px solid #000;border-left:4px solid var(--accent);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;box-shadow:4px 4px 0 #000}
+.note p:last-child{margin:0}
+.steps{list-style:none;padding:0;counter-reset:s;max-width:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);margin:0;max-width:none}
+.steps li::before{content:counter(s);font-family:'Merriweather',Georgia,serif;font-weight:700;font-size:20px;color:var(--accent);line-height:1.3}
+s{color:var(--muted)}
+.fig{background:var(--panel)}
+.fig figcaption{font-size:14px;color:var(--muted);margin-top:10px}
+.d-title{font:700 15px 'Merriweather',Georgia,serif;fill:#fff}
+.d-box{fill:#0f0d0c;stroke:#6b5a48;stroke-width:1.25}
+.d-box.main{fill:#33210f;stroke:#e2711d;stroke-width:2}
+.d-group{fill:#2b2a28;stroke:#6b5a48;stroke-width:1.25}
+.d-name{font:700 13px 'Raleway',sans-serif;fill:#f5efe6}
+.d-line{font:500 11.5px 'Raleway',sans-serif;fill:#b9ada0}
+.d-arrow{fill:none;stroke:#8a7a68;stroke-width:1.25}
+.d-head{fill:#8a7a68}
+td:first-child{font-weight:700;color:#fff}
+</style></head>
+<body><header><nav class="bar" aria-label="Project"><a class="logo-badge" href="index.html" aria-label="Back to home">DK</a><a href='wayfare-prototype.html'>Prototype</a><a href='wayfare-case-study.html'>Case study</a><a href='wayfare-system-design.html' aria-current="page">System design</a><a class="home" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Back to home</a></nav>
+<div class="hero"><h1>Wayfare: System Design</h1><p>How the Wayfare prototype is built today, and the architecture it grows into for production. Version 1.1, October 2026.</p></div></header>
+<main><h2 id="summary">Summary</h2>
+          <p>Wayfare runs today as one self-contained HTML file: a WebGL globe, a single-page app and two data layers, with no backend. Inside Claude, an AI layer supplies details and itineraries; on any other website, a live open-data layer takes over automatically. The production version moves keys, data and AI calls behind a small backend and uses licensed sources throughout.</p>
+        
+<h2 id="goals-and-non-goals">Goals and non-goals</h2>
+          <h3>Goals</h3>
+          <ul>
+            <li>Map-first discovery: from globe to a list of attractions within a chosen radius in two taps.</li>
+            <li>One attraction page that answers "should I go, and how" in under a minute.</li>
+            <li>Itineraries grounded in real opening hours, distances and weather.</li>
+            <li>Fast on mid-range phones: first paint under 2 seconds on 4G.</li>
+            <li>Clear provenance: every section says where its data comes from.</li>
+          </ul>
+          <h3>Non-goals for the first release</h3>
+          <ul>
+            <li>Selling hotels, tickets or parking directly (link out or use affiliate programs instead).</li>
+            <li>Street-level maps or navigation (hand off to the phone's map app).</li>
+            <li>Scraping social media for tips.</li>
+          </ul>
+        
+<h2 id="prototype-architecture">Prototype architecture</h2>
+          <figure class="fig">
+            <svg viewBox="0 0 760 504" role="img" aria-label="One HTML file holds the globe, the app and the AI layer">
+              <defs><marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="d-head" d="M0 0L10 5L0 10z"/></marker></defs>
+              <text class="d-title" x="24" y="32">One HTML file holds the globe, the app and the AI layer</text>
+              <rect class="d-group" x="24" y="52" width="712" height="340" rx="8"/>
+              <text class="d-name" x="40" y="78">The app, one self-contained HTML file</text>
+              <g class="d-arrow">
+                <path d="M152 168V198" marker-end="url(#arrA)"/><path d="M380 168V198" marker-end="url(#arrA)"/><path d="M608 168V198" marker-end="url(#arrA)"/>
+                <path d="M152 256V286" marker-end="url(#arrA)"/><path d="M380 256V286" marker-end="url(#arrA)"/><path d="M608 256V286" marker-end="url(#arrA)"/>
+                <path d="M152 376V422" marker-end="url(#arrA)"/><path d="M380 376V422" marker-end="url(#arrA)"/>
+              </g>
+              <rect class="d-box" x="48" y="96" width="208" height="72" rx="8"/>
+              <text class="d-name" x="64" y="120">Explore screen</text><text class="d-line" x="64" y="136">Globe and bottom sheet</text><text class="d-line" x="64" y="152">Radius, list, weather</text>
+              <rect class="d-box" x="276" y="96" width="208" height="72" rx="8"/>
+              <text class="d-name" x="292" y="120">Attraction screen</text><text class="d-line" x="292" y="136">7 sections, each loads alone</text><text class="d-line" x="292" y="152">Reviews, food, photo spots</text>
+              <rect class="d-box" x="504" y="96" width="208" height="72" rx="8"/>
+              <text class="d-name" x="520" y="120">Plan trip screen</text><text class="d-line" x="520" y="136">Agent form and checks</text><text class="d-line" x="520" y="152">Streamed plan, refine, save</text>
+              <rect class="d-box" x="48" y="200" width="664" height="56" rx="8"/>
+              <text class="d-name" x="64" y="224">App state and actions</text><text class="d-line" x="64" y="240">Selected city, radius, attraction, units and tab; one click handler drives every screen</text>
+              <rect class="d-box" x="48" y="288" width="208" height="88" rx="8"/>
+              <text class="d-name" x="64" y="312">Globe renderer</text><text class="d-line" x="64" y="328">WebGL Earth, 2D overlay</text><text class="d-line" x="64" y="344">NASA day and night images</text><text class="d-line" x="64" y="360">Hit testing and fly-to</text>
+              <rect class="d-box main" x="276" y="288" width="208" height="88" rx="8"/>
+              <text class="d-name" x="292" y="312">Data layer</text><text class="d-line" x="292" y="328">Claude inside Claude</text><text class="d-line" x="292" y="344">Open data on the web</text><text class="d-line" x="292" y="360">Offline demo fallback</text>
+              <rect class="d-box" x="504" y="288" width="208" height="88" rx="8"/>
+              <text class="d-name" x="520" y="312">Weather</text><text class="d-line" x="520" y="328">Open-Meteo on the web</text><text class="d-line" x="520" y="344">Simulated inside Claude</text><text class="d-line" x="520" y="360">16 days, 4-year history</text>
+              <rect class="d-box" x="48" y="424" width="208" height="56" rx="8"/>
+              <text class="d-name" x="64" y="448">Open-data services</text><text class="d-line" x="64" y="464">OSM, Wikimedia, Open-Meteo</text>
+              <rect class="d-box" x="276" y="424" width="208" height="56" rx="8"/>
+              <text class="d-name" x="292" y="448">Claude</text><text class="d-line" x="292" y="464">Only when run inside Claude</text>
+            </svg>
+            <figcaption>Three screens share one state object; the globe, data and weather engines sit underneath. The data layer picks Claude or open data depending on where the app runs.</figcaption>
+          </figure>
+        
+<h2 id="globe-rendering-pipeline">Globe rendering pipeline</h2>
+          <p>The globe is two stacked canvases that share one orthographic projection: WebGL draws the Earth, and a 2D canvas draws everything people tap.</p>
+          <div class='table'><table>
+            <thead><tr><th>Layer</th><th>Technology</th><th>What it draws</th></tr></thead>
+            <tbody>
+              <tr><td>Background</td><td>CSS</td><td>Starfield and deep-space gradient</td></tr>
+              <tr><td>Earth</td><td>WebGL fragment shader on a full-screen quad</td><td>NASA day and night textures, sun shading, ocean glint, twilight band, atmosphere rim</td></tr>
+              <tr><td>Overlay</td><td>Canvas 2D with D3 orthographic projection</td><td>Country borders, city dots, search radius, attraction markers, labels</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li><b>Shared math:</b> the shader inverts the same rotation D3 uses, so markers sit exactly on the imagery.</li>
+            <li><b>Textures:</b> NASA Blue Marble at 4096 x 2048 and Black Marble at 2048 x 1024, embedded as data URIs (about 1.1 MB).</li>
+            <li><b>Sharpness:</b> mipmaps with a level of detail computed per pixel, which avoids shimmer and a seam at the date line.</li>
+            <li><b>Day and night:</b> a fixed light keeps the visible side bright; live mode computes the real sun position from the current UTC time.</li>
+            <li><b>Fallbacks:</b> no image support falls back to a procedurally painted Earth; no WebGL falls back to flat 2D colours.</li>
+            <li><b>Interaction:</b> pointer events for drag and pinch, animated fly-to with a zoom dip, hit testing on the overlay.</li>
+          </ul>
+        
+<h2 id="ai-layer-inside-claude">AI layer (inside Claude)</h2>
+          <p>In the prototype, Claude is the data source for anything that needs knowledge of a place, and the planner for itineraries. Every call returns strict JSON or streamed Markdown.</p>
+          <div class='table'><table>
+            <thead><tr><th>Call</th><th>Trigger</th><th>Output</th></tr></thead>
+            <tbody>
+              <tr><td>Attractions</td><td>City selected</td><td>Up to 24 attractions within 50 km with coordinates; the radius filters on the device</td></tr>
+              <tr><td>Overview</td><td>Attraction opened</td><td>Summary, history, facts, hours, price, booking link</td></tr>
+              <tr><td>Reviews and tips</td><td>Attraction opened</td><td>Review themes with sentiment, 10 traveler tips</td></tr>
+              <tr><td>Local</td><td>Attraction opened</td><td>Restaurants by cuisine, parking, transit</td></tr>
+              <tr><td>Photo spots</td><td>Attraction opened</td><td>4 to 6 spots with light and timing</td></tr>
+              <tr><td>Climate</td><td>Weather shown</td><td>12 months of normals that drive the simulated forecast and history</td></tr>
+              <tr><td>Geocode</td><td>Free-text search</td><td>City or attraction with coordinates</td></tr>
+              <tr><td>Itinerary</td><td>Plan submitted or refined</td><td>Streamed day-by-day Markdown plan</td></tr>
+            </tbody>
+          </table></div>
+          <h3>Reliability rules</h3>
+          <ul>
+            <li>A queue runs at most two calls at once, overview first, and drops queued calls when the user moves to another place.</li>
+            <li>Each section loads and fails on its own, with a retry button.</li>
+            <li>Responses are cached for an hour, so revisiting a place is instant.</li>
+            <li>With no AI available, the app serves offline demo data for Paris and the Eiffel Tower.</li>
+            <li>Prompts forbid invented quotes and URLs; uncertain fields come back empty.</li>
+          </ul>
+        
+<h2 id="live-open-data-mode">Live open-data mode</h2>
+          <p>Outside Claude, for example on this website, the prototype switches to live open data automatically, so every city and attraction works without a backend or API keys.</p>
+          <div class='table'><table>
+            <thead><tr><th>Feature</th><th>Source</th><th>How it is used</th></tr></thead>
+            <tbody>
+              <tr><td>Attractions in a radius</td><td>OpenStreetMap (Overpass)</td><td>Places tagged as attractions, museums, viewpoints, worship sites and parks with a Wikidata link, ranked by how many languages name them</td></tr>
+              <tr><td>Details and history</td><td>Wikipedia and Wikidata</td><td>Summary, dated history sentences, facts such as height, style, heritage status and visitors per year</td></tr>
+              <tr><td>Photos</td><td>Wikimedia Commons</td><td>Up to 10 openly licensed photos taken nearby, each with author and license</td></tr>
+              <tr><td>Food, parking, transit</td><td>OpenStreetMap</td><td>Restaurants by cuisine, public parking and stations within a short walk</td></tr>
+              <tr><td>Tips</td><td>Wikivoyage</td><td>Getting around, safety, etiquette and money advice for the city</td></tr>
+              <tr><td>Weather</td><td>Open-Meteo</td><td>Real 16-day forecast, four years of recorded history, sunrise and sunset for golden hour</td></tr>
+              <tr><td>Search</td><td>Open-Meteo geocoding, Wikipedia</td><td>Cities and landmarks suggested as you type</td></tr>
+              <tr><td>Itinerary</td><td>Built-in planner</td><td>Ranks attractions by interests, groups them into days by area, adds nearby restaurants and the forecast</td></tr>
+            </tbody>
+          </table></div>
+          <p>Ratings and written reviews have no free open source, so the app links to Google, Tripadvisor and Yelp rather than copying them.</p>
+          <h3>How the mode is chosen and kept reliable</h3>
+          <ul>
+            <li>If the page can reach Claude it uses the AI layer; otherwise it switches to open data at start-up, with no setting to change.</li>
+            <li>Every open-data call has a timeout, and the place search tries a second Overpass server if the first is busy.</li>
+            <li>Responses are cached in memory, so revisiting a city or attraction makes no new requests.</li>
+            <li>Each tab loads and fails on its own with a "Try again" button; Paris and the Eiffel Tower fall back to built-in sample data when offline.</li>
+            <li>The map library is bundled into the file, so the globe works behind strict security settings.</li>
+          </ul>
+        
+<h2 id="production-architecture">Production architecture</h2>
+          <figure class="fig">
+            <svg viewBox="0 0 760 564" role="img" aria-label="Only the backend talks to providers; the app holds no keys">
+              <defs><marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="d-head" d="M0 0L10 5L0 10z"/></marker></defs>
+              <text class="d-title" x="24" y="32">Only the backend talks to providers; the app holds no keys</text>
+              <g class="d-arrow">
+                <path d="M186 252H214" marker-start="url(#arrB)" marker-end="url(#arrB)"/>
+                <path d="M498 128H542" marker-end="url(#arrB)"/><path d="M498 216H542" marker-end="url(#arrB)"/>
+                <path d="M498 304H542" marker-end="url(#arrB)"/><path d="M498 392H542" marker-end="url(#arrB)"/>
+                <path d="M364 438V466" marker-start="url(#arrB)" marker-end="url(#arrB)"/>
+              </g>
+              <rect class="d-box" x="24" y="208" width="160" height="88" rx="8"/>
+              <text class="d-name" x="40" y="232">Mobile app</text><text class="d-line" x="40" y="248">React Native, Expo</text><text class="d-line" x="40" y="264">Globe and screens</text><text class="d-line" x="40" y="280">Saved trips offline</text>
+              <text class="d-line" x="24" y="322">HTTPS only, no keys</text>
+              <rect class="d-group" x="216" y="60" width="296" height="376" rx="8"/>
+              <text class="d-name" x="232" y="84">Backend API: keys, cache, rate limits</text>
+              <rect class="d-box" x="232" y="100" width="264" height="56" rx="8"/>
+              <text class="d-name" x="248" y="124">Places service</text><text class="d-line" x="248" y="140">Search, nearby, details, food</text>
+              <rect class="d-box" x="232" y="188" width="264" height="56" rx="8"/>
+              <text class="d-name" x="248" y="212">Weather service</text><text class="d-line" x="248" y="228">Forecast and 4-year history</text>
+              <rect class="d-box main" x="232" y="276" width="264" height="56" rx="8"/>
+              <text class="d-name" x="248" y="300">Itinerary agent</text><text class="d-line" x="248" y="316">Claude plus place and weather tools</text>
+              <rect class="d-box" x="232" y="364" width="264" height="56" rx="8"/>
+              <text class="d-name" x="248" y="388">Content service</text><text class="d-line" x="248" y="404">History, photos, credits</text>
+              <rect class="d-box" x="544" y="92" width="192" height="72" rx="8"/>
+              <text class="d-name" x="560" y="116">Places data</text><text class="d-line" x="560" y="132">Google Places, or</text><text class="d-line" x="560" y="148">Foursquare and OSM</text>
+              <rect class="d-box" x="544" y="180" width="192" height="72" rx="8"/>
+              <text class="d-name" x="560" y="204">Weather data</text><text class="d-line" x="560" y="220">Open-Meteo or MET Norway,</text><text class="d-line" x="560" y="236">ERA5 for history</text>
+              <rect class="d-box" x="544" y="268" width="192" height="72" rx="8"/>
+              <text class="d-name" x="560" y="292">Claude API</text><text class="d-line" x="560" y="308">Itinerary writing</text><text class="d-line" x="560" y="324">and review summaries</text>
+              <rect class="d-box" x="544" y="356" width="192" height="72" rx="8"/>
+              <text class="d-name" x="560" y="380">Open knowledge</text><text class="d-line" x="560" y="396">Wikipedia, Wikivoyage,</text><text class="d-line" x="560" y="412">Wikimedia Commons photos</text>
+              <rect class="d-box" x="232" y="468" width="264" height="72" rx="8"/>
+              <text class="d-name" x="248" y="492">Postgres</text><text class="d-line" x="248" y="508">Users, trips, itineraries,</text><text class="d-line" x="248" y="524">saved place IDs only</text>
+            </svg>
+            <figcaption>The app calls one backend; four services each own a provider, and the itinerary agent reuses the places and weather services as tools so plans rest on real hours and forecasts.</figcaption>
+          </figure>
+        
+<h2 id="data-sources">Data sources</h2>
+          <p>Production replaces AI-compiled data with licensed sources. There are two viable stacks: a paid Google-centred one with the richest data, and a free, openly licensed one that costs only hosting.</p>
+          <div class='table'><table>
+            <thead><tr><th>Feature</th><th>Paid option</th><th>Free option (commercial use allowed)</th></tr></thead>
+            <tbody>
+              <tr><td>Map and globe</td><td>Google Maps SDK (required if Google place data is shown)</td><td>MapLibre with OpenFreeMap tiles and NASA imagery</td></tr>
+              <tr><td>Attractions, food, parking</td><td>Google Places API</td><td>Foursquare open places dataset and OpenStreetMap, self-hosted</td></tr>
+              <tr><td>History and background</td><td>Wikipedia and Wikidata</td><td>Same</td></tr>
+              <tr><td>Photos</td><td>Google Places Photos</td><td>Wikimedia Commons, with per-photo credits</td></tr>
+              <tr><td>Reviews</td><td>Google Places; Yelp on paid plans</td><td>None; build in-app reviews</td></tr>
+              <tr><td>Tips</td><td>Claude summarizing licensed review text</td><td>Wikivoyage plus user tips</td></tr>
+              <tr><td>Forecast</td><td>Open-Meteo commercial plan (up to 16 days)</td><td>MET Norway (about 9 days, attribution required)</td></tr>
+              <tr><td>Weather history</td><td>Open-Meteo professional plan</td><td>ERA5 or NOAA daily data, self-hosted</td></tr>
+              <tr><td>Itinerary</td><td>Claude API from the backend</td><td>Same (pay per use)</td></tr>
+            </tbody>
+          </table></div>
+          <h3>Licensing rules that shape the design</h3>
+          <ul>
+            <li>Google place content must be shown on a Google map and must not be stored, except place IDs.</li>
+            <li>OpenStreetMap and Wikipedia require attribution and share-alike on derived data.</li>
+            <li>Every source gets a line on an in-app credits screen.</li>
+            <li>Prices and terms change often: re-check before launch, and have a lawyer review.</li>
+          </ul>
+        
+<h2 id="api-and-data-model">API and data model</h2>
+          <p>The app talks only to Wayfare's backend; the backend talks to every provider. Each endpoint returns the provider name and fetch time, so the app can show where data came from.</p>
+          <div class='table'><table>
+            <thead><tr><th>Endpoint</th><th>Purpose</th><th>Main sources</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET /search?q=</code></td><td>Cities and attractions as you type</td><td>Places autocomplete or own index</td></tr>
+              <tr><td><code>GET /places/nearby</code></td><td>Attractions within the radius (lat, lon, radiusKm, category)</td><td>Places nearby search</td></tr>
+              <tr><td><code>GET /places/{id}</code></td><td>Overview, history, hours, tickets</td><td>Places details, Wikipedia</td></tr>
+              <tr><td><code>GET /places/{id}/reviews</code></td><td>Review themes and top reviews</td><td>Places reviews, Claude summary</td></tr>
+              <tr><td><code>GET /places/{id}/nearby-food</code></td><td>Restaurants grouped by cuisine</td><td>Places nearby search</td></tr>
+              <tr><td><code>GET /places/{id}/getting-there</code></td><td>Parking and transit</td><td>Places, OpenStreetMap</td></tr>
+              <tr><td><code>GET /places/{id}/photos</code></td><td>Gallery with credits</td><td>Places Photos or Wikimedia Commons</td></tr>
+              <tr><td><code>GET /weather</code></td><td>Forecast and 4-year history (lat, lon, days)</td><td>Weather provider</td></tr>
+              <tr><td><code>POST /itineraries</code></td><td>Create a plan, streamed</td><td>Claude with tools calling the endpoints above</td></tr>
+              <tr><td><code>POST /itineraries/{id}/refine</code></td><td>Change a plan by chat</td><td>Claude</td></tr>
+            </tbody>
+          </table></div>
+          <h3>Stored data (Postgres)</h3>
+          <div class='table'><table>
+            <thead><tr><th>Table</th><th>Key fields</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>users</td><td>id, email, home city, units</td><td>Created on sign-in</td></tr>
+              <tr><td>trips</td><td>id, user_id, destination, start_date, days, travelers, budget, pace, interests</td><td>One per planned trip</td></tr>
+              <tr><td>itineraries</td><td>id, trip_id, version, markdown, created_at</td><td>Every refinement is a new version</td></tr>
+              <tr><td>saved_places</td><td>user_id, place_id, provider, note</td><td>Place IDs only, to respect Google's storage rules</td></tr>
+              <tr><td>user_tips</td><td>id, place_id, user_id, text, status</td><td>Moderated before showing</td></tr>
+              <tr><td>weather_cache</td><td>lat_lon_key, payload, fetched_at</td><td>Short-lived cache to cut provider calls</td></tr>
+            </tbody>
+          </table></div>
+        
+<h2 id="security-privacy-scaling-and-risks">Security, privacy, scaling and risks</h2>
+          <h3>Security</h3>
+          <ul>
+            <li>All provider and AI keys live on the backend; the app ships no secrets.</li>
+            <li>Rate limits per user and per IP, plus daily spend caps in each provider console.</li>
+            <li>Prompts treat fetched web text and user tips as data, never as instructions.</li>
+          </ul>
+          <h3>Privacy</h3>
+          <ul>
+            <li>Location is used only when the user taps "Find me", and is not stored.</li>
+            <li>Trips and itineraries belong to the user and can be deleted in the app, as app stores require.</li>
+            <li>A plain-language privacy policy that includes each provider's terms.</li>
+          </ul>
+          <h3>Scaling and cost</h3>
+          <ul>
+            <li>Stateless API containers that scale with traffic; Postgres for user data only.</li>
+            <li>Cache what licences allow; request only the fields each screen needs, since provider prices rise with richer fields.</li>
+            <li>Cache itineraries for popular destinations and cap free itinerary runs per user to control AI spend.</li>
+            <li>Monitoring: crash reporting, request latency per provider, and a daily cost dashboard.</li>
+          </ul>
+          <h3>Risks</h3>
+          <div class='table'><table>
+            <thead><tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr></thead>
+            <tbody>
+              <tr><td>Provider price or terms change</td><td>Costs jump or features must change</td><td>Keep an open-data fallback for every feature</td></tr>
+              <tr><td>AI states a wrong fact</td><td>User trusts bad hours or prices</td><td>Ground answers in provider data; show sources and "verify" notes</td></tr>
+              <tr><td>Google ships the same features</td><td>Weak differentiation</td><td>Focus on one audience with comfort and access needs</td></tr>
+              <tr><td>Free public services go down</td><td>Map or weather gaps</td><td>Self-host tiles and weather once traffic grows</td></tr>
+            </tbody>
+          </table></div></main>
+<footer>Concept project by Deepam Khirwar, October 2026. Globe imagery: NASA Earth Observatory (Blue Marble) and NASA Goddard Space Flight Center (Black Marble).</footer>
+<div class="cur-main" id="cMain"></div><div class="cur-ring" id="cRing"></div>
+<script>
+(function(){
+  var cMain=document.getElementById('cMain'),cRing=document.getElementById('cRing');
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain&&cRing&&fine){
+    var mx=-100,my=-100,rx=-100,ry=-100,last=0;
+    window.addEventListener('mousemove',function(e){
+      mx=e.clientX;my=e.clientY;
+      cMain.style.transform='translate('+mx+'px,'+my+'px)';
+      var now=performance.now();
+      if(now-last>22){last=now;var t=document.createElement('div');t.className='cur-trail';t.style.left=mx+'px';t.style.top=my+'px';document.body.appendChild(t);setTimeout(function(){t.remove()},600);}
+    });
+    (function loop(){rx+=(mx-rx)*.45;ry+=(my-ry)*.45;cRing.style.transform='translate('+rx+'px,'+ry+'px)';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){cRing.classList.add('hover')});
+      el.addEventListener('mouseleave',function(){cRing.classList.remove('hover')});
+    });
+  }
+})();
+</script>
+</body></html>
