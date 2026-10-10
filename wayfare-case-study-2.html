@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wayfare: Case Study</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#e2711d;--accent-dk:#c85f16;--ink:#f5efe6;--paper:#0f0d0c;--panel:#1c1815;--muted:#b9ada0;--line:#33291f;--body:#d8d4cc}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Raleway',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;cursor:none}
+a,button{cursor:none}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-color:var(--accent)}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.bar{max-width:760px;margin:0 auto;padding:16px 24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:15px}
+.bar a{color:var(--muted);text-decoration:none}
+.bar a:hover{color:var(--ink)}
+.bar a[aria-current]{color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent)}
+.bar a.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--accent);font-family:'Merriweather',serif;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .3s ease;margin-right:6px}
+.bar a.logo-badge:hover{transform:scale(1.12);color:var(--accent)}
+.bar a.home{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:.86rem;padding:6px 10px;border-radius:4px;border:1px solid transparent;transition:transform .2s ease,color .2s ease,background .2s ease,border-color .2s ease}
+.bar a.home:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--accent)}
+.hero{max-width:760px;margin:0 auto;padding:40px 24px 48px}
+.hero h1{font-family:'Merriweather',Georgia,serif;font-size:clamp(32px,6vw,48px);line-height:1.14;letter-spacing:-0.01em;margin:0 0 14px;color:#fff}
+.hero p{margin:0;color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:16px 24px 72px}
+h2{font-family:'Merriweather',Georgia,serif;font-size:26px;line-height:1.25;color:#fff;margin:48px 0 12px;padding-top:12px;border-top:3px solid var(--accent);display:inline-block}
+p,li{max-width:68ch;color:var(--body)}
+strong{color:#fff}
+li::marker{color:var(--accent)}
+.table{overflow-x:auto;margin:16px 0 20px;border:2px solid #000;border-radius:10px;background:var(--panel);box-shadow:5px 5px 0 #000}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--body)}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:rgba(226,113,29,.05)}
+th{background:var(--accent);color:#0f0d0c;font-weight:700}
+th:empty{display:none}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85em;background:#2b2a28;color:var(--accent);padding:1px 5px;border-radius:4px}
+pre{background:#000;color:#e6e0d6;padding:16px;border-radius:10px;border:2px solid #000;box-shadow:5px 5px 0 var(--line);overflow-x:auto;font-size:13.5px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit}
+.fig{background:#fff;border:2px solid #000;border-radius:10px;padding:12px;margin:16px 0;overflow-x:auto;box-shadow:5px 5px 0 #000}
+.fig svg{display:block;width:100%;min-width:560px;height:auto}
+footer{max-width:760px;margin:0 auto;padding:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;transform:translate(-100px,-100px)}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--accent);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width .2s ease,height .2s ease,margin .2s ease}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,.14)}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9990;opacity:.5;animation:trail-fade .55s ease-out forwards}
+@keyframes trail-fade{to{opacity:0;transform:scale(.15)}}
+@media (hover:none){.cur-main,.cur-ring{display:none}body,a,button{cursor:auto}}
+
+h3{font-family:'Merriweather',Georgia,serif;font-size:19px;line-height:1.3;color:#fff;margin:26px 0 8px}
+.note{background:var(--panel);border:2px solid #000;border-left:4px solid var(--accent);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;box-shadow:4px 4px 0 #000}
+.note p:last-child{margin:0}
+.steps{list-style:none;padding:0;counter-reset:s;max-width:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);margin:0;max-width:none}
+.steps li::before{content:counter(s);font-family:'Merriweather',Georgia,serif;font-weight:700;font-size:20px;color:var(--accent);line-height:1.3}
+s{color:var(--muted)}
+.fig{background:var(--panel)}
+.fig figcaption{font-size:14px;color:var(--muted);margin-top:10px}
+.d-title{font:700 15px 'Merriweather',Georgia,serif;fill:#fff}
+.d-box{fill:#0f0d0c;stroke:#6b5a48;stroke-width:1.25}
+.d-box.main{fill:#33210f;stroke:#e2711d;stroke-width:2}
+.d-group{fill:#2b2a28;stroke:#6b5a48;stroke-width:1.25}
+.d-name{font:700 13px 'Raleway',sans-serif;fill:#f5efe6}
+.d-line{font:500 11.5px 'Raleway',sans-serif;fill:#b9ada0}
+.d-arrow{fill:none;stroke:#8a7a68;stroke-width:1.25}
+.d-head{fill:#8a7a68}
+td:first-child{font-weight:700;color:#fff}
+</style></head>
+<body><header><nav class="bar" aria-label="Project"><a class="logo-badge" href="index.html" aria-label="Back to home">DK</a><a href='wayfare-prototype.html'>Prototype</a><a href='wayfare-case-study.html' aria-current="page">Case study</a><a href='wayfare-system-design.html'>System design</a><a class="home" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Back to home</a></nav>
+<div class="hero"><h1>Wayfare: Case Study</h1><p>How I designed a mobile travel app that puts discovery, attraction details, weather and trip planning behind one interactive globe.</p></div></header>
+<main><h2 id="overview">Overview</h2>
+          <p>I took Wayfare from a one-line idea to a working mobile web app with a NASA imagery globe, attraction pages, real weather and a day-by-day itinerary planner. The whole prototype is a single self-contained HTML file that runs in two modes: with Claude for AI-written details and itineraries, and on any website with live open data.</p>
+        
+<div class='table'><table>
+<thead><tr><th></th><th></th></tr></thead>
+<tbody>
+<tr><td>Role</td><td>Product designer and prototyper, solo</td></tr>
+<tr><td>Timeline</td><td>Concept and working prototype, October 2026</td></tr>
+<tr><td>Platform</td><td>Mobile-first web app</td></tr>
+<tr><td>Tools</td><td>HTML, CSS, JavaScript, D3, WebGL, Claude</td></tr>
+<tr><td>Status</td><td>Working prototype, not yet tested with users</td></tr>
+</tbody></table></div>
+<h2 id="the-problem">The problem</h2>
+          <p>Planning a trip means juggling five to ten apps: maps for location, review sites for opinions, a weather app, booking sites, blogs for tips and a notes app for the plan itself. Each answers one question, so the traveler does the joining up.</p>
+          <p>The pain shows up at three moments:</p>
+          <ul>
+            <li><b>Choosing where to go:</b> it is hard to see what is near a city without scrolling long, unranked lists.</li>
+            <li><b>Deciding about one place:</b> history, tickets, reviews, food, parking and weather live on different sites.</li>
+            <li><b>Building the plan:</b> turning a pile of saved places into a realistic day-by-day schedule is slow and manual.</li>
+          </ul>
+          <div class="note"><p>The brief: one app that covers all three moments, starting from a globe the traveler can explore.</p></div>
+        
+<h2 id="users-and-goals">Users and goals</h2>
+          <p>The primary user is a leisure traveler planning a city trip on their phone, a few weeks to a few months ahead.</p>
+          <div class='table'><table>
+            <thead><tr><th>User need</th><th>What Wayfare does</th></tr></thead>
+            <tbody>
+              <tr><td>See what is worth visiting near a place</td><td>Radius search (1 to 50 km) with attractions plotted on the globe</td></tr>
+              <tr><td>Judge one attraction quickly</td><td>One page with history, tickets, review themes, food, parking, tips, photo spots and weather</td></tr>
+              <tr><td>Know what to expect from the weather</td><td>7 to 16 day outlook plus four years of monthly history</td></tr>
+              <tr><td>Get a realistic plan without the busywork</td><td>An AI agent that asks for the essentials, then writes and refines an itinerary</td></tr>
+            </tbody>
+          </table></div>
+          <p><b>Design goals:</b> mobile first, one tap from map to detail, honest about where data comes from, and useful even when the AI is unavailable.</p>
+        
+<h2 id="process">Process</h2>
+          <p>The prototype went through eight iterations, each driven by testing the previous version and naming what felt wrong.</p>
+          <ol class="steps">
+            <li><div><b>Desktop prototype.</b> A globe on the left and a panel on the right, with search, radius discovery, attraction details, weather and the itinerary agent all working end to end.</div></li>
+            <li><div><b>Mobile app shell.</b> Feedback: it needed to be a phone app. I rebuilt it around a full-screen globe, a draggable bottom sheet and a bottom tab bar.</div></li>
+            <li><div><b>Attraction tab fix.</b> The tab was locked until a place was picked, and its data calls could hit rate limits. I made it always open, with nearby and popular picks, and queued the AI calls two at a time.</div></li>
+            <li><div><b>Realistic Earth.</b> The flat globe looked generic. I wrote a WebGL renderer with a painted texture: oceans by depth, deserts, forests, ice, clouds, sun shading and an atmosphere.</div></li>
+            <li><div><b>NASA imagery.</b> I replaced the painted texture with NASA Blue Marble (day) and Black Marble (night) images, blended along the day and night line, with an optional live sun mode.</div></li>
+            <li><div><b>Visual identity.</b> A pastel green and black theme across light and dark modes, with pastel green markers on the globe.</div></li>
+            <li><div><b>Portfolio build.</b> The app, case study and system design packed into one HTML file, with the app running inside a phone frame. A black-screen bug in strict previews led me to load the app inline and bundle its map library.</div></li>
+            <li><div><b>Live open data.</b> On a normal website the app could only show a Paris sample. I added a live mode that pulls attractions, photos, food, parking, tips and real weather from open-data services, plus a built-in itinerary planner.</div></li>
+          </ol>
+        
+<h2 id="key-features">Key features</h2>
+          <div class='table'><table>
+            <thead><tr><th>Feature</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td>Globe</td><td>Drag, pinch and tap a NASA imagery Earth; tap land or a city dot to explore it</td></tr>
+              <tr><td>Search</td><td>Instant matches for 100+ cities and known attractions; anything else is located by AI</td></tr>
+              <tr><td>Radius discovery</td><td>Up to 24 attractions within 1 to 50 km, filtered by category and plotted on the globe</td></tr>
+              <tr><td>Attraction page</td><td>Overview and history, review themes, food by cuisine, parking and tickets, tips, photo spots, weather</td></tr>
+              <tr><td>Weather</td><td>Current conditions, 7 or 16 days ahead, and four years of monthly history; real data from Open-Meteo on the web</td></tr>
+              <tr><td>Photos</td><td>Up to 10 real, credited photos per attraction from Wikimedia Commons on the web</td></tr>
+              <tr><td>Itinerary</td><td>Checks required fields, then writes a day-by-day plan: an AI agent with chat edits inside Claude, a built-in planner with live data on the web</td></tr>
+              <tr><td>Live sun</td><td>Shows real day and night for the current moment, with city lights on the dark side</td></tr>
+            </tbody>
+          </table></div>
+        
+<h2 id="design-decisions">Design decisions</h2>
+          <div class='table'><table>
+            <thead><tr><th>Decision</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Globe as the home screen, not a list</td><td>Travel starts with "where"; a globe makes distance and region obvious at a glance</td></tr>
+              <tr><td>Bottom sheet with three heights</td><td>Keeps the globe visible while browsing; the globe re-centres above the sheet</td></tr>
+              <tr><td>Same attraction page from list, map tap or search</td><td>One mental model, however the user arrives</td></tr>
+              <tr><td>Attraction tab always open</td><td>A locked tab read as broken; an empty state with suggestions invites exploring</td></tr>
+              <tr><td>Sections load independently</td><td>Users read the overview while reviews and food are still loading</td></tr>
+              <tr><td>Labels on AI-compiled or simulated sections</td><td>Builds trust; users know what to verify before they travel</td></tr>
+              <tr><td>Itinerary agent asks before it writes</td><td>Missing dates or budget produce generic plans; a short check gives better results</td></tr>
+              <tr><td>Offline demo data</td><td>The prototype still works when the AI is unavailable, so a visitor never sees an empty screen</td></tr>
+            </tbody>
+          </table></div>
+        
+<h2 id="constraints-and-trade-offs">Constraints and trade-offs</h2>
+          <p>Inside Claude, the prototype runs in a locked-down environment: no outside images, no third-party APIs, and AI calls limited to a couple at a time. On a normal website the opposite holds: open data is reachable but Claude is not. Each constraint forced a visible, honest compromise rather than a fake.</p>
+          <div class='table'><table>
+            <thead><tr><th>Constraint</th><th>Trade-off I made</th></tr></thead>
+            <tbody>
+              <tr><td>No live Google, Yelp or social media data</td><td>Claude compiles details, review themes, restaurants and tips, labelled as AI-compiled with links to the real sources</td></tr>
+              <tr><td>No live weather API</td><td>Forecast and history are simulated from climate normals and marked "Simulated"</td></tr>
+              <tr><td>No remote images</td><td>Attraction headers use generated illustrations; real photos are reached through links</td></tr>
+              <tr><td>No satellite map tiles</td><td>NASA day and night images embedded in the page (about 1.1 MB), blurring only at street level</td></tr>
+              <tr><td>AI rate limits</td><td>Requests queued two at a time, overview first; stale requests dropped when the user moves on</td></tr>
+              <tr><td>No Claude on a normal website</td><td>Automatic switch to live open data: OpenStreetMap, Wikipedia, Wikidata, Wikimedia Commons, Wikivoyage and Open-Meteo, plus a built-in planner</td></tr>
+              <tr><td>No free source for reviews</td><td>The Reviews tab links to Google, Tripadvisor and Yelp instead of copying or rewriting reviews</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><p>The biggest lesson: showing where data comes from mattered more than making every section look complete.</p></div>
+        
+<h2 id="market-research-and-positioning">Market research and positioning</h2>
+          <p>Most of Wayfare's individual features already exist; the combination around a globe and an attraction-level "should I go" page does not. Research as of October 2026.</p>
+          <div class='table'><table>
+            <thead><tr><th>Product</th><th>Strength</th><th>Gap Wayfare targets</th></tr></thead>
+            <tbody>
+              <tr><td>Google Maps and AI Mode trip planning</td><td>Owns places, reviews and photos; now builds itineraries</td><td>General purpose; no radius discovery or multi-year weather for a visit</td></tr>
+              <tr><td>Mindtrip</td><td>All-in-one AI planning and booking</td><td>Chat first, not map first</td></tr>
+              <tr><td>Wanderlog</td><td>Hands-on, map-based planning</td><td>Manual; little help judging a single attraction</td></tr>
+              <tr><td>Layla (acquired by Expedia, July 2026)</td><td>AI planning tied to booking</td><td>Built to sell bookings, not to help decide</td></tr>
+            </tbody>
+          </table></div>
+          <p><b>Positioning:</b> a map-first "decide and plan" companion. The strongest niche from research is travelers who need comfort and access information, such as families with elderly parents or pilgrims: toilets, walking distance from parking, rest points and ticket release dates.</p>
+        
+<h2 id="outcomes-and-next-steps">Outcomes and next steps</h2>
+          <p>The result is a working mobile prototype that covers discovery, decision and planning in one flow, for any city in the world, in a single HTML file. It has not yet been tested with users, so the next step is evidence, not more features.</p>
+          <h3>What I learned</h3>
+          <ul>
+            <li>Constraints sharpen a prototype: every limit became a design decision the user can see.</li>
+            <li>Honest labels ("AI-compiled", "Simulated") are a feature, not a disclaimer.</li>
+            <li>Visual realism changes perception: the NASA globe made the same features feel like a real product.</li>
+            <li>Bundling features is not a moat; focus on one audience is.</li>
+            <li>Designing for two runtimes (with AI and with open data) made every feature define its data source explicitly.</li>
+          </ul>
+          <h3>Next steps</h3>
+          <ul>
+            <li>Test with 5 to 8 travelers planning a real trip; measure time to a finished itinerary.</li>
+            <li>Pick one audience (families with elderly parents, or pilgrims) and add comfort and access details.</li>
+            <li><s>Replace simulated weather with a live forecast and history service.</s> Done for the web version (Open-Meteo).</li>
+            <li><s>Add real attraction photos from an openly licensed source.</s> Done for the web version (Wikimedia Commons).</li>
+            <li>Build the production app described in the <a href="wayfare-system-design.html">system design</a>.</li>
+          </ul></main>
+<footer>Concept project by Deepam Khirwar, October 2026. Globe imagery: NASA Earth Observatory (Blue Marble) and NASA Goddard Space Flight Center (Black Marble).</footer>
+<div class="cur-main" id="cMain"></div><div class="cur-ring" id="cRing"></div>
+<script>
+(function(){
+  var cMain=document.getElementById('cMain'),cRing=document.getElementById('cRing');
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain&&cRing&&fine){
+    var mx=-100,my=-100,rx=-100,ry=-100,last=0;
+    window.addEventListener('mousemove',function(e){
+      mx=e.clientX;my=e.clientY;
+      cMain.style.transform='translate('+mx+'px,'+my+'px)';
+      var now=performance.now();
+      if(now-last>22){last=now;var t=document.createElement('div');t.className='cur-trail';t.style.left=mx+'px';t.style.top=my+'px';document.body.appendChild(t);setTimeout(function(){t.remove()},600);}
+    });
+    (function loop(){rx+=(mx-rx)*.45;ry+=(my-ry)*.45;cRing.style.transform='translate('+rx+'px,'+ry+'px)';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){cRing.classList.add('hover')});
+      el.addEventListener('mouseleave',function(){cRing.classList.remove('hover')});
+    });
+  }
+})();
+</script>
+</body></html>
