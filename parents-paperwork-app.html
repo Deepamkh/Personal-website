@@ -1,0 +1,1569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parents' Paperwork - interactive prototype</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #15211D; --paper: #F3F5F2; --accent: #e2711d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #0f0d0c; color: #f5efe6; font-family: 'Raleway', system-ui, -apple-system, 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: var(--accent); }
+  button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .topnav { width: 100%; max-width: 1120px; margin: 0 auto; padding: 16px 24px 0; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; font-size: 15px; }
+  .topnav a { color: #b9ada0; text-decoration: none; }
+  .topnav a:hover { color: #f5efe6; }
+  .topnav a.logo-badge { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 9px; background: #000; color: #e2711d; font-family: 'Merriweather', serif; font-weight: 700; font-size: .95rem; box-shadow: 0 3px 10px rgba(0,0,0,.5); transition: transform .3s ease; margin-right: 6px; }
+  .topnav a.logo-badge:hover { transform: scale(1.12); color: #e2711d; }
+  .topnav a.home { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: #f5efe6; font-size: .86rem; padding: 6px 10px; border-radius: 4px; border: 1px solid transparent; transition: transform .2s ease, color .2s ease, background .2s ease, border-color .2s ease; }
+  .topnav a.home:hover { transform: scale(1.06); background: #000; border-color: #000; color: #e2711d; }
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 16px 32px; }
+  .phone { background: #000; border-radius: 52px; padding: 12px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px #33291f; }
+  .screen { width: 390px; height: 844px; border-radius: 40px; overflow: hidden; transform-origin: top left; }
+  .screen-wrap { overflow: hidden; border-radius: 40px; }
+  .caption { text-align: center; font-size: 13px; line-height: 1.5; color: #b9ada0; margin: 16px 0 0; max-width: 390px; }
+  @media (max-width: 640px) { .topnav { padding: 12px 16px 0; gap: 14px; } .topnav a.home span { display: none; } }
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Project"><a class="logo-badge" href="index.html" aria-label="Back to home">DK</a><a href="parents-paperwork-case-study.html">Case study</a><a href="parents-paperwork-prototype.html">Walkthrough page</a><a class="home" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Back to home</span></a></nav>
+<main class="stage">
+  <div class="phone"><div class="screen-wrap" id="wrap"><div class="screen" id="app" aria-label="Interactive app prototype"></div></div></div>
+  <p class="caption">Interactive: every tap works. Sample family, names and figures. Rules reflect research done in October 2026 and are shown for illustration, not as tax or financial advice.</p>
+</main>
+
+<template id="tpl">
+<div style="width: 390px; height: 844px; position: relative; display: flex; flex-direction: column; background: #F3F5F2; color: #15211D; font-family: 'Raleway', system-ui, -apple-system, 'Segoe UI', sans-serif; overflow: hidden">
+
+<div data-scroll style="flex: 1; min-height: 0; overflow-y: auto">
+
+<!-- ================= TODAY ================= -->
+<sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+<div style="padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 12px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">Kulkarni family · Pune</span>
+      <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px; line-height: 1.1; font-weight: 700">Hi Priya</h1>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <button onClick="{{goCard}}" aria-label="Emergency card" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #C9D3CE; background: #FFFFFF; color: #8A3A10; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-0.7-8-4.5-8-9V6zM12 9v6M9 12h6"></path></svg>
+      </button>
+      <button onClick="{{goAdd}}" aria-label="Add a document or deadline" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: {{accent}}; color: #15211D; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+    <button onClick="{{goTimeline}}" style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; text-align: left; cursor: pointer; color: #15211D">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{stats.done}}/{{stats.yearTotal}}</span>
+      <span style="font-size: 12px; color: #4D5C56; font-weight: 600">done this tax year</span>
+    </button>
+    <button onClick="{{goTimeline}}" style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; text-align: left; cursor: pointer; color: #15211D">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{stats.soon}}</span>
+      <span style="font-size: 12px; color: #4D5C56; font-weight: 600">due in 60 days</span>
+    </button>
+    <button onClick="{{goDocs}}" style="background: #FCEBDC; border: 1px solid #F3D3B8; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; text-align: left; cursor: pointer; color: #5A2208">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{stats.missing}}</span>
+      <span style="font-size: 12px; font-weight: 600">documents missing</span>
+    </button>
+  </div>
+
+  <button onClick="{{openBenefits}}" style="min-height: 64px; display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 12px 14px; text-align: left; cursor: pointer; color: #15211D">
+    <span style="flex: none; width: 40px; height: 40px; border-radius: 12px; background: #FFF4DE; color: #5C3A06; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18"></path></svg>
+    </span>
+    <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 15px; font-weight: 700">{{benStats.toClaim}} government benefits to claim or check</span>
+      <span style="font-size: 13px; color: #4D5C56">{{benStats.claimed}} already in use for Mom and Dad</span>
+    </span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+  </button>
+
+  <sc-if value="{{hasHero}}" hint-placeholder-val="{{true}}">
+  <div style="background: {{accent}}; color: #15211D; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+    <span style="align-self: flex-start; background: #15211D; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px">Window open now</span>
+    <h2 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 22px; line-height: 1.2">{{hero.title}}</h2>
+    <p style="margin: 0; font-size: 15px; line-height: 1.45; color: rgba(21, 33, 29, 0.82)">{{hero.heroLine}}</p>
+    <button onClick="{{hero.open}}" style="margin-top: 4px; min-height: 48px; border: 0; border-radius: 12px; background: #FFFFFF; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">Open the guided walkthrough</button>
+  </div>
+  </sc-if>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap" aria-label="Filter tasks">
+    <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+      <button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-for list="{{homeSections}}" as="sec" hint-placeholder-count="2">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{sec.label}}</h3>
+      <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+        <sc-for list="{{sec.items}}" as="t" hint-placeholder-count="3">
+          <button onClick="{{t.open}}" style="{{t.rowStyle}}">
+            <span style="{{t.dateStyle}}">
+              <span style="font-size: 17px; font-weight: 700; line-height: 1">{{t.day}}</span>
+              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em">{{t.mon}}</span>
+            </span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+              <span style="{{t.titleStyle}}">{{t.title}}</span>
+              <span style="font-size: 13px; color: #4D5C56">{{t.meta}}</span>
+            </span>
+            <span style="{{t.pillStyle}}">{{t.pillText}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+  <sc-if value="{{homeEmpty}}" hint-placeholder-val="{{false}}">
+    <p style="margin: 0; font-size: 15px; color: #4D5C56; text-align: center; padding: 16px 0">Nothing due in the next 60 days for this filter.</p>
+  </sc-if>
+  <button onClick="{{goTimeline}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 14px; background: #FFFFFF; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">See the full year timeline</button>
+</div>
+</sc-if>
+
+<!-- ================= TIMELINE ================= -->
+<sc-if value="{{isTimeline}}" hint-placeholder-val="{{false}}">
+<div style="padding: 20px 0 28px; display: flex; flex-direction: column; gap: 16px">
+  <div style="padding: 0 20px; display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Timeline</h1>
+    <span style="font-size: 14px; color: #4D5C56">Tax year 2026-27 · April to March</span>
+  </div>
+  <div style="display: flex; gap: 8px; overflow-x: auto; padding: 0 20px 4px" aria-label="Filter by category">
+    <sc-for list="{{catChips}}" as="c" hint-placeholder-count="6">
+      <button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}</button>
+    </sc-for>
+  </div>
+  <div style="padding: 0 20px; display: flex; flex-direction: column; gap: 16px">
+    <sc-for list="{{tlMonths}}" as="m" hint-placeholder-count="4">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{m.label}}</h3>
+          <sc-if value="{{m.isNow}}" hint-placeholder-val="{{false}}">
+            <span style="font-size: 11px; font-weight: 700; background: #e2711d; color: #15211D; padding: 2px 8px; border-radius: 999px">NOW</span>
+          </sc-if>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+          <sc-for list="{{m.items}}" as="t" hint-placeholder-count="2">
+            <button onClick="{{t.open}}" style="{{t.rowStyle}}">
+              <span style="{{t.dateStyle}}">
+                <span style="font-size: 17px; font-weight: 700; line-height: 1">{{t.day}}</span>
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em">{{t.mon}}</span>
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+                <span style="{{t.titleStyle}}">{{t.title}}</span>
+                <span style="font-size: 13px; color: #4D5C56">{{t.metaRec}}</span>
+              </span>
+              <span style="{{t.pillStyle}}">{{t.pillText}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <sc-if value="{{hasBeyond}}" hint-placeholder-val="{{true}}">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">Every few years</h3>
+      <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+        <sc-for list="{{beyond}}" as="t" hint-placeholder-count="3">
+          <button onClick="{{t.open}}" style="{{t.rowStyle}}">
+            <span style="{{t.dateStyle}}">
+              <span style="font-size: 13px; font-weight: 700; line-height: 1">{{t.mon}}</span>
+              <span style="font-size: 11px; font-weight: 700">{{t.year}}</span>
+            </span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+              <span style="{{t.titleStyle}}">{{t.title}}</span>
+              <span style="font-size: 13px; color: #4D5C56">{{t.metaRec}}</span>
+            </span>
+            <span style="{{t.pillStyle}}">{{t.pillText}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= TASK DETAIL / WALKTHROUGH ================= -->
+<sc-if value="{{isDetail}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+  <button onClick="{{goBack}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Back
+  </button>
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <span style="font-size: 12px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{d.cat}} · {{d.whoLabel}}</span>
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 26px; line-height: 1.15">{{d.title}}</h1>
+    <span style="font-size: 15px; font-weight: 600; color: #8A3A10">{{d.dueLine}}</span>
+    <span style="font-size: 13px; color: #4D5C56">Repeats: {{d.rec}}</span>
+  </div>
+
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+    <span style="font-weight: 700; font-size: 15px">Why it matters</span>
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #33433D">{{d.why}}</p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Who's handling it</span>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: #E3EAE6; padding: 4px; border-radius: 12px">
+      <sc-for list="{{ownerOpts}}" as="o" hint-placeholder-count="3">
+        <button onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">{{o.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-weight: 700; font-size: 15px">Walkthrough</span>
+      <span style="font-size: 13px; color: #4D5C56">{{stepsDoneCount}} of {{stepsTotal}} steps</span>
+    </div>
+    <div style="height: 6px; border-radius: 3px; background: #E3EAE6; overflow: hidden">
+      <div style="height: 6px; background: {{accent}}; width: {{stepsPct}}"></div>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{detailSteps}}" as="st" hint-placeholder-count="4">
+        <button onClick="{{st.toggle}}" aria-pressed="{{st.pressed}}" style="{{st.rowStyle}}">
+          <span style="{{st.boxStyle}}">
+            <sc-if value="{{st.checked}}" hint-placeholder-val="{{false}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15211D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>
+            </sc-if>
+            <sc-if value="{{st.unchecked}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 12px; font-weight: 700; color: #4D5C56">{{st.num}}</span>
+            </sc-if>
+          </span>
+          <span style="{{st.textStyle}}">{{st.text}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{hasDetailDocs}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Documents you'll need</span>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{detailDocs}}" as="dc" hint-placeholder-count="2">
+        <button onClick="{{dc.open}}" style="{{dc.rowStyle}}">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 15px; font-weight: 600">{{dc.name}}</span>
+            <span style="font-size: 13px; color: #4D5C56">{{dc.whoLabel}}</span>
+          </span>
+          <span style="{{dc.pillStyle}}">{{dc.statusLabel}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{hasHelps}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Get help</span>
+    <sc-for list="{{helpBtns}}" as="h" hint-placeholder-count="2">
+      <button onClick="{{h.go}}" style="min-height: 56px; display: flex; align-items: center; gap: 12px; text-align: left; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; padding: 12px 14px; cursor: pointer; color: #15211D">
+        <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-weight: 700; font-size: 15px">{{h.label}}</span>
+          <span style="font-size: 13px; color: #4D5C56">{{h.sub}}</span>
+        </span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <button onClick="{{d.toggleDone}}" style="{{doneBtnStyle}}">{{doneBtnLabel}}</button>
+  <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #4D5C56; text-align: center">Rules change: confirm dates with the bank or official portal each year. We never ask for passwords or OTPs, and we don't give investment or tax advice.</p>
+</div>
+</sc-if>
+
+<!-- ================= DOCUMENTS ================= -->
+<sc-if value="{{isDocs}}" hint-placeholder-val="{{false}}">
+<div style="padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Documents</h1>
+      <span style="font-size: 14px; color: #4D5C56">Everything Mom and Dad may be asked for</span>
+    </div>
+    <button onClick="{{goAdd}}" aria-label="Scan a document" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: {{accent}}; color: #15211D; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+    </button>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+    <div style="background: #E3EFE9; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #1F3A30">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{docStats.onfile}}</span>
+      <span style="font-size: 12px; font-weight: 600">on file</span>
+    </div>
+    <div style="background: #FFF4DE; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #5C3A06">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{docStats.due}}</span>
+      <span style="font-size: 12px; font-weight: 600">renew / review</span>
+    </div>
+    <div style="background: #FCEBDC; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #5A2208">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{docStats.missing}}</span>
+      <span style="font-size: 12px; font-weight: 600">missing</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap" aria-label="Filter documents">
+    <sc-for list="{{docChips}}" as="c" hint-placeholder-count="4">
+      <button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-for list="{{docGroups}}" as="g" hint-placeholder-count="4">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{g.label}}</h3>
+      <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+        <sc-for list="{{g.items}}" as="dc" hint-placeholder-count="3">
+          <button onClick="{{dc.open}}" style="{{dc.rowStyle}}">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 15px; font-weight: 600">{{dc.name}}</span>
+              <span style="font-size: 13px; color: #4D5C56">{{dc.sub}}</span>
+            </span>
+            <span style="{{dc.pillStyle}}">{{dc.statusLabel}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+  <sc-if value="{{docsEmpty}}" hint-placeholder-val="{{false}}">
+    <p style="margin: 0; font-size: 15px; color: #4D5C56; text-align: center; padding: 16px 0">No documents match this filter.</p>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ================= DOCUMENT DETAIL ================= -->
+<sc-if value="{{isDocDetail}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+  <button onClick="{{goBack}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Back
+  </button>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{dd.catLabel}} · {{dd.whoLabel}}</span>
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 26px; line-height: 1.15">{{dd.name}}</h1>
+    <span style="{{dd.pillStyle}}">{{dd.statusLabel}}</span>
+  </div>
+
+  <div style="height: 150px; border-radius: 16px; border: 1.5px dashed #9AABA4; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #4D5C56">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 13h6M9 17h6"></path></svg>
+    <span style="font-size: 14px; font-weight: 600">{{dd.previewLabel}}</span>
+  </div>
+
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 4px 16px">
+    <div style="padding: 12px 0; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 13px; font-weight: 700; color: #4D5C56">What it's for</span>
+      <span style="font-size: 15px; line-height: 1.45">{{dd.use}}</span>
+    </div>
+    <div style="padding: 12px 0; border-top: 1px solid #E4EAE6; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 13px; font-weight: 700; color: #4D5C56">Validity / renewal</span>
+      <span style="font-size: 15px; line-height: 1.45">{{dd.valid}}</span>
+    </div>
+    <div style="padding: 12px 0; border-top: 1px solid #E4EAE6; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 13px; font-weight: 700; color: #4D5C56">Where the original is</span>
+      <span style="font-size: 15px; line-height: 1.45">{{dd.kept}}</span>
+    </div>
+  </div>
+
+  <sc-if value="{{hasDocTasks}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Used in these tasks</span>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{docTasks}}" as="t" hint-placeholder-count="2">
+        <button onClick="{{t.open}}" style="{{t.rowStyle}}">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="{{t.titleStyle}}">{{t.title}}</span>
+            <span style="font-size: 13px; color: #4D5C56">{{t.dueShort}}</span>
+          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <button onClick="{{dd.upload}}" style="min-height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">{{dd.uploadLabel}}</button>
+    <button onClick="{{dd.toggle}}" style="min-height: 52px; border: 1px solid #C9D3CE; border-radius: 14px; background: #FFFFFF; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">{{dd.toggleLabel}}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= TRACKERS ================= -->
+<sc-if value="{{isTrack}}" hint-placeholder-val="{{false}}">
+<div style="padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Trackers</h1>
+    <span style="font-size: 14px; color: #4D5C56">Across every bank, insurer and office</span>
+  </div>
+  <button onClick="{{openBenefits}}" style="min-height: 72px; display: flex; align-items: center; gap: 12px; background: #FFF4DE; border: 1px solid #F0DDB0; border-radius: 16px; padding: 12px 14px; text-align: left; cursor: pointer; color: #3D2804">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18"></path></svg>
+    <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 16px; font-weight: 700">Government benefits</span>
+      <span style="font-size: 13px">{{benStats.claimed}} in use · {{benStats.toClaim}} to claim or check · {{benStats.na}} not eligible</span>
+    </span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+  </button>
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #E3EAE6; padding: 4px; border-radius: 12px">
+    <sc-for list="{{trkTabs}}" as="o" hint-placeholder-count="4">
+      <button onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">{{o.label}}</button>
+    </sc-for>
+  </div>
+
+  <div style="background: {{accent}}; color: #15211D; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+    <span style="font-size: 13px; font-weight: 600; color: rgba(21, 33, 29, 0.82)">{{trk.kicker}}</span>
+    <span style="font-family: 'Merriweather', Georgia, serif; font-size: 26px; font-weight: 700">{{trk.big}}</span>
+    <span style="font-size: 14px; color: rgba(21, 33, 29, 0.82); line-height: 1.4">{{trk.sub}}</span>
+  </div>
+
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+    <sc-for list="{{trk.rows}}" as="r" hint-placeholder-count="4">
+      <button onClick="{{r.open}}" style="{{r.rowStyle}}">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+          <span style="font-size: 15px; font-weight: 600">{{r.name}}</span>
+          <span style="font-size: 13px; color: #4D5C56; line-height: 1.4">{{r.sub}}</span>
+        </span>
+        <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+          <span style="font-size: 14px; font-weight: 700">{{r.right}}</span>
+          <span style="{{r.pillStyle}}">{{r.pill}}</span>
+        </span>
+      </button>
+    </sc-for>
+  </div>
+  <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #4D5C56">{{trk.foot}}</p>
+</div>
+</sc-if>
+
+<!-- ================= BENEFITS ================= -->
+<sc-if value="{{isBenefits}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+  <button onClick="{{benBack}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Back
+  </button>
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px; line-height: 1.1">Government benefits</h1>
+    <span style="font-size: 14px; color: #4D5C56; line-height: 1.4">Matched to Mom and Dad's age, pension type and state</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+    <div style="background: #E3EFE9; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #1F3A30">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{benStats.claimed}}</span>
+      <span style="font-size: 12px; font-weight: 600">in use</span>
+    </div>
+    <div style="background: #FCEBDC; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #5A2208">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{benStats.toClaim}}</span>
+      <span style="font-size: 12px; font-weight: 600">claim or check</span>
+    </div>
+    <div style="background: #EEF1EF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; color: #26352F">
+      <span style="font-size: 22px; font-weight: 700; font-family: 'Merriweather', Georgia, serif">{{benStats.na}}</span>
+      <span style="font-size: 12px; font-weight: 600">not eligible</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap" aria-label="Filter benefits">
+    <sc-for list="{{benChips}}" as="c" hint-placeholder-count="4">
+      <button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-for list="{{benGroups}}" as="g" hint-placeholder-count="4">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{g.label}}</h3>
+      <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+        <sc-for list="{{g.items}}" as="b" hint-placeholder-count="3">
+          <button onClick="{{b.open}}" style="{{b.rowStyle}}">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 15px; font-weight: 600; line-height: 1.3">{{b.name}}</span>
+              <span style="font-size: 13px; color: #4D5C56; line-height: 1.4">{{b.whoLine}}</span>
+            </span>
+            <span style="{{b.pillStyle}}">{{b.pill}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+  <sc-if value="{{benEmpty}}" hint-placeholder-val="{{false}}">
+    <p style="margin: 0; font-size: 15px; color: #4D5C56; text-align: center; padding: 16px 0">Nothing left to claim for this filter.</p>
+  </sc-if>
+  <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #4D5C56">Schemes and amounts change. Each benefit links to the agency that runs it; confirm there before applying. We never apply on a parent's behalf or handle money.</p>
+</div>
+</sc-if>
+
+<!-- ================= BENEFIT DETAIL ================= -->
+<sc-if value="{{isBenefitDetail}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+  <button onClick="{{goBenefits}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Benefits
+  </button>
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <span style="font-size: 12px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">{{bd.catLabel}} · {{bd.agency}}</span>
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 26px; line-height: 1.15">{{bd.name}}</h1>
+  </div>
+
+  <div style="background: {{accent}}; color: #15211D; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+    <span style="font-size: 13px; font-weight: 600; color: rgba(21, 33, 29, 0.82)">What it gives</span>
+    <span style="font-size: 17px; font-weight: 600; line-height: 1.4">{{bd.value}}</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Status for each parent</span>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{bdPeople}}" as="p" hint-placeholder-count="2">
+        <div style="{{p.rowStyle}}">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 15px; font-weight: 700">{{p.name}}</span>
+            <span style="{{p.pillStyle}}">{{p.statusLabel}}</span>
+          </span>
+          <sc-if value="{{p.canMark}}" hint-placeholder-val="{{true}}">
+            <button onClick="{{p.mark}}" style="flex: none; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #C9D3CE; background: #FFFFFF; color: #15211D; font-size: 14px; font-weight: 700; cursor: pointer">{{p.markLabel}}</button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 4px 16px">
+    <div style="padding: 12px 0; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 13px; font-weight: 700; color: #4D5C56">Who qualifies</span>
+      <span style="font-size: 15px; line-height: 1.45">{{bd.rule}}</span>
+    </div>
+    <sc-if value="{{bd.hasNote}}" hint-placeholder-val="{{true}}">
+    <div style="padding: 12px 0; border-top: 1px solid #E4EAE6; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 13px; font-weight: 700; color: #8A3A10">Good to know</span>
+      <span style="font-size: 15px; line-height: 1.45">{{bd.note}}</span>
+    </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{bdHasSteps}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-weight: 700; font-size: 15px">How to claim</span>
+      <span style="font-size: 13px; color: #4D5C56">{{bdStepsDone}} of {{bdStepsTotal}} steps</span>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{bdSteps}}" as="st" hint-placeholder-count="3">
+        <button onClick="{{st.toggle}}" aria-pressed="{{st.pressed}}" style="{{st.rowStyle}}">
+          <span style="{{st.boxStyle}}">
+            <sc-if value="{{st.checked}}" hint-placeholder-val="{{false}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15211D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>
+            </sc-if>
+            <sc-if value="{{st.unchecked}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 12px; font-weight: 700; color: #4D5C56">{{st.num}}</span>
+            </sc-if>
+          </span>
+          <span style="{{st.textStyle}}">{{st.text}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{bdHasDocs}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-weight: 700; font-size: 15px">Documents you'll need</span>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{bdDocs}}" as="dc" hint-placeholder-count="2">
+        <button onClick="{{dc.open}}" style="{{dc.rowStyle}}">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 15px; font-weight: 600">{{dc.name}}</span>
+            <span style="font-size: 13px; color: #4D5C56">{{dc.whoLabel}}</span>
+          </span>
+          <span style="{{dc.pillStyle}}">{{dc.statusLabel}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{bdHasTask}}" hint-placeholder-val="{{false}}">
+    <button onClick="{{bd.openTask}}" style="min-height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #15211D; font-size: 16px; font-weight: 700; cursor: pointer">Open the task on the timeline</button>
+  </sc-if>
+  <sc-if value="{{bdCanAdd}}" hint-placeholder-val="{{true}}">
+    <button onClick="{{bd.addTask}}" style="min-height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #15211D; font-size: 16px; font-weight: 700; cursor: pointer">Add claiming this to the timeline</button>
+  </sc-if>
+  <span style="font-size: 12px; line-height: 1.5; color: #4D5C56; text-align: center">Confirm current rules with {{bd.agency}} before applying.</span>
+</div>
+</sc-if>
+
+<!-- ================= FAMILY ================= -->
+<sc-if value="{{isFamily}}" hint-placeholder-val="{{false}}">
+<div style="padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 20px">
+  <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Family</h1>
+
+  <button onClick="{{goCard}}" style="min-height: 64px; display: flex; align-items: center; gap: 12px; background: #FCEBDC; border: 1px solid #F3D3B8; border-radius: 16px; padding: 12px 16px; text-align: left; cursor: pointer; color: #5A2208">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-0.7-8-4.5-8-9V6zM12 9v6M9 12h6"></path></svg>
+    <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 16px; font-weight: 700">Emergency card</span>
+      <span style="font-size: 13px">Policies, doctors, medicines, where papers are</span>
+    </span>
+  </button>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">Parents</h3>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-weight: 700; font-size: 17px">Ramesh Kulkarni · Dad, 81</span>
+      <span style="font-size: 14px; color: #4D5C56; line-height: 1.45">Central govt pensioner · Pension and SCSS at SBI · Gives SBI the 75+ declaration, so no ITR · Android phone with Jeevan Pramaan</span>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+      <span style="font-weight: 700; font-size: 17px">Sunita Kulkarni · Mom, 76</span>
+      <span style="font-size: 14px; color: #4D5C56; line-height: 1.45">State govt pensioner · Deposits at SBI, Post Office · Files ITR each July · LIC policy</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">Who's on what</h3>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; overflow: hidden">
+      <sc-for list="{{ownerLoad}}" as="ol" hint-placeholder-count="3">
+        <div style="{{ol.rowStyle}}">
+          <span style="{{ol.avatarStyle}}">{{ol.initial}}</span>
+          <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-weight: 700; font-size: 15px">{{ol.name}}</span>
+            <span style="font-size: 13px; color: #4D5C56">{{ol.place}}</span>
+          </span>
+          <span style="font-size: 14px; font-weight: 700">{{ol.countLabel}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <button onClick="{{invite}}" style="min-height: 48px; border: 1.5px dashed #9AABA4; border-radius: 14px; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; cursor: pointer">Invite a sibling or spouse</button>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #4D5C56; letter-spacing: 0.06em; text-transform: uppercase">Recent activity</h3>
+    <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 4px 16px">
+      <div style="padding: 12px 0; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px"><b>Arjun</b> updated the nominee on Mom's SBI deposit</span>
+        <span style="font-size: 13px; color: #4D5C56">2 Oct</span>
+      </div>
+      <div style="padding: 12px 0; border-top: 1px solid #E4EAE6; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px"><b>Reminder sent</b> to Priya: Dad's life certificate window opened</span>
+        <span style="font-size: 13px; color: #4D5C56">1 Oct</span>
+      </div>
+      <div style="padding: 12px 0; border-top: 1px solid #E4EAE6; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px"><b>Priya</b> uploaded Mom's ITR acknowledgement</span>
+        <span style="font-size: 13px; color: #4D5C56">29 Jul</span>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= ADD ================= -->
+<sc-if value="{{isAdd}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+  <button onClick="{{goBack}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Back
+  </button>
+  <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Add something</h1>
+
+  <sc-if value="{{addPick}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #33433D">Snap a policy, FD receipt, tax notice or bank letter. We read the dates, file the document and build the reminders.</p>
+    <button onClick="{{openCamera}}" style="min-height: 120px; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left; background: {{accent}}; color: #15211D; border: 0; border-radius: 20px; padding: 18px; cursor: pointer">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6"></path></svg>
+      <span style="font-size: 18px; font-weight: 700">Scan a document</span>
+      <span style="font-size: 14px; color: rgba(21, 33, 29, 0.82)">Policy, FD receipt, tax notice, bank letter</span>
+    </button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <button onClick="{{manual}}" style="min-height: 64px; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; font-size: 15px; font-weight: 600; color: #15211D; cursor: pointer">Type it in</button>
+      <button onClick="{{forward}}" style="min-height: 64px; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; font-size: 15px; font-weight: 600; color: #15211D; cursor: pointer">Forward an email</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{addCamera}}" hint-placeholder-val="{{false}}">
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div style="height: 420px; border-radius: 20px; background: #1A2420; display: flex; align-items: center; justify-content: center; position: relative">
+      <div style="width: 230px; height: 300px; border: 2px solid #e2711d; border-radius: 10px; background: #2B3833; display: flex; flex-direction: column; gap: 10px; padding: 20px; box-sizing: border-box">
+        <div style="height: 12px; width: 60%; background: #4A5A53; border-radius: 3px"></div>
+        <div style="height: 8px; width: 90%; background: #3C4B45; border-radius: 3px"></div>
+        <div style="height: 8px; width: 80%; background: #3C4B45; border-radius: 3px"></div>
+        <div style="height: 8px; width: 85%; background: #3C4B45; border-radius: 3px"></div>
+        <div style="height: 26px; width: 50%; background: #4A5A53; border-radius: 3px; margin-top: 12px"></div>
+      </div>
+      <span style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #E6F0EC; font-size: 14px">Fit the page inside the frame</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <button onClick="{{cancelAdd}}" style="min-height: 44px; min-width: 80px; border: 0; background: transparent; font-size: 15px; font-weight: 600; color: #15211D; cursor: pointer">Cancel</button>
+      <button onClick="{{capture}}" aria-label="Capture document" style="width: 72px; height: 72px; border-radius: 50%; border: 4px solid {{accent}}; background: #FFFFFF; cursor: pointer"></button>
+      <span style="min-width: 80px"></span>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{addReview}}" hint-placeholder-val="{{false}}">
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div style="background: #E3EFE9; border-radius: 14px; padding: 12px 14px; font-size: 14px; line-height: 1.45; color: #1F3A30">We read these details from your photo. Check them before adding.</div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="f-kind" style="font-size: 13px; font-weight: 700; color: #33433D">What is it</label>
+      <input id="f-kind" name="kind" value="{{form.kind}}" onChange="{{onField}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 12px; padding: 0 14px; font-size: 16px; background: #FFFFFF; color: #15211D">
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-cat" style="font-size: 13px; font-weight: 700; color: #33433D">Category</label>
+        <select id="f-cat" name="cat" value="{{form.cat}}" onChange="{{onField}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 12px; padding: 0 10px; font-size: 16px; background: #FFFFFF; color: #15211D">
+          <option value="Insurance">Insurance</option>
+          <option value="Tax">Tax</option>
+          <option value="Bank">Bank</option>
+          <option value="Pension">Pension</option>
+          <option value="Property">Property</option>
+          <option value="Vehicle">Vehicle</option>
+          <option value="Health">Health</option>
+          <option value="Legal">Legal</option>
+          <option value="ID">ID</option>
+        </select>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-person" style="font-size: 13px; font-weight: 700; color: #33433D">For</label>
+        <select id="f-person" name="person" value="{{form.person}}" onChange="{{onField}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 12px; padding: 0 10px; font-size: 16px; background: #FFFFFF; color: #15211D">
+          <option value="Mom">Mom</option>
+          <option value="Dad">Dad</option>
+          <option value="Both">Both</option>
+        </select>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="f-due" style="font-size: 13px; font-weight: 700; color: #33433D">Next due date</label>
+      <input id="f-due" name="due" value="{{form.due}}" onChange="{{onField}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 12px; padding: 0 14px; font-size: 16px; background: #FFFFFF; color: #15211D">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="f-rec" style="font-size: 13px; font-weight: 700; color: #33433D">Repeats</label>
+      <input id="f-rec" name="rec" value="{{form.rec}}" onChange="{{onField}}" style="min-height: 48px; border: 1px solid #C9D3CE; border-radius: 12px; padding: 0 14px; font-size: 16px; background: #FFFFFF; color: #15211D">
+    </div>
+    <span style="font-size: 13px; color: #4D5C56">Reminders 30 days and 7 days before, to you and Arjun. The scan is filed under Documents.</span>
+    <button onClick="{{saveAdd}}" style="min-height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #15211D; font-size: 16px; font-weight: 700; cursor: pointer">Add to family calendar</button>
+    <button onClick="{{cancelAdd}}" style="min-height: 44px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; cursor: pointer">Discard</button>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ================= EMERGENCY CARD ================= -->
+<sc-if value="{{isCard}}" hint-placeholder-val="{{false}}">
+<div style="padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+  <button onClick="{{goBack}}" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #15211D; font-size: 15px; font-weight: 600; padding: 0; cursor: pointer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Back
+  </button>
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Merriweather', Georgia, serif; font-size: 28px">Emergency card</h1>
+    <span style="font-size: 14px; color: #4D5C56">What anyone needs at a hospital desk</span>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; font-weight: 700; color: #8A3A10; letter-spacing: 0.06em; text-transform: uppercase">Hospital cover</span>
+    <span style="font-size: 14px; color: #33433D; line-height: 1.5"><b>Family floater:</b> policy ending 4821, cashless card in Dad's wallet<br><b>Ayushman Vay Vandana:</b> Dad's card on file; Mom's pending</span>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; font-weight: 700; color: #8A3A10; letter-spacing: 0.06em; text-transform: uppercase">Doctors &amp; medicines</span>
+    <span style="font-size: 14px; color: #33433D; line-height: 1.5"><b>Family GP:</b> Dr. [Name], [Clinic], [Phone]<br><b>Dad:</b> [conditions] · daily [medicine list]<br><b>Mom:</b> [conditions] · daily [medicine list]<br><b>Allergies:</b> [list]</span>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; font-weight: 700; color: #8A3A10; letter-spacing: 0.06em; text-transform: uppercase">Where things are</span>
+    <span style="font-size: 14px; color: #33433D; line-height: 1.5">Policies, FD receipts, PPOs: blue file, steel cupboard, bedroom, top shelf<br>Sale deed &amp; Dad's will: SBI locker [number]</span>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 12px; font-weight: 700; color: #8A3A10; letter-spacing: 0.06em; text-transform: uppercase">Call first</span>
+    <span style="font-size: 14px; color: #33433D; line-height: 1.5">Neighbour [Name, phone] · Arjun (Bengaluru) · Priya (Toronto)</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <button onClick="{{shareCard}}" style="min-height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">Share one-page PDF</button>
+    <button onClick="{{printCard}}" style="min-height: 52px; border: 1px solid #C9D3CE; border-radius: 14px; background: #FFFFFF; color: #15211D; font-size: 15px; font-weight: 700; cursor: pointer">Fridge printout</button>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+<!-- ================= TAB BAR ================= -->
+<nav aria-label="Main" style="flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DCE3DF; padding: 6px 4px 14px">
+  <sc-for list="{{tabs}}" as="tab" hint-placeholder-count="5">
+    <button onClick="{{tab.go}}" aria-current="{{tab.current}}" style="{{tab.style}}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{tab.d}}"></path></svg>
+      <span style="font-size: 11px; font-weight: 600">{{tab.label}}</span>
+    </button>
+  </sc-for>
+</nav>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+  <div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 96px; background: #15211D; color: #FFFFFF; border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.4">{{toast}}</div>
+</sc-if>
+
+</div>
+</template>
+
+<script>
+(function () {
+  var scheduled = false, comp = null, lastScreen = null;
+  window.DCLogic = class {
+    constructor(props) { this.props = props || {}; this.state = {}; }
+    setState(u) {
+      var patch = typeof u === 'function' ? u(this.state) : u;
+      this.state = Object.assign({}, this.state, patch);
+      if (!scheduled) { scheduled = true; requestAnimationFrame(render); }
+    }
+  };
+  var HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+  function lookup(path, scopes) {
+    if (!path) return undefined;
+    var parts = path.trim().split('.');
+    for (var i = scopes.length - 1; i >= 0; i--) {
+      if (scopes[i] && Object.prototype.hasOwnProperty.call(scopes[i], parts[0])) {
+        var v = scopes[i][parts[0]];
+        for (var j = 1; j < parts.length; j++) { if (v == null) return undefined; v = v[parts[j]]; }
+        return v;
+      }
+    }
+    return undefined;
+  }
+  function interp(str, scopes) { return str.replace(HOLE, function (_, p) { var v = lookup(p, scopes); return v == null ? '' : String(v); }); }
+  function single(str) { var m = (str || '').match(/^\{\{\s*([\w.$]+)\s*\}\}$/); return m ? m[1] : null; }
+  var SVG = 'http://www.w3.org/2000/svg';
+  function build(node, scopes, out) {
+    if (node.nodeType === 3) { out.appendChild(document.createTextNode(interp(node.nodeValue, scopes))); return; }
+    if (node.nodeType !== 1) return;
+    var tag = node.localName;
+    if (tag === 'sc-if') {
+      if (lookup(single(node.getAttribute('value')), scopes)) node.childNodes.forEach(function (c) { build(c, scopes, out); });
+      return;
+    }
+    if (tag === 'sc-for') {
+      var list = lookup(single(node.getAttribute('list')), scopes) || [];
+      var as = node.getAttribute('as');
+      list.forEach(function (item) { var sc = {}; sc[as] = item; node.childNodes.forEach(function (c) { build(c, scopes.concat([sc]), out); }); });
+      return;
+    }
+    var el = node.namespaceURI === SVG ? document.createElementNS(SVG, tag) : document.createElement(tag);
+    var val;
+    Array.prototype.forEach.call(node.attributes, function (a) {
+      var n = a.name, v = a.value;
+      if (n.indexOf('hint-') === 0) return;
+      if (n.indexOf('on') === 0) {
+        var fn = lookup(single(v), scopes);
+        if (typeof fn === 'function') el.addEventListener(n.slice(2).toLowerCase(), fn);
+        return;
+      }
+      if (n === 'value' && (tag === 'input' || tag === 'select')) { val = interp(v, scopes); return; }
+      el.setAttribute(n, interp(v, scopes));
+    });
+    node.childNodes.forEach(function (c) { build(c, scopes, el); });
+    if (val !== undefined) el.value = val;
+    out.appendChild(el);
+  }
+  var tpl = document.getElementById('tpl');
+  function render() {
+    scheduled = false;
+    var root = document.getElementById('app');
+    var oldScroll = root.querySelector('[data-scroll]');
+    var keepTop = oldScroll ? oldScroll.scrollTop : 0;
+    var vals = comp.renderVals();
+    var frag = document.createDocumentFragment();
+    tpl.content.childNodes.forEach(function (c) { build(c, [vals], frag); });
+    root.replaceChildren(frag);
+    var sc = root.querySelector('[data-scroll]');
+    if (sc) sc.scrollTop = comp.state.screen === lastScreen ? keepTop : 0;
+    lastScreen = comp.state.screen;
+  }
+  function fit() {
+    var wrap = document.getElementById('wrap'), screen = document.getElementById('app');
+    var availW = Math.min(window.innerWidth - 56, 390);
+    var availH = window.innerHeight - 200;
+    var s = Math.min(1, availW / 390, Math.max(0.8, availH / 844));
+    screen.style.transform = s < 1 ? 'scale(' + s + ')' : '';
+    wrap.style.width = (390 * s) + 'px';
+    wrap.style.height = (844 * s) + 'px';
+  }
+  window.__start = function (C) { comp = new C({ accent: '#e2711d' }); fit(); render(); window.addEventListener('resize', fit); };
+})();
+</script>
+<script>
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: 'home', prev: 'home', taskId: null, docId: null,
+      filter: 'All', tlCat: 'All', docWho: 'All', trk: 'deposits',
+      tasks: this.seedTasks(), docs: this.seedDocs(),
+      benefits: this.seedBenefits(), benId: null, benPrev: 'home', benFilter: 'All',
+      steps: { 'lc-dad': { 0: true } },
+      addStage: 'pick',
+      form: { kind: 'LIC premium (Mom)', cat: 'Insurance', person: 'Mom', due: '28 Feb 2027', rec: 'Every year' },
+      toast: ''
+    };
+  }
+
+  seedTasks() {
+    const T = (id, title, who, cat, date, rec, owner, done, why, steps, docs, helps, extra) =>
+      Object.assign({ id: id, title: title, who: who, cat: cat, date: date, rec: rec, owner: owner, done: done, why: why, steps: steps, docs: docs || [], helps: helps || [] }, extra || {});
+    const lc = (who) => [
+      'Check the AadhaarFaceRD and Jeevan Pramaan apps are installed on ' + who + "'s Android phone",
+      'Keep ready: Aadhaar number, PPO number, pension bank account number',
+      'Start a video call; help ' + who + ' do the face scan in good light',
+      'Wait for the confirmation SMS and save the Jeevan Pramaan ID here',
+      'Check next month that the pension was credited as usual'
+    ];
+    return [
+      T('f121', 'Form 121 at every bank', 'Both', 'Tax', '2026-04-08', 'Every April', 'You', true,
+        'From 1 April 2026, Form 121 replaced Forms 15G and 15H. If income is below the taxable level, it goes to every bank or post office holding deposits at the start of each tax year, or TDS is cut from the interest.',
+        ['List every bank and post office holding a deposit', 'Confirm with Mom and Dad that their tax for the year is nil', 'Submit Form 121 at SBI (net banking or branch)', 'Submit at the Post Office and any other bank', 'Upload each acknowledgement here'],
+        ['pan-d', 'pan-m', 'f121ack'], ['partner']),
+      T('decl75', "Dad's 75+ declaration to SBI (no ITR needed)", 'Dad', 'Tax', '2026-04-15', 'Every April', 'You', true,
+        "Dad is 75+ and his income is only pension and interest from SBI, the bank that pays his pension. With the declaration (earlier called Form 12BBA) the bank works out and deducts his tax, so he doesn't file a return. Any other income source, such as interest from another bank, rent or capital gains, breaks this.",
+        ["Confirm all of Dad's income is pension + SBI interest", "Ask SBI for the senior-citizen declaration form", 'Fill and sign; attach any deduction proofs', 'Submit and upload the receipt'],
+        ['decl75doc', 'ppo-d', 'pan-d']),
+      T('ptax', 'Property tax for the year', 'Dad', 'Property', '2026-05-31', 'Every year', 'Arjun', true,
+        "Many municipal corporations give a rebate for paying the full year early. Dates and rebates vary; this date came from last year's receipt.",
+        ['Find the property ID on the last receipt', 'Check the bill on the municipal portal', 'Pay online or at the ward office', 'Upload the receipt'],
+        ['ptaxr', 'deed']),
+      T('tdscert', 'Collect pension TDS certificates', 'Both', 'Tax', '2026-06-15', 'Every June', 'You', true,
+        'The pension bank issues a yearly certificate of pension paid and tax deducted. Mom needs it to file; Dad needs it to check what SBI deducted.',
+        ["Download from the pension bank's net banking, or ask the branch", 'Check the TDS amount against the AIS', 'Upload both certificates'],
+        ['f130', 'intcert']),
+      T('ais', "Check Mom's Annual Information Statement", 'Mom', 'Tax', '2026-07-10', 'Every July', 'You', true,
+        'The AIS lists every interest payment and TDS entry the tax department has. Mismatches with what is filed trigger notices.',
+        ['Log in to the e-filing portal with Mom', 'Download the AIS', 'Compare with bank interest certificates', 'Flag anything wrong as feedback on the portal'],
+        ['aisdoc', 'intcert']),
+      T('itr-mom', "File Mom's income tax return", 'Mom', 'Tax', '2026-07-31', 'Every July', 'You', true,
+        "Mom has interest from more than one bank, so the 75+ no-filing route doesn't apply. 31 July is the due date for ITR-1/ITR-2; a belated return is possible until 31 December with a late fee.",
+        ['Gather pension certificate, interest certificates and AIS', 'Decide: file together or hand to a tax filer', 'File the return', 'E-verify within 30 days (Aadhaar OTP on Mom’s phone)', 'Upload the acknowledgement'],
+        ['f130', 'intcert', 'aisdoc', 'itrack'], ['partner']),
+      T('avv-d', "Dad's Ayushman Vay Vandana card", 'Dad', 'Health', '2026-08-20', 'One-time', 'Arjun', true,
+        'Everyone 70+ can get the Ayushman Vay Vandana card under PM-JAY, which adds hospital cover on top of private insurance.',
+        ['Enrol on the Ayushman app with Aadhaar e-KYC', 'Download the card', 'Save it here'], ['aad-d', 'avv-d']),
+      T('nominee', "Nominee update, Mom's SBI deposit", 'Mom', 'Bank', '2026-10-02', 'One-time', 'Arjun', true,
+        'Nominees let money reach the right person quickly. Without one, family members face lengthy paperwork.',
+        ['Fill the nomination form at the branch or online', 'Collect the acknowledgement', 'Upload it here'], ['nomack']),
+      T('avv-m', "Mom's Ayushman Vay Vandana card", 'Mom', 'Health', '2026-10-15', 'One-time', 'Unassigned', false,
+        'Everyone aged 70+ is eligible for the Ayushman Vay Vandana card under PM-JAY. It adds hospital cover on top of private insurance. Dad has his; Mom does not yet.',
+        ["Open the Ayushman app with Mom's Aadhaar-linked mobile", 'Complete Aadhaar e-KYC; Mom enters the OTP herself', "Take Mom's photo in the app", 'Download the card and upload it here'],
+        ['aad-m', 'avv-m'], ['video']),
+      T('fd-sbi', 'SBI fixed deposit matures', 'Mom', 'Bank', '2026-10-21', 'At maturity', 'Arjun', false,
+        "If nobody acts, the deposit may auto-renew on the bank's current terms. Decide with Mom what she wants; we don't recommend investments.",
+        ['Check the maturity instruction on net banking or the receipt', 'Talk to Mom: renew, move or withdraw', 'Make sure Form 121 covers any renewed deposit', 'Record the new maturity date here'],
+        ['fd-sbi-r', 'f121ack'], ['partner']),
+      T('kyc', 'HDFC Bank re-KYC', 'Dad', 'Bank', '2026-10-31', 'When the bank asks', 'Unassigned', false,
+        'Banks ask for periodic re-KYC. If it lapses, transactions on the account can be restricted.',
+        ["Read the bank's letter for what is needed", 'If nothing changed, a self-declaration often works (net banking or branch)', 'Otherwise carry Aadhaar, PAN and a photo, or use video KYC', 'Note the completion date here'],
+        ['aad-d', 'pan-d'], ['partner']),
+      T('nom-hdfc', "Add a nominee to Dad's HDFC account", 'Dad', 'Bank', '2026-10-31', 'One-time', 'Unassigned', false,
+        "Dad's HDFC savings account has no nominee. Do it together with the re-KYC visit.",
+        ['Decide the nominee with Dad', 'Fill the nomination form (online or branch)', 'Upload the acknowledgement'], ['nomack', 'aad-d']),
+      T('refund', "Check Mom's return is processed", 'Mom', 'Tax', '2026-11-10', 'Every year', 'You', false,
+        'Returns are usually processed within a few months. A refund or a notice shows up on the e-filing portal; notices have their own reply deadlines.',
+        ['Log in to the e-filing portal with Mom', 'Check the status of the return', 'If a notice is raised, note its deadline here'],
+        ['itrack']),
+      T('health', 'Health insurance renewal', 'Both', 'Insurance', '2026-11-18', 'Every year', 'Arjun', false,
+        'Letting the policy lapse past its grace period can mean losing continuity benefits, including cover built up for pre-existing conditions.',
+        ["Compare the renewal notice with last year's cover", 'Confirm both parents are still listed', 'Pay before the due date', 'Upload the renewed policy; keep the premium receipt for tax'],
+        ['hpol'], ['partner']),
+      T('lc-dad', "Dad's life certificate", 'Dad', 'Pension', '2026-11-30', 'Every year', 'You', false,
+        "Pensioners aged 80+ can submit from 1 October; others from 1 November. The deadline is 30 November. If missed, pension is paused from December and paid as arrears once the certificate is in.",
+        lc('Dad'), ['aad-d', 'ppo-d', 'lcc-d'], ['video', 'ippb'],
+        { hero: true, heroLine: 'Dad is 80+, so he can submit now. If 30 Nov is missed, his pension pauses from December.' }),
+      T('lc-mom', "Mom's life certificate", 'Mom', 'Pension', '2026-11-30', 'Every year', 'You', false,
+        "Mom is under 80, so her window opens on 1 November. Deadline is 30 November; if missed, pension pauses from December until it's submitted.",
+        lc('Mom'), ['aad-m', 'ppo-m', 'lcc-m'], ['video', 'ippb']),
+      T('puc', 'Car PUC certificate', 'Dad', 'Vehicle', '2026-12-05', 'Every 6-12 months', 'Arjun', false,
+        'A valid Pollution Under Control certificate is needed to drive and is usually checked when renewing insurance.',
+        ['Visit any authorised PUC centre', 'Upload the new certificate'], ['pucdoc', 'rc']),
+      T('nom-mf', "Add a nominee to Dad's mutual fund folio", 'Dad', 'Bank', '2026-12-31', 'One-time', 'You', false,
+        "Dad's mutual fund folio has no nominee. Without one, family members need much more paperwork to claim it.",
+        ['Log in to the fund or registrar portal with Dad', 'Add the nominee; Dad confirms with OTP on his phone', 'Upload the confirmation'], ['nomack', 'pan-d']),
+      T('car', 'Car insurance renewal', 'Dad', 'Vehicle', '2027-01-12', 'Every year', 'Arjun', false,
+        'Driving without valid motor insurance is an offence, and a lapse can cost the no-claim bonus.',
+        ['Check the renewal quote', 'Make sure PUC is valid', 'Renew before the due date', 'Upload the new policy'], ['carpol', 'rc', 'pucdoc']),
+      T('checkup', 'Annual health check', 'Both', 'Health', '2027-01-20', 'Every year', 'You', false,
+        'A yearly check keeps medical records current for emergencies and insurance claims.',
+        ['Book with the family GP or a lab', 'Upload reports so the emergency card stays current'], ['medrec']),
+      T('lic', "LIC premium for Mom", 'Mom', 'Insurance', '2027-02-28', 'Every year', 'You', false,
+        'A missed premium can lapse the policy after the grace period, and reviving it costs extra.',
+        ['Check the premium notice', 'Pay online or at the branch', 'Upload the receipt'], ['licpol']),
+      T('scss', "Dad's SCSS account matures", 'Dad', 'Bank', '2027-02-28', 'At maturity', 'You', false,
+        "A Senior Citizens' Savings Scheme account runs five years and can then be closed or extended, with timing rules for extension. Decide with Dad; we don't recommend investments.",
+        ['Ask SBI for the maturity options and extension form', 'Decide with Dad', 'Submit the form; Form 121 if needed', 'Record the new date here'],
+        ['scssp', 'f121ack'], ['partner']),
+      T('f121-next', 'Prepare Form 121 for next tax year', 'Both', 'Tax', '2027-03-25', 'Every March', 'You', false,
+        'Have forms ready so they reach every bank on 1 April, before the first interest of the new tax year.',
+        ['Check each deposit is still held', 'Confirm tax for next year is expected to be nil', 'Prefill forms for each bank'], ['f121ack', 'pan-d', 'pan-m']),
+      T('aadhaar', "Update Dad's Aadhaar documents", 'Dad', 'ID', '2027-06-30', 'Every 10 years', 'You', false,
+        'UIDAI asks people enrolled 10+ years ago to refresh proof of identity and address. Dad enrolled in 2012.',
+        ['Check details on the myAadhaar portal', 'Upload current ID and address proof', 'Save the update request number'], ['aad-d']),
+      T('will', 'Review both wills', 'Both', 'Legal', '2027-09-01', 'Every 3 years or after a big change', 'Unassigned', false,
+        'Wills should be reviewed after major changes, like a property sold or a death in the family. Mom does not have one yet; without one, settling bank and property is much slower.',
+        ['Read the current will with Dad', 'Talk to Mom about making hers', 'Book the family lawyer', 'Note where originals are kept'], ['will-d', 'will-m', 'poa'], ['partner']),
+      T('dl', "Dad's driving licence renewal", 'Dad', 'ID', '2028-03-14', 'Every 5 years after 50', 'Arjun', false,
+        'After 50, a driving licence is renewed every five years and needs a medical certificate.',
+        ['Get the medical certificate from a registered doctor', 'Apply on the Parivahan Sarathi portal', 'Visit the RTO if asked', 'Upload the new licence'], ['dlic']),
+      T('passport', "Mom's passport renewal", 'Mom', 'ID', '2029-08-10', 'Every 10 years', 'You', false,
+        'Start about six months before expiry; some countries require six months of validity to travel.',
+        ['Apply on Passport Seva', 'Book an appointment', 'Upload the new passport'], ['pass-m'])
+    ];
+  }
+
+  seedDocs() {
+    const D = (id, name, who, cat, status, use, valid, kept) => ({ id: id, name: name, who: who, cat: cat, status: status, use: use, valid: valid, kept: kept });
+    return [
+      D('aad-d', 'Aadhaar', 'Dad', 'id', 'onfile', 'Life certificate, e-KYC, e-verifying returns', 'No expiry; refresh documents every 10 years', 'Wallet; copy in blue file'),
+      D('aad-m', 'Aadhaar', 'Mom', 'id', 'onfile', 'Life certificate, e-KYC, Ayushman card', 'No expiry', 'Handbag; copy in blue file'),
+      D('pan-d', 'PAN card', 'Dad', 'id', 'onfile', 'Every bank, tax and investment form', 'No expiry; linked to Aadhaar', 'Blue file'),
+      D('pan-m', 'PAN card', 'Mom', 'id', 'onfile', 'Every bank, tax and investment form', 'No expiry; linked to Aadhaar', 'Blue file'),
+      D('pass-m', 'Passport', 'Mom', 'id', 'onfile', 'Travel; address proof', 'Valid to Aug 2029', 'Steel cupboard, top shelf'),
+      D('dlic', 'Driving licence', 'Dad', 'id', 'onfile', 'Driving; ID proof', 'Valid to Mar 2028', 'Wallet'),
+      D('ppo-d', 'Pension Payment Order (PPO)', 'Dad', 'pension', 'onfile', 'Life certificate, any pension query, family pension later', 'Permanent. Check Mom is named for family pension', 'Blue file'),
+      D('ppo-m', 'Pension Payment Order (PPO)', 'Mom', 'pension', 'missing', 'Life certificate, pension queries', 'Permanent. Ask the pension office for a copy', 'Not found'),
+      D('lcc-d', 'Life certificate 2026 confirmation', 'Dad', 'pension', 'due', 'Proof the pension will continue past November', 'Every year by 30 Nov', 'Saved here once submitted'),
+      D('lcc-m', 'Life certificate 2026 confirmation', 'Mom', 'pension', 'due', 'Proof the pension will continue past November', 'Every year by 30 Nov', 'Saved here once submitted'),
+      D('fd-sbi-r', 'SBI fixed deposit receipt', 'Mom', 'bank', 'onfile', 'Maturity, renewal, nominee check', 'Matures 21 Oct 2026', 'Blue file'),
+      D('po-mis', 'Post Office MIS passbook', 'Mom', 'bank', 'onfile', 'Monthly income, maturity', 'Matures Aug 2028', 'Blue file'),
+      D('scssp', 'SCSS passbook (SBI)', 'Dad', 'bank', 'onfile', 'Interest, maturity, extension', 'Matures 28 Feb 2027', 'Blue file'),
+      D('nomack', 'Nomination acknowledgements', 'Both', 'bank', 'review', 'Proof each account has a nominee', 'HDFC savings and the mutual fund folio have none', 'Blue file'),
+      D('f121ack', 'Form 121 acknowledgements 2026-27', 'Both', 'tax', 'onfile', 'Stops TDS on deposit interest', 'This tax year only; redo in April', 'Saved here'),
+      D('decl75doc', '75+ declaration to SBI', 'Dad', 'tax', 'onfile', 'Lets SBI handle tax so Dad needn’t file a return', 'This tax year only', 'Saved here'),
+      D('f130', 'Pension TDS certificates', 'Both', 'tax', 'onfile', 'Filing and checking tax', 'Issued each June', 'Saved here'),
+      D('intcert', 'Interest certificates', 'Both', 'tax', 'onfile', 'Filing; checking TDS', 'Download each year from every bank', 'Saved here'),
+      D('aisdoc', 'Annual Information Statement', 'Mom', 'tax', 'onfile', 'Checking all income before filing', 'Download each year', 'Saved here'),
+      D('itrack', 'ITR acknowledgement (filed Jul 2026)', 'Mom', 'tax', 'onfile', 'Proof of filing; loans, visas', 'Keep at least 6 years', 'Saved here'),
+      D('hpol', 'Health insurance policy', 'Both', 'insurance', 'due', 'Hospital admission, cashless claims', 'Renews 18 Nov 2026', 'Cashless card in Dad’s wallet'),
+      D('avv-d', 'Ayushman Vay Vandana card', 'Dad', 'insurance', 'onfile', 'Free cover at empanelled hospitals', 'No renewal', 'Saved here'),
+      D('avv-m', 'Ayushman Vay Vandana card', 'Mom', 'insurance', 'missing', 'Free cover at empanelled hospitals', 'Enrol once', 'Not enrolled yet'),
+      D('licpol', 'LIC policy bond', 'Mom', 'insurance', 'onfile', 'Claims, maturity, nominee', 'Premium due every Feb', 'Steel cupboard'),
+      D('carpol', 'Car insurance policy', 'Dad', 'insurance', 'onfile', 'Driving; claims', 'Renews 12 Jan 2027', 'Glovebox; copy here'),
+      D('deed', 'Sale deed (flat)', 'Dad', 'property', 'onfile', 'Ownership proof; sale, transfer, loans', 'Permanent', 'SBI locker'),
+      D('ptaxr', 'Property tax receipt 2026-27', 'Dad', 'property', 'onfile', 'Proof of payment; transfers', 'Every year', 'Saved here'),
+      D('rc', 'Vehicle RC', 'Dad', 'property', 'onfile', 'Ownership; insurance; PUC', 'Private cars: 15 years, then renew', 'Glovebox'),
+      D('pucdoc', 'PUC certificate', 'Dad', 'property', 'due', 'Driving; insurance renewal', 'Expires 5 Dec 2026', 'Glovebox'),
+      D('medrec', 'Medical records & prescriptions', 'Both', 'health', 'review', 'Hospital admission; claims', 'Last updated Mar 2026', 'Saved here'),
+      D('will-d', 'Will', 'Dad', 'legal', 'onfile', 'Passing on property and money', 'Review every few years', 'SBI locker'),
+      D('will-m', 'Will', 'Mom', 'legal', 'missing', 'Passing on property and money', 'Not made yet', 'Not made yet'),
+      D('poa', 'Power of attorney', 'Both', 'legal', 'missing', 'Lets a child act if a parent can’t', 'Optional but recommended', 'Not made yet')
+    ];
+  }
+
+  seedBenefits() {
+    const B = (id, name, cat, agency, value, rule, st, steps, docs, task, note) =>
+      ({ id: id, name: name, cat: cat, agency: agency, value: value, rule: rule, st: st, steps: steps || [], docs: docs || [], task: task || null, note: note || '' });
+    return [
+      B('avv', 'Ayushman Vay Vandana card', 'health', 'National Health Authority',
+        'Cashless hospital cover of up to ₹5 lakh a year under PM-JAY, on top of any private insurance',
+        'Everyone aged 70 and above, regardless of income.',
+        { Dad: 'claimed', Mom: 'unclaimed' },
+        ["Open the Ayushman app or beneficiary portal with the parent's Aadhaar-linked mobile", 'Complete Aadhaar e-KYC; the parent enters the OTP', 'Take a photo in the app', 'Download the card and file it under Documents'],
+        ['aad-m', 'avv-m'], 'avv-m',
+        'Seniors already on CGHS or another government health scheme must choose between it and this cover.'),
+      B('cghs', 'CGHS card', 'health', 'Central Government Health Scheme',
+        'OPD consultations, medicines and hospital care for central government pensioners and dependants',
+        'Central government pensioners and eligible family members, in CGHS-covered cities (Pune is one).',
+        { Dad: 'check', Mom: 'check' },
+        ['Check whether Dad chose CGHS or Ayushman Vay Vandana', 'If CGHS: apply on the CGHS portal with his PPO', 'Pay the contribution for his pay level', 'Download cards for Dad and Mom (as dependant)'],
+        ['ppo-d', 'aad-d', 'aad-m'], null,
+        'Dad already has the Ayushman card. Compare hospital networks before switching; he can only use one of the two.'),
+      B('addl80', 'Additional pension at 80+', 'pension', "Dept of Pension & Pensioners' Welfare",
+        '20% extra basic pension from age 80, stepping up at 85, 90, 95 and 100',
+        'Central government pensioners from the month they turn 80. State pensions follow their own rules.',
+        { Dad: 'check', Mom: 'na' },
+        ["Check Dad's pension slip or passbook for the age-80 additional pension", 'If missing, write to the pension-paying branch with date-of-birth proof', 'Track the arrears once it is corrected'],
+        ['ppo-d', 'aad-d'], null,
+        'This is added by the bank automatically, but errors happen. Dad turned 80 last year; worth a one-time check.'),
+      B('dr', 'Dearness Relief revisions', 'pension', 'Central / state finance departments',
+        'Pension rises with inflation; usually revised twice a year',
+        'All government pensioners; states announce their own revisions.',
+        { Dad: 'auto', Mom: 'auto' },
+        ['When a revision is announced, check the next pension credit', 'Check arrears for the backdated months arrive'], [], null,
+        "We'll remind you after each announcement."),
+      B('fampen', 'Family pension for Mom', 'pension', "Dad's pension office",
+        "Mom keeps receiving a pension if Dad passes away first",
+        "Spouse named in the pensioner's PPO.",
+        { Dad: 'na', Mom: 'claimed' },
+        ["Check Mom's name is in Dad's PPO", 'Keep marriage proof and a joint photo with the PPO'], ['ppo-d'], null, ''),
+      B('ignoaps', 'Old age pension (IGNOAPS)', 'pension', 'Ministry of Rural Development',
+        'Monthly pension for seniors from BPL households, with state top-ups',
+        'Aged 60+ and from a below-poverty-line household.',
+        { Dad: 'na', Mom: 'na' }, [], [], null, ''),
+      B('nofile', 'No ITR needed at 75+', 'tax', 'Income Tax Department',
+        'The pension bank works out and deducts tax, so no return has to be filed',
+        "75+, resident, income only from pension and interest at the same bank, and a declaration given to that bank.",
+        { Dad: 'claimed', Mom: 'na' }, [], ['decl75doc'], 'decl75',
+        'Mom has interest from more than one bank, so she still files each July.'),
+      B('exempt', 'Higher tax-free income limit', 'tax', 'Income Tax Department',
+        'Higher basic exemption for ages 60-79 and higher still at 80+, under the old tax regime',
+        'Senior and super-senior citizens who choose the old regime.',
+        { Dad: 'auto', Mom: 'auto' }, [], [], null,
+        'Under the new regime everyone has the same slabs. Compare both regimes each year before filing.'),
+      B('int50', 'Interest deduction up to ₹50,000', 'tax', 'Income Tax Department',
+        'Interest from bank and post office deposits deducted from taxable income',
+        'Senior citizens filing under the old regime.',
+        { Dad: 'auto', Mom: 'claimed' }, [], ['intcert'], 'itr-mom', ''),
+      B('hp50', 'Health premium deduction up to ₹50,000', 'tax', 'Income Tax Department',
+        'Health insurance premium for a senior citizen deducted from taxable income',
+        'Premium paid for a senior citizen, under the old regime.',
+        { Dad: 'auto', Mom: 'claimed' }, [], ['hpol'], 'health', 'Keep every premium receipt; it is needed when filing.'),
+      B('noadv', 'No advance tax', 'tax', 'Income Tax Department',
+        'Tax is paid at filing time instead of in quarterly instalments',
+        'Resident seniors aged 60+ with no business income.',
+        { Dad: 'auto', Mom: 'auto' }, [], [], null, ''),
+      B('scss', "Senior Citizens' Savings Scheme", 'savings', 'Post Office / authorised banks',
+        'Government-backed deposit for 60+ with quarterly interest; the rate is set each quarter',
+        'Aged 60+, up to ₹30 lakh per person.',
+        { Dad: 'claimed', Mom: 'available' }, [], ['scssp'], 'scss',
+        'Listed so you know it exists. We do not recommend investments.'),
+      B('doorstep', 'Doorstep banking for 70+', 'everyday', 'Reserve Bank of India / your bank',
+        'Cash and cheque pickup or delivery and KYC at home',
+        'Bank customers aged 70+ and persons with disabilities. Banks may charge a small fee.',
+        { Dad: 'available', Mom: 'available' },
+        ['Ask SBI to register Mom and Dad for doorstep banking', "Save the bank's booking number in both phones"], [], null, ''),
+      B('msrtc', 'Free state bus travel at 75+', 'everyday', 'Maharashtra State Road Transport Corp.',
+        'Free travel on MSRTC buses within Maharashtra',
+        'Maharashtra residents aged 75+; carry age proof.',
+        { Dad: 'check', Mom: 'check' },
+        ['Confirm current rules at the bus depot or MSRTC site', 'Make sure both carry Aadhaar or a senior citizen card'], ['aad-d', 'aad-m'], null,
+        'State schemes differ. We match these to the state your parents live in.'),
+      B('rail', 'Railway fare concession', 'everyday', 'Indian Railways',
+        'Discount on train fares for senior citizens',
+        'Suspended since 2020 and not restored as of our last check.',
+        { Dad: 'suspended', Mom: 'suspended' }, [], [], null, "We'll alert you if it comes back."),
+      B('srcard', 'Senior citizen ID card', 'everyday', 'State social justice department',
+        'Age proof that many offices accept for priority queues and concessions',
+        'Aged 60+, issued by the state.',
+        { Dad: 'unclaimed', Mom: 'unclaimed' },
+        ['Apply at an Aaple Sarkar centre or the state portal', 'Carry Aadhaar, a photo and address proof', 'File the card under Documents'], ['aad-d', 'aad-m'], null, ''),
+      B('ptaxsr', 'Senior property tax concession', 'everyday', 'Your municipal corporation',
+        'Some municipalities give seniors a discount on property tax',
+        'Varies by city and by who owns the property.',
+        { Dad: 'check', Mom: 'na' },
+        ['Check the municipal portal or ward office for a senior concession', 'Apply before paying next year’s bill'], ['ptaxr', 'deed'], null, ''),
+      B('vayoshri', 'Rashtriya Vayoshri Yojana', 'health', 'Ministry of Social Justice',
+        'Free hearing aids, walkers, spectacles, dentures and other aids at camps',
+        'Seniors from BPL households or within the scheme’s income limit.',
+        { Dad: 'na', Mom: 'na' }, [], [], null, ''),
+      B('elder', 'Elderline 14567', 'safety', 'Ministry of Social Justice',
+        'Free national helpline: information, legal advice, emotional support and help in abuse cases',
+        'All senior citizens.',
+        { Dad: 'available', Mom: 'available' },
+        ["Save 14567 in both parents' phones", 'Add it to the emergency card'], [], null, ''),
+      B('mwpsc', 'Maintenance & Welfare of Parents and Senior Citizens Act', 'safety', 'Maintenance Tribunal (sub-divisional)',
+        'Legal right to maintenance and to protection of life and property',
+        'All senior citizens and parents.',
+        { Dad: 'available', Mom: 'available' }, [], [], null, 'Good to know about; most families never need it.')
+    ];
+  }
+
+  showToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => this.setState({ toast: '' }), 2600);
+  }
+  componentWillUnmount() { clearTimeout(this._tt); }
+  patchTask(id, patch) { this.setState((s) => ({ tasks: s.tasks.map((t) => (t.id === id ? Object.assign({}, t, patch) : t)) })); }
+  patchDoc(id, patch) { this.setState((s) => ({ docs: s.docs.map((d) => (d.id === id ? Object.assign({}, d, patch) : d)) })); }
+
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#e2711d';
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const MONF = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const TODAY = '2026-10-03';
+    const dnum = (iso) => { const p = iso.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]) / 86400000; };
+    const tdn = dnum(TODAY);
+    const ROW = 'width:100%;min-height:64px;display:flex;align-items:center;gap:12px;padding:12px 14px;background:#FFFFFF;border:0;cursor:pointer;color:#15211D;text-align:left;';
+    const SEP = 'border-top:1px solid #E4EAE6;';
+    const PILL = 'flex:none;font-size:12px;font-weight:700;padding:5px 9px;border-radius:999px;white-space:nowrap;';
+    const TONE = {
+      green: 'background:#E3EFE9;color:#1F3A30;', orange: 'background:#FCEBDC;color:#7A2E0B;',
+      amber: 'background:#FFF4DE;color:#5C3A06;', grey: 'background:#EEF1EF;color:#26352F;', blue: 'background:#E6ECF7;color:#1F3A66;'
+    };
+    const whoLabel = (w) => (w === 'Both' ? 'Mom & Dad' : w);
+    const ownerName = (o) => (o === 'You' ? 'Priya' : o === 'Arjun' ? 'Arjun' : 'No owner');
+    const nav = (screen, extra) => this.setState(Object.assign({ screen: screen, prev: s.screen === 'detail' || s.screen === 'docDetail' || s.screen === 'add' || s.screen === 'card' ? s.prev : s.screen, addStage: 'pick' }, extra || {}));
+    const openTask = (id) => () => this.setState({ screen: 'detail', taskId: id, prev: s.screen === 'detail' || s.screen === 'docDetail' ? s.prev : s.screen });
+    const openDoc = (id) => () => this.setState({ screen: 'docDetail', docId: id, prev: s.screen === 'detail' || s.screen === 'docDetail' ? s.prev : s.screen });
+
+    const dueText = (t) => {
+      if (t.done) return 'Done';
+      const diff = dnum(t.date) - tdn;
+      if (diff < 0) return 'Overdue';
+      if (diff === 0) return 'Today';
+      if (diff <= 60) return 'in ' + diff + ' days';
+      return null;
+    };
+    const decorate = (t, i) => {
+      const p = t.date.split('-').map(Number);
+      const diff = dnum(t.date) - tdn;
+      const dt = dueText(t);
+      let pillText, tone;
+      if (t.done) { pillText = 'Done'; tone = TONE.green; }
+      else if (diff < 0) { pillText = 'Overdue'; tone = TONE.orange; }
+      else if (t.owner === 'Unassigned') { pillText = 'No owner'; tone = TONE.orange; }
+      else { pillText = ownerName(t.owner); tone = TONE.grey; }
+      return Object.assign({}, t, {
+        day: String(p[2]), mon: MON[p[1] - 1], year: String(p[0]),
+        open: openTask(t.id),
+        rowStyle: ROW + (i ? SEP : ''),
+        dateStyle: 'flex:none;width:44px;height:44px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + (t.done ? 'background:#EEF1EF;color:#5A6862;' : diff <= 30 ? 'background:#FFF4DE;color:#5C3A06;' : 'background:#EEF1EF;color:#26352F;'),
+        titleStyle: 'font-size:15px;font-weight:600;line-height:1.3;' + (t.done ? 'text-decoration:line-through;color:#5A6862;' : ''),
+        meta: whoLabel(t.who) + ' · ' + t.cat + (dt && !t.done ? ' · ' + dt : ''),
+        metaRec: whoLabel(t.who) + ' · ' + t.rec,
+        dueShort: (t.done ? 'Done · ' : '') + p[2] + ' ' + MON[p[1] - 1] + ' ' + p[0],
+        pillText: pillText,
+        pillStyle: PILL + tone
+      });
+    };
+    const chipStyle = (on) => 'flex:none;min-height:40px;padding:0 16px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;' +
+      (on ? 'background:#15211D;color:#FFFFFF;border:1px solid #15211D;' : 'background:#FFFFFF;color:#15211D;border:1px solid #C9D3CE;');
+    const personMatch = (who, f) => f === 'All' || who === f || who === 'Both';
+
+    // ---------- Today ----------
+    const homeMatch = (t) => s.filter === 'All' || (s.filter === 'Mine' && t.owner === 'You') || personMatch(t.who, s.filter) && s.filter !== 'Mine';
+    const soon = s.tasks.filter((t) => !t.done && dnum(t.date) - tdn <= 60).sort((a, b) => (a.date < b.date ? -1 : 1));
+    const soonF = soon.filter(homeMatch);
+    const byMonth = {};
+    soonF.forEach((t) => { const k = t.date.slice(0, 7); (byMonth[k] = byMonth[k] || []).push(t); });
+    const homeSections = Object.keys(byMonth).sort().map((k) => ({ label: MONF[Number(k.slice(5, 7)) - 1], items: byMonth[k].map(decorate) }));
+    const chips = ['All', 'Mine', 'Dad', 'Mom'].map((c) => ({ label: c === 'Mine' ? 'My tasks' : c, pressed: s.filter === c ? 'true' : 'false', pick: () => this.setState({ filter: c }), style: chipStyle(s.filter === c) }));
+    const yearTasks = s.tasks.filter((t) => t.date >= '2026-04-01' && t.date <= '2027-03-31');
+    const heroTask = s.tasks.find((t) => t.hero && !t.done);
+    const missingDocs = s.docs.filter((d) => d.status === 'missing').length;
+
+    // ---------- Timeline ----------
+    const CATS = ['All', 'Pension', 'Tax', 'Bank', 'Insurance', 'Health', 'Property', 'Vehicle', 'ID', 'Legal'];
+    const catChips = CATS.map((c) => ({ label: c, pressed: s.tlCat === c ? 'true' : 'false', pick: () => this.setState({ tlCat: c }), style: chipStyle(s.tlCat === c) }));
+    const catOk = (t) => s.tlCat === 'All' || t.cat === s.tlCat;
+    const tlMonths = [];
+    for (let i = 0; i < 12; i++) {
+      const y = i < 9 ? 2026 : 2027; const m = ((3 + i) % 12) + 1;
+      const key = y + '-' + String(m).padStart(2, '0');
+      const items = s.tasks.filter((t) => t.date.slice(0, 7) === key && catOk(t)).sort((a, b) => (a.date < b.date ? -1 : 1));
+      const isNow = key === TODAY.slice(0, 7);
+      if (items.length) tlMonths.push({ label: MONF[m - 1] + ' ' + y, isNow: isNow, items: items.map(decorate) });
+    }
+    const beyond = s.tasks.filter((t) => t.date > '2027-03-31' && catOk(t)).sort((a, b) => (a.date < b.date ? -1 : 1)).map(decorate);
+
+    // ---------- Task detail ----------
+    const dt = s.tasks.find((t) => t.id === s.taskId) || s.tasks[0];
+    const dp = dt.date.split('-').map(Number);
+    const stepMap = s.steps[dt.id] || {};
+    const detailSteps = dt.steps.map((text, i) => {
+      const checked = dt.done || !!stepMap[i];
+      return {
+        text: text, num: String(i + 1), checked: checked, unchecked: !checked, pressed: checked ? 'true' : 'false',
+        toggle: () => this.setState((st) => { const cur = Object.assign({}, st.steps[dt.id] || {}); cur[i] = !cur[i]; const n = Object.assign({}, st.steps); n[dt.id] = cur; return { steps: n }; }),
+        rowStyle: ROW + 'min-height:56px;' + (i ? SEP : ''),
+        boxStyle: 'flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;' + (checked ? 'background:' + accent + ';border:2px solid ' + accent + ';' : 'background:#FFFFFF;border:2px solid #9AABA4;'),
+        textStyle: 'font-size:15px;line-height:1.4;' + (checked ? 'color:#5A6862;text-decoration:line-through;' : '')
+      };
+    });
+    const stepsDone = detailSteps.filter((x) => x.checked).length;
+    const STATUS = {
+      onfile: { label: 'On file', tone: TONE.green }, missing: { label: 'Missing', tone: TONE.orange },
+      due: { label: 'Renew soon', tone: TONE.amber }, review: { label: 'Check', tone: TONE.blue }
+    };
+    const CATL = { id: 'Identity', pension: 'Pension', bank: 'Bank & deposits', tax: 'Tax', insurance: 'Insurance', property: 'Property & vehicle', health: 'Health', legal: 'Legal' };
+    const detailDocs = dt.docs.map((id) => s.docs.find((x) => x.id === id)).filter(Boolean).map((x, i) => ({
+      name: x.name, whoLabel: whoLabel(x.who), open: openDoc(x.id), rowStyle: ROW + 'min-height:56px;' + (i ? SEP : ''),
+      statusLabel: STATUS[x.status].label, pillStyle: PILL + STATUS[x.status].tone
+    }));
+    const helpDefs = {
+      video: { label: 'Start a video walkthrough with ' + (dt.who === 'Mom' ? 'Mom' : 'Dad'), sub: 'WhatsApp link; the steps show on both screens', msg: 'Video call link sent on WhatsApp' },
+      ippb: { label: 'Book a doorstep visit', sub: 'India Post Payments Bank, about ₹70', msg: 'Doorstep request drafted. You confirm before anything is booked.' },
+      partner: { label: 'Hand this to a partner', sub: 'Vetted concierge or tax filer; you approve any fee first', msg: "We'll share partner options. Nothing happens without your OK." }
+    };
+    const helpBtns = dt.helps.map((h) => ({ label: helpDefs[h].label, sub: helpDefs[h].sub, go: () => this.showToast(helpDefs[h].msg) }));
+    const ownerOpts = ['You', 'Arjun', 'Unassigned'].map((o) => ({
+      label: o === 'You' ? 'Me' : o === 'Unassigned' ? 'Nobody' : o, pressed: dt.owner === o ? 'true' : 'false',
+      pick: () => this.patchTask(dt.id, { owner: o }),
+      style: 'min-height:44px;border:0;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;' + (dt.owner === o ? 'background:#FFFFFF;color:#15211D;box-shadow:0 1px 3px rgba(21,33,29,0.18);' : 'background:transparent;color:#33433D;')
+    }));
+    const ddt = dueText(dt);
+    const d = Object.assign({}, dt, {
+      whoLabel: whoLabel(dt.who),
+      dueLine: (dt.done ? 'Done · was due ' : 'Due ') + dp[2] + ' ' + MON[dp[1] - 1] + ' ' + dp[0] + (ddt && !dt.done ? ' · ' + ddt : ''),
+      toggleDone: () => { const nd = !dt.done; this.patchTask(dt.id, { done: nd }); if (nd) this.showToast("Marked done. We'll schedule next time's reminder."); }
+    });
+
+    // ---------- Documents ----------
+    const docChips = ['All', 'Dad', 'Mom', 'Missing'].map((c) => ({ label: c, pressed: s.docWho === c ? 'true' : 'false', pick: () => this.setState({ docWho: c }), style: chipStyle(s.docWho === c) }));
+    const docOk = (x) => s.docWho === 'All' || (s.docWho === 'Missing' ? x.status === 'missing' : personMatch(x.who, s.docWho));
+    const docGroups = Object.keys(CATL).map((k) => ({
+      label: CATL[k],
+      items: s.docs.filter((x) => x.cat === k && docOk(x)).map((x, i) => ({
+        name: x.name, sub: whoLabel(x.who) + ' · ' + x.valid, open: openDoc(x.id), rowStyle: ROW + (i ? SEP : ''),
+        statusLabel: STATUS[x.status].label, pillStyle: PILL + STATUS[x.status].tone
+      }))
+    })).filter((g) => g.items.length);
+    const docStats = {
+      onfile: s.docs.filter((x) => x.status === 'onfile').length,
+      due: s.docs.filter((x) => x.status === 'due' || x.status === 'review').length,
+      missing: missingDocs
+    };
+    const dx = s.docs.find((x) => x.id === s.docId) || s.docs[0];
+    const dd = Object.assign({}, dx, {
+      whoLabel: whoLabel(dx.who), catLabel: CATL[dx.cat],
+      statusLabel: STATUS[dx.status].label, pillStyle: 'align-self:flex-start;' + PILL + STATUS[dx.status].tone,
+      previewLabel: dx.status === 'missing' ? 'No copy yet' : 'Tap to view scan',
+      uploadLabel: dx.status === 'missing' ? 'Scan it now' : 'Replace scan',
+      upload: () => { this.patchDoc(dx.id, { status: 'onfile' }); this.showToast('Scanned and filed. Siblings can see it now.'); },
+      toggleLabel: dx.status === 'onfile' ? 'Mark missing' : 'Mark on file',
+      toggle: () => this.patchDoc(dx.id, { status: dx.status === 'onfile' ? 'missing' : 'onfile' })
+    });
+    const docTasks = s.tasks.filter((t) => t.docs.indexOf(dx.id) >= 0).map((t, i) => decorate(t, i));
+    docTasks.forEach((t, i) => { t.rowStyle = ROW + 'min-height:56px;' + (i ? SEP : ''); });
+
+    // ---------- Trackers ----------
+    const tk = (id) => s.tasks.find((t) => t.id === id) || {};
+    const rupee = (n) => '₹' + n.toLocaleString('en-IN');
+    const row = (i, name, sub, right, pill, tone, taskId) => ({
+      name: name, sub: sub, right: right, pill: pill, pillStyle: PILL + tone,
+      rowStyle: ROW + (i ? SEP : ''),
+      open: taskId ? openTask(taskId) : () => this.showToast('Nothing to do here right now')
+    });
+    const deps = [
+      { n: 'SBI fixed deposit', w: 'Mom', a: 300000, m: '21 Oct 2026', t: 'fd-sbi' },
+      { n: 'SCSS at SBI', w: 'Dad', a: 1500000, m: '28 Feb 2027', t: 'scss' },
+      { n: 'HDFC fixed deposit', w: 'Dad', a: 250000, m: '14 Mar 2027', t: null },
+      { n: 'Post Office MIS', w: 'Mom', a: 450000, m: 'Aug 2028', t: null }
+    ];
+    const lcD = tk('lc-dad'), lcM = tk('lc-mom');
+    const TRK = {
+      deposits: {
+        kicker: 'Deposits across 3 institutions (sample figures)', big: rupee(deps.reduce((a, b) => a + b.a, 0)),
+        sub: 'Form 121 is filed at every bank for 2026-27. Next maturity: 21 Oct.',
+        rows: deps.map((x, i) => row(i, x.n, whoLabel(x.w) + ' · matures ' + x.m, rupee(x.a), 'Form 121 ✓', TONE.green, x.t)),
+        foot: 'Amounts are typed in by the family. We never connect to bank logins.'
+      },
+      insurance: {
+        kicker: 'Policies', big: '4 active · 1 to enrol', sub: 'Next renewal: health floater on 18 Nov.',
+        rows: [
+          row(0, 'Health family floater', 'Mom & Dad · renews 18 Nov 2026', 'Sum insured [₹]', tk('health').done ? 'Renewed' : 'Renew soon', tk('health').done ? TONE.green : TONE.amber, 'health'),
+          row(1, 'Ayushman Vay Vandana', 'Dad · PM-JAY cover for 70+', '', 'Active', TONE.green, 'avv-d'),
+          row(2, 'Ayushman Vay Vandana', 'Mom · eligible, not enrolled', '', tk('avv-m').done ? 'Active' : 'Enrol', tk('avv-m').done ? TONE.green : TONE.orange, 'avv-m'),
+          row(3, 'LIC endowment', 'Mom · premium every Feb', '', 'Active', TONE.green, 'lic'),
+          row(4, 'Car insurance', 'Dad · renews 12 Jan 2027', '', 'Active', TONE.green, 'car')
+        ],
+        foot: 'Keep premium receipts here; they may be needed for tax filing.'
+      },
+      pension: {
+        kicker: 'Life certificates for 2026', big: [lcD.done, lcM.done].filter(Boolean).length + ' of 2 submitted',
+        sub: 'Deadline 30 Nov. Dad (80+) can submit now; Mom from 1 Nov.',
+        rows: [
+          row(0, 'Dad · central govt pension', 'SBI · last credit 1 Oct', '', lcD.done ? 'Submitted' : 'Window open', lcD.done ? TONE.green : TONE.amber, 'lc-dad'),
+          row(1, 'Mom · state govt pension', 'SBI · last credit 1 Oct', '', lcM.done ? 'Submitted' : 'Opens 1 Nov', lcM.done ? TONE.green : TONE.grey, 'lc-mom'),
+          row(2, 'Dad · 75+ declaration to SBI', 'SBI handles his tax; no ITR', '', 'Filed for 2026-27', TONE.green, 'decl75'),
+          row(3, 'Family pension details', "Mom named in Dad's PPO", '', 'Check', TONE.blue, null)
+        ],
+        foot: 'Tick each month’s credit after checking the passbook or SMS.'
+      },
+      nominees: {
+        kicker: 'Nominees', big: (tk('nom-hdfc').done && tk('nom-mf').done ? 6 : tk('nom-hdfc').done || tk('nom-mf').done ? 5 : 4) + ' of 6 accounts',
+        sub: 'Accounts without a nominee are slow and costly for the family to claim.',
+        rows: [
+          row(0, 'SBI savings + SCSS', 'Dad', '', 'Set', TONE.green, null),
+          row(1, 'SBI fixed deposit', 'Mom · updated 2 Oct', '', 'Set', TONE.green, 'nominee'),
+          row(2, 'HDFC savings', 'Dad', '', tk('nom-hdfc').done ? 'Set' : 'Not set', tk('nom-hdfc').done ? TONE.green : TONE.orange, 'nom-hdfc'),
+          row(3, 'Mutual fund folio', 'Dad', '', tk('nom-mf').done ? 'Set' : 'Not set', tk('nom-mf').done ? TONE.green : TONE.orange, 'nom-mf'),
+          row(4, 'Post Office MIS', 'Mom', '', 'Set', TONE.green, null),
+          row(5, 'LIC policy', 'Mom', '', 'Set', TONE.green, 'lic')
+        ],
+        foot: 'Also check joint accounts are “either or survivor”.'
+      }
+    };
+    const trkTabs = [['deposits', 'Deposits'], ['insurance', 'Insurance'], ['pension', 'Pension'], ['nominees', 'Nominees']].map((o) => ({
+      label: o[1], pressed: s.trk === o[0] ? 'true' : 'false', pick: () => this.setState({ trk: o[0] }),
+      style: 'min-height:44px;border:0;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;padding:0 2px;' + (s.trk === o[0] ? 'background:#FFFFFF;color:#15211D;box-shadow:0 1px 3px rgba(21,33,29,0.18);' : 'background:transparent;color:#33433D;')
+    }));
+
+    // ---------- Family ----------
+    const people = [
+      { key: 'You', name: 'Priya (you)', place: 'Toronto', initial: 'P', bg: accent, fg: '#15211D' },
+      { key: 'Arjun', name: 'Arjun', place: 'Bengaluru', initial: 'A', bg: '#e2711d', fg: '#15211D' },
+      { key: 'Unassigned', name: 'Nobody yet', place: 'Pick these up so nothing slips', initial: '?', bg: '#FCEBDC', fg: '#7A2E0B' }
+    ];
+    const ownerLoad = people.map((p, i) => {
+      const n = s.tasks.filter((t) => !t.done && t.owner === p.key).length;
+      return {
+        name: p.name, place: p.place, initial: p.initial, countLabel: n + (n === 1 ? ' open task' : ' open tasks'),
+        rowStyle: 'display:flex;align-items:center;gap:12px;padding:12px 14px;' + (i ? SEP : ''),
+        avatarStyle: 'flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;background:' + p.bg + ';color:' + p.fg + ';'
+      };
+    });
+
+    // ---------- Benefits ----------
+    const BST = {
+      claimed: { label: 'In use', tone: TONE.green, rank: 3 }, auto: { label: 'Automatic', tone: TONE.green, rank: 4 },
+      unclaimed: { label: 'Not claimed', tone: TONE.orange, rank: 0 }, check: { label: 'Check', tone: TONE.blue, rank: 1 },
+      available: { label: 'Available', tone: TONE.grey, rank: 5 }, suspended: { label: 'Suspended', tone: TONE.grey, rank: 6 },
+      na: { label: 'Not eligible', tone: 'background:#F3F5F2;color:#4D5C56;border:1px solid #DCE3DF;', rank: 7 }
+    };
+    const BCAT = { health: 'Health cover', pension: 'Pension', tax: 'Tax relief', savings: 'Savings', everyday: 'Travel & everyday', safety: 'Safety & rights' };
+    const headline = (b) => ['Dad', 'Mom'].map((p) => b.st[p]).sort((a, c) => BST[a].rank - BST[c].rank)[0];
+    const isToClaim = (b) => b.st.Dad === 'unclaimed' || b.st.Mom === 'unclaimed' || b.st.Dad === 'check' || b.st.Mom === 'check';
+    const isInUse = (b) => ['claimed', 'auto'].indexOf(b.st.Dad) >= 0 || ['claimed', 'auto'].indexOf(b.st.Mom) >= 0;
+    const isNa = (b) => ['na', 'suspended'].indexOf(b.st.Dad) >= 0 && ['na', 'suspended'].indexOf(b.st.Mom) >= 0;
+    const benStats = {
+      toClaim: s.benefits.filter(isToClaim).length,
+      claimed: s.benefits.filter(isInUse).length,
+      na: s.benefits.filter(isNa).length
+    };
+    const openBen = (id) => () => this.setState({ screen: 'benefitDetail', benId: id });
+    const benChips = [['All', 'All'], ['To claim', 'To claim'], ['Dad', 'Dad'], ['Mom', 'Mom']].map((c) => ({
+      label: c[1], pressed: s.benFilter === c[0] ? 'true' : 'false', pick: () => this.setState({ benFilter: c[0] }), style: chipStyle(s.benFilter === c[0])
+    }));
+    const benOk = (b) => s.benFilter === 'All' || (s.benFilter === 'To claim' ? isToClaim(b) : ['na', 'suspended'].indexOf(b.st[s.benFilter]) < 0);
+    const benGroups = Object.keys(BCAT).map((k) => ({
+      label: BCAT[k],
+      items: s.benefits.filter((b) => b.cat === k && benOk(b)).map((b, i) => {
+        const h = headline(b);
+        return {
+          name: b.name, open: openBen(b.id), rowStyle: ROW + (i ? SEP : ''),
+          whoLine: 'Dad: ' + BST[b.st.Dad].label + ' · Mom: ' + BST[b.st.Mom].label,
+          pill: BST[h].label, pillStyle: PILL + BST[h].tone
+        };
+      })
+    })).filter((g) => g.items.length);
+
+    const bx = s.benefits.find((b) => b.id === s.benId) || s.benefits[0];
+    const patchBen = (person, val) => this.setState((st) => ({
+      benefits: st.benefits.map((b) => (b.id === bx.id ? Object.assign({}, b, { st: Object.assign({}, b.st, (() => { const o = {}; o[person] = val; return o; })()) }) : b))
+    }));
+    const bdPeople = ['Dad', 'Mom'].map((p, i) => {
+      const v = bx.st[p];
+      const canMark = ['unclaimed', 'check', 'available', 'claimed'].indexOf(v) >= 0;
+      return {
+        name: p === 'Dad' ? 'Dad · 81' : 'Mom · 76',
+        statusLabel: BST[v].label, pillStyle: 'align-self:flex-start;' + PILL + BST[v].tone,
+        canMark: canMark,
+        markLabel: v === 'claimed' ? 'Undo' : 'Mark in use',
+        mark: () => { patchBen(p, v === 'claimed' ? 'unclaimed' : 'claimed'); if (v !== 'claimed') this.showToast(p + ' marked as using ' + bx.name); },
+        rowStyle: 'display:flex;align-items:center;gap:12px;padding:12px 14px;' + (i ? SEP : '')
+      };
+    });
+    const bKey = 'b-' + bx.id;
+    const bMap = s.steps[bKey] || {};
+    const bdSteps = bx.steps.map((text, i) => {
+      const checked = !!bMap[i];
+      return {
+        text: text, num: String(i + 1), checked: checked, unchecked: !checked, pressed: checked ? 'true' : 'false',
+        toggle: () => this.setState((st) => { const cur = Object.assign({}, st.steps[bKey] || {}); cur[i] = !cur[i]; const n = Object.assign({}, st.steps); n[bKey] = cur; return { steps: n }; }),
+        rowStyle: ROW + 'min-height:56px;' + (i ? SEP : ''),
+        boxStyle: 'flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;' + (checked ? 'background:' + accent + ';border:2px solid ' + accent + ';' : 'background:#FFFFFF;border:2px solid #9AABA4;'),
+        textStyle: 'font-size:15px;line-height:1.4;' + (checked ? 'color:#5A6862;text-decoration:line-through;' : '')
+      };
+    });
+    const bdDocs = bx.docs.map((id) => s.docs.find((x) => x.id === id)).filter(Boolean).map((x, i) => ({
+      name: x.name, whoLabel: whoLabel(x.who), open: openDoc(x.id), rowStyle: ROW + 'min-height:56px;' + (i ? SEP : ''),
+      statusLabel: STATUS[x.status].label, pillStyle: PILL + STATUS[x.status].tone
+    }));
+    const addedId = 'ben-' + bx.id;
+    const linkedTask = bx.task || (s.tasks.find((t) => t.id === addedId) ? addedId : null);
+    const catToTask = { health: 'Health', pension: 'Pension', tax: 'Tax', savings: 'Bank', everyday: 'ID', safety: 'Legal' };
+    const bd = Object.assign({}, bx, {
+      catLabel: BCAT[bx.cat], hasNote: !!bx.note,
+      openTask: linkedTask ? openTask(linkedTask) : () => {},
+      addTask: () => {
+        const who = bx.st.Dad === 'unclaimed' || bx.st.Dad === 'check' ? (bx.st.Mom === 'unclaimed' || bx.st.Mom === 'check' ? 'Both' : 'Dad') : 'Mom';
+        const task = {
+          id: addedId, title: 'Claim: ' + bx.name, who: who, cat: catToTask[bx.cat], date: '2026-11-15', rec: 'One-time', owner: 'You', done: false,
+          why: bx.value + '. ' + bx.rule, steps: bx.steps.length ? bx.steps : ['Confirm eligibility with ' + bx.agency, 'Apply', 'File the proof under Documents'],
+          docs: bx.docs, helps: ['partner']
+        };
+        this.setState((st) => ({ tasks: st.tasks.concat([task]) }));
+        this.showToast('Added to the timeline for 15 Nov');
+      }
+    });
+
+    // ---------- Tabs ----------
+    const tabOf = { home: 'home', timeline: 'timeline', docs: 'docs', track: 'track', family: 'family' };
+    const activeTab = (s.screen === 'benefits' || s.screen === 'benefitDetail') ? (tabOf[s.benPrev] || 'home') : (tabOf[s.screen] || tabOf[s.prev] || 'home');
+    const tabs = [
+      { id: 'home', label: 'Today', d: 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z' },
+      { id: 'timeline', label: 'Timeline', d: 'M4 5h16v15H4zM4 10h16M9 3v4M15 3v4' },
+      { id: 'docs', label: 'Docs', d: 'M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M9 13h6M9 17h6' },
+      { id: 'track', label: 'Trackers', d: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
+      { id: 'family', label: 'Family', d: 'M16 20v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M22 20v-1a4 4 0 0 0-3-3.9M16 5.1a3 3 0 0 1 0 5.8' }
+    ].map((t) => ({
+      label: t.label, d: t.d, current: activeTab === t.id ? 'page' : 'false',
+      go: () => this.setState({ screen: t.id, prev: t.id, addStage: 'pick' }),
+      style: 'min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;cursor:pointer;border-radius:12px;padding:0;' + (activeTab === t.id ? 'color:#a8470d;' : 'color:#4D5C56;')
+    }));
+
+    return {
+      accent: accent,
+      isHome: s.screen === 'home', isTimeline: s.screen === 'timeline', isDetail: s.screen === 'detail',
+      isDocs: s.screen === 'docs', isDocDetail: s.screen === 'docDetail', isTrack: s.screen === 'track',
+      isFamily: s.screen === 'family', isAdd: s.screen === 'add', isCard: s.screen === 'card',
+      goBack: () => this.setState({ screen: s.prev || 'home', addStage: 'pick' }),
+      goTimeline: () => nav('timeline'), goDocs: () => nav('docs'),
+      goAdd: () => this.setState({ screen: 'add', prev: tabOf[s.screen] ? s.screen : s.prev, addStage: 'pick' }),
+      goCard: () => this.setState({ screen: 'card', prev: tabOf[s.screen] ? s.screen : s.prev }),
+
+      stats: { done: yearTasks.filter((t) => t.done).length, yearTotal: yearTasks.length, soon: soon.length, missing: missingDocs },
+      hasHero: !!heroTask,
+      hero: heroTask ? Object.assign({}, heroTask, { open: openTask(heroTask.id) }) : {},
+      chips: chips, homeSections: homeSections, homeEmpty: homeSections.length === 0,
+
+      catChips: catChips, tlMonths: tlMonths, beyond: beyond, hasBeyond: beyond.length > 0,
+
+      d: d, detailSteps: detailSteps, stepsDoneCount: stepsDone, stepsTotal: detailSteps.length,
+      stepsPct: Math.round((stepsDone / Math.max(1, detailSteps.length)) * 100) + '%',
+      ownerOpts: ownerOpts, helpBtns: helpBtns, hasHelps: helpBtns.length > 0,
+      detailDocs: detailDocs, hasDetailDocs: detailDocs.length > 0,
+      doneBtnLabel: dt.done ? 'Mark as not done' : 'Mark as done',
+      doneBtnStyle: 'min-height:52px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;' + (dt.done ? 'background:#FFFFFF;color:#15211D;border:1px solid #C9D3CE;' : 'background:' + accent + ';color:#15211D;border:0;'),
+
+      docChips: docChips, docGroups: docGroups, docsEmpty: docGroups.length === 0, docStats: docStats,
+      dd: dd, docTasks: docTasks, hasDocTasks: docTasks.length > 0,
+
+      trkTabs: trkTabs, trk: TRK[s.trk],
+
+      ownerLoad: ownerLoad,
+      invite: () => this.showToast('Invite link ready to share on WhatsApp'),
+
+      addPick: s.addStage === 'pick', addCamera: s.addStage === 'camera', addReview: s.addStage === 'review',
+      openCamera: () => this.setState({ addStage: 'camera' }),
+      capture: () => this.setState({ addStage: 'review' }),
+      cancelAdd: () => this.setState({ addStage: 'pick' }),
+      manual: () => this.setState({ addStage: 'review' }),
+      forward: () => this.showToast('Forward policy and bank emails to your family inbox and we file them'),
+      form: s.form,
+      onField: (e) => { const n = e.target.name; const v = e.target.value; this.setState((st) => { const f = Object.assign({}, st.form); f[n] = v; return { form: f }; }); },
+      saveAdd: () => {
+        const f = s.form;
+        const parts = String(f.due).trim().split(/\s+/);
+        const mi = MON.indexOf((parts[1] || '').slice(0, 3));
+        const iso = parts.length === 3 && mi >= 0 && Number(parts[0]) && Number(parts[2]) ? parts[2] + '-' + String(mi + 1).padStart(2, '0') + '-' + String(Number(parts[0])).padStart(2, '0') : '2027-03-01';
+        const task = {
+          id: 'new-' + Date.now(), title: f.kind, who: f.person, cat: f.cat, date: iso, rec: f.rec || 'Every year', owner: 'You', done: false,
+          why: 'Added from a scanned document. Reminders go out 30 days and 7 days before the due date.',
+          steps: ['Check the amount on the notice', 'Pay or submit before the due date', 'Upload the receipt'], docs: [], helps: []
+        };
+        this.setState((st) => ({ tasks: st.tasks.concat([task]), screen: 'timeline', prev: 'timeline', addStage: 'pick', tlCat: 'All' }));
+        this.showToast('Added to the family timeline');
+      },
+
+      shareCard: () => this.showToast('One-page card ready to send on WhatsApp'),
+      printCard: () => this.showToast('Printable A4 version ready'),
+
+      isBenefits: s.screen === 'benefits', isBenefitDetail: s.screen === 'benefitDetail',
+      openBenefits: () => this.setState({ screen: 'benefits', benPrev: tabOf[s.screen] ? s.screen : s.benPrev }),
+      goBenefits: () => this.setState({ screen: 'benefits' }),
+      benBack: () => this.setState({ screen: s.benPrev || 'home' }),
+      benStats: benStats, benChips: benChips, benGroups: benGroups, benEmpty: benGroups.length === 0,
+      bd: bd, bdPeople: bdPeople, bdSteps: bdSteps, bdHasSteps: bdSteps.length > 0,
+      bdStepsDone: bdSteps.filter((x) => x.checked).length, bdStepsTotal: bdSteps.length,
+      bdDocs: bdDocs, bdHasDocs: bdDocs.length > 0,
+      bdHasTask: !!linkedTask, bdCanAdd: !linkedTask && isToClaim(bx),
+
+      tabs: tabs, hasToast: !!s.toast, toast: s.toast
+    };
+  }
+}
+
+window.__start(Component);
+</script>
+</body>
+</html>

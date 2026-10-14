@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parents' Paperwork: System Design</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#e2711d;--accent-dk:#c85f16;--ink:#f5efe6;--paper:#0f0d0c;--panel:#1c1815;--muted:#b9ada0;--line:#33291f;--body:#d8d4cc}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Raleway',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;cursor:none}
+a,button{cursor:none}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-color:var(--accent)}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.bar{max-width:760px;margin:0 auto;padding:16px 24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:15px}
+.bar a{color:var(--muted);text-decoration:none}
+.bar a:hover{color:var(--ink)}
+.bar a[aria-current]{color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent)}
+.bar a.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--accent);font-family:'Merriweather',serif;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .3s ease;margin-right:6px}
+.bar a.logo-badge:hover{transform:scale(1.12);color:var(--accent)}
+.bar a.home{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:.86rem;padding:6px 10px;border-radius:4px;border:1px solid transparent;transition:transform .2s ease,color .2s ease,background .2s ease,border-color .2s ease}
+.bar a.home:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--accent)}
+.hero{max-width:760px;margin:0 auto;padding:40px 24px 48px}
+.hero h1{font-family:'Merriweather',Georgia,serif;font-size:clamp(32px,6vw,48px);line-height:1.14;letter-spacing:-0.01em;margin:0 0 14px;color:#fff}
+.hero p{margin:0;color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:16px 24px 72px}
+h2{font-family:'Merriweather',Georgia,serif;font-size:26px;line-height:1.25;color:#fff;margin:48px 0 12px;padding-top:12px;border-top:3px solid var(--accent);display:inline-block}
+p,li{max-width:68ch;color:var(--body)}
+strong{color:#fff}
+li::marker{color:var(--accent)}
+.table{overflow-x:auto;margin:16px 0 20px;border:2px solid #000;border-radius:10px;background:var(--panel);box-shadow:5px 5px 0 #000}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--body)}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:rgba(226,113,29,.05)}
+th{background:var(--accent);color:#0f0d0c;font-weight:700}
+th:empty{display:none}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85em;background:#2b2a28;color:var(--accent);padding:1px 5px;border-radius:4px}
+pre{background:#000;color:#e6e0d6;padding:16px;border-radius:10px;border:2px solid #000;box-shadow:5px 5px 0 var(--line);overflow-x:auto;font-size:13.5px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit}
+.fig{background:#fff;border:2px solid #000;border-radius:10px;padding:12px;margin:16px 0;overflow-x:auto;box-shadow:5px 5px 0 #000}
+.fig svg{display:block;width:100%;min-width:560px;height:auto}
+footer{max-width:760px;margin:0 auto;padding:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;transform:translate(-100px,-100px)}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--accent);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width .2s ease,height .2s ease,margin .2s ease}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,.14)}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9990;opacity:.5;animation:trail-fade .55s ease-out forwards}
+@keyframes trail-fade{to{opacity:0;transform:scale(.15)}}
+@media (hover:none){.cur-main,.cur-ring{display:none}body,a,button{cursor:auto}}
+</style></head>
+<body><header><nav class="bar" aria-label="Project"><a class="logo-badge" href="index.html" aria-label="Back to home">DK</a><a href='parents-paperwork-prototype.html'>Prototype</a><a href='parents-paperwork-case-study.html'>Case study</a><a href='parents-paperwork-system-design.html' aria-current="page">System design</a><a class="home" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Back to home</a></nav>
+<div class="hero"><h1>Parents' Paperwork: System Design</h1><p>How the rules engine, reminders, document scanning and benefits engine fit together, and how the data stays safe.</p></div></header>
+<main><h2>Scope and goals</h2>
+<p>Version 1 turns a family's facts into a personal, correct calendar of deadlines, guides, documents and benefits, shared across siblings. It is software-first: it informs and guides, it never acts on a parent's accounts.</p>
+<p><strong>In scope for v1</strong></p>
+<ul>
+<li>Family workspace: parents, siblings, roles, task ownership</li>
+<li>A versioned rules engine that generates each family's deadlines for the Indian tax year (April to March) and long-cycle items</li>
+<li>Guided walkthroughs per task, with step progress shared across the family</li>
+<li>Document vault with status, validity and links to tasks</li>
+<li>Trackers: deposits, insurance, pension, nominees</li>
+<li>Government benefits eligibility per parent</li>
+<li>Reminders by push and WhatsApp; document scanning with extraction</li>
+<li>Emergency card export</li>
+</ul>
+<p><strong>Out of scope for v1</strong></p>
+<ul>
+<li>Logging in to bank, tax or government portals for the parent</li>
+<li>Storing passwords, OTPs or full card numbers</li>
+<li>Moving money or recommending investments</li>
+<li>Filing returns or forms on the family's behalf (hand-off to partners only)</li>
+</ul>
+<h2>Requirements</h2>
+<p><strong>Functional</strong></p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td>A family admin adds parents, siblings, institutions, accounts, policies, deposits, property and vehicles</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>The system generates each family's tasks from rules and the family's facts, and regenerates them when facts or rules change</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>Each task has one owner, a due date, a recurrence, steps, required documents and optional help actions</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>Step progress, ownership and completion sync across all family members in near real time</td>
+</tr>
+<tr>
+<td>F5</td>
+<td>Members upload or scan documents; the system extracts type, dates and references for review</td>
+</tr>
+<tr>
+<td>F6</td>
+<td>The system evaluates every benefit scheme for each parent and stores a status per parent</td>
+</tr>
+<tr>
+<td>F7</td>
+<td>Reminders go out at configurable offsets (default 30 and 7 days, plus the day a window opens)</td>
+</tr>
+<tr>
+<td>F8</td>
+<td>Members export a one-page emergency card as PDF</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Non-functional</strong></p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correctness</td>
+<td>Every generated task traces back to a rule version and a source</td>
+</tr>
+<tr>
+<td>Privacy</td>
+<td>Data stored in India; encrypted in transit and at rest; field-level encryption for identifiers</td>
+</tr>
+<tr>
+<td>Availability</td>
+<td>99.5% for the app; reminders delivered within 15 minutes of schedule</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Home screen loads in under 1.5 s on a mid-range Android phone over 4G</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Large type, high contrast, 44 px touch targets; parent-facing screens in English and Hindi first</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Infrastructure under Rs 15 per family per month at 10,000 families</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Architecture</h2>
+<div class='fig'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 520' font-family='Helvetica, Arial, sans-serif' role='img' aria-label='System architecture' aria-label='System architecture'><defs><marker id='a' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#5A6862'/></marker></defs><text x='24' y='32' font-size='15' font-weight='600' fill='#15211D'>One rules engine turns versioned rules into each family's tasks</text><path d='M194 112V142' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M566 112V142' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M107 200V230' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M289 200V230' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M471 200V230' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M653 200V230' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M107 304V334' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M289 304V334' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M471 304V334' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M653 304V334' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M132 392V422' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M368 392V422' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><path d='M604 392V422' stroke='#5A6862' stroke-width='1.25' fill='none' marker-end='url(#a)'/><rect x='24' y='56' width='340' height='56' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='194' y='80' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Family app</text><text x='194' y='96' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>React Native, Android first; for family members</text><rect x='396' y='56' width='340' height='56' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='566' y='80' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Rules console</text><text x='566' y='96' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Content team drafts, reviews and publishes rules</text><rect x='24' y='144' width='712' height='56' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='380' y='168' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>API and auth</text><text x='380' y='184' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>REST plus a WebSocket per family; phone OTP sign-in; roles</text><rect x='24' y='232' width='166' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='107' y='256' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Family and tasks</text><text x='107' y='272' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Tasks, owners, steps,</text><text x='107' y='288' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>trackers, live sync</text><rect x='206' y='232' width='166' height='72' rx='8' fill='#e2711d' fill-opacity='0.12' stroke='#e2711d' stroke-width='2'/><text x='289' y='256' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Rules engine</text><text x='289' y='272' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Versioned rules to</text><text x='289' y='288' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>dated tasks per family</text><rect x='388' y='232' width='166' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='471' y='256' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Benefits engine</text><text x='471' y='272' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Scheme status per</text><text x='471' y='288' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>parent, age, state</text><rect x='570' y='232' width='166' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='653' y='256' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Documents</text><text x='653' y='272' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Vault, scans, OCR,</text><text x='653' y='288' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>field extraction</text><rect x='24' y='336' width='712' height='56' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='380' y='360' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Job queue and workers</text><text x='380' y='376' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Nightly regeneration, reminders at local 9:00, extraction; retries with backoff</text><rect x='24' y='424' width='216' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='132' y='448' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>PostgreSQL</text><text x='132' y='464' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Families, rules, tasks, audit</text><text x='132' y='480' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>India region, encrypted</text><rect x='260' y='424' width='216' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='368' y='448' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Object storage</text><text x='368' y='464' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Document images</text><text x='368' y='480' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Per-family KMS keys, India</text><rect x='496' y='424' width='216' height='72' rx='8' fill='none' fill-opacity='1' stroke='#5A6862' stroke-width='1.25'/><text x='604' y='448' text-anchor='middle' font-size='13' font-weight='600' fill='#15211D'>Notifications</text><text x='604' y='464' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>Push first, then WhatsApp</text><text x='604' y='480' text-anchor='middle' font-size='11.5' font-weight='400' fill='#4D5C56'>templates, then email</text></svg></div>
+<p>The rules engine is the centre: rule or fact changes flow through the job queue, which regenerates tasks, schedules reminders and runs extraction. Services and workers share one PostgreSQL database; document images live in encrypted object storage in India.</p>
+<h2>Data model</h2>
+<p>Everything hangs off a Family. Facts about parents and their holdings drive rules; rules produce Tasks; Tasks reference Documents. Generated rows always keep the rule version that made them.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Entity</th>
+<th>Key fields</th>
+<th>Relationships</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Family</td>
+<td>id, name, state, city, plan, created_at</td>
+<td>has many Members, Parents</td>
+</tr>
+<tr>
+<td>Member</td>
+<td>id, family_id, name, role (admin, member), country, timezone, notify_prefs</td>
+<td>owns Tasks</td>
+</tr>
+<tr>
+<td>Parent</td>
+<td>id, family_id, name, date_of_birth, pension_type (central, state, none), pension_bank_id, state_of_residence</td>
+<td>has Holdings, Documents, BenefitStatuses</td>
+</tr>
+<tr>
+<td>Institution</td>
+<td>id, name, type (bank, post office, insurer, municipality, fund)</td>
+<td>referenced by Holdings</td>
+</tr>
+<tr>
+<td>Holding</td>
+<td>id, parent_id, institution_id, type (savings, FD, SCSS, MIS, policy, property, vehicle, MF folio), maturity_or_renewal_date, nominee_set, masked_ref</td>
+<td>drives rules</td>
+</tr>
+<tr>
+<td>Rule</td>
+<td>id, version, category, applies_when (condition), schedule, steps, required_doc_types, source_url, owner, reviewed_on</td>
+<td>produces Tasks</td>
+</tr>
+<tr>
+<td>Task</td>
+<td>id, family_id, parent_ids, rule_id, rule_version, title, due_date, window_opens, recurrence, owner_id, status, generated (bool)</td>
+<td>has StepProgress, links Documents</td>
+</tr>
+<tr>
+<td>StepProgress</td>
+<td>task_id, step_index, done_by, done_at</td>
+<td>belongs to Task</td>
+</tr>
+<tr>
+<td>Document</td>
+<td>id, parent_id, doc_type, status (on_file, missing, due, review), valid_until, storage_key, extracted_fields, kept_at</td>
+<td>linked to Tasks</td>
+</tr>
+<tr>
+<td>Scheme</td>
+<td>id, version, name, level (central, state), eligibility (condition), claim_steps, agency, source_url</td>
+<td>evaluated into BenefitStatus</td>
+</tr>
+<tr>
+<td>BenefitStatus</td>
+<td>parent_id, scheme_id, status (in_use, auto, not_claimed, check, available, suspended, not_eligible), set_by (engine or member), updated_at</td>
+<td>belongs to Parent</td>
+</tr>
+<tr>
+<td>Reminder</td>
+<td>id, task_id, member_id, channel, send_at, sent_at, state</td>
+<td>belongs to Task</td>
+</tr>
+<tr>
+<td>AuditEvent</td>
+<td>id, family_id, actor_id, action, object, at</td>
+<td>append-only</td>
+</tr>
+</tbody>
+</table></div>
+<p>Account numbers are never stored in full: <code>masked_ref</code> keeps the last four digits so families can tell holdings apart.</p>
+<h2>Rules engine</h2>
+<p>Rules are data, not code. Each rule is a versioned JSON record that a content team edits and reviews; the engine evaluates it against a family's facts to produce tasks. This is the product's moat, so it gets the most care.</p>
+<p><strong>Rule schema (example: pensioner life certificate)</strong></p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;pension.life_certificate&quot;,
+  &quot;version&quot;: 3,
+  &quot;applies_when&quot;: { &quot;parent.pension_type&quot;: { &quot;in&quot;: [&quot;central&quot;, &quot;state&quot;] } },
+  &quot;schedule&quot;: {
+    &quot;due&quot;: &quot;YYYY-11-30&quot;,
+    &quot;window_opens&quot;: [
+      { &quot;when&quot;: { &quot;parent.age_on&quot;: { &quot;date&quot;: &quot;YYYY-10-01&quot;, &quot;gte&quot;: 80 } }, &quot;date&quot;: &quot;YYYY-10-01&quot; },
+      { &quot;else&quot;: &quot;YYYY-11-01&quot; }
+    ],
+    &quot;recurrence&quot;: &quot;yearly&quot;
+  },
+  &quot;consequence&quot;: &quot;Pension paused from December until submitted; paid as arrears.&quot;,
+  &quot;steps&quot;: [&quot;Install AadhaarFaceRD and Jeevan Pramaan&quot;, &quot;Keep Aadhaar, PPO and account number ready&quot;, &quot;Face scan on a video call&quot;, &quot;Save the Jeevan Pramaan ID&quot;],
+  &quot;required_doc_types&quot;: [&quot;aadhaar&quot;, &quot;ppo&quot;],
+  &quot;help&quot;: [&quot;video_walkthrough&quot;, &quot;ippb_doorstep&quot;],
+  &quot;source_url&quot;: &quot;https://jeevanpramaan.gov.in&quot;,
+  &quot;reviewed_on&quot;: &quot;2026-09-15&quot;,
+  &quot;owner&quot;: &quot;rules-team&quot;
+}
+</code></pre>
+<p><strong>How a family's calendar is generated</strong></p>
+<ol>
+<li>A trigger arrives: a fact changed (new deposit, birthday crossed 75 or 80), a rule version was published, or the nightly sweep runs.</li>
+<li>The engine loads the family's facts and every active rule, and evaluates <code>applies_when</code> for each parent and holding.</li>
+<li>For each match it computes due dates and windows for the current and next tax year.</li>
+<li>It upserts tasks keyed on (family, rule id, subject, period), so reruns never duplicate. Owner, step progress and completion are preserved.</li>
+<li>Tasks whose rule no longer applies are archived, not deleted, and the family is told why.</li>
+<li>Reminder jobs are rescheduled for any task whose dates moved.</li>
+</ol>
+<p><strong>Versioning and review</strong></p>
+<ul>
+<li>A rule change creates a new version in draft. A second reviewer must approve it against the cited source before publishing.</li>
+<li>Publishing triggers regeneration for affected families, with a changelog line shown in the app (for example: "Forms 15G/15H replaced by Form 121 from 1 April 2026").</li>
+<li>Every rule shows a "reviewed on" date; rules older than 6 months are flagged for review.</li>
+</ul>
+<h2>Reminders and notifications</h2>
+<p>Reminders are scheduled jobs created per task and member, sent in the member's own timezone at a sensible local hour (9:00 by default).</p>
+<ol>
+<li>When a task is created or its dates change, the scheduler writes Reminder rows for each offset: window opens, 30 days, 7 days, 1 day.</li>
+<li>A worker polls due reminders every minute and skips any whose task is done.</li>
+<li>Owners get every reminder; other members get only the 7-day and overdue ones, to avoid noise.</li>
+<li>Delivery goes by push first; WhatsApp (approved message templates) for members who opt in; email as fallback.</li>
+<li>Each send is logged. A failed send retries 3 times with backoff, then falls to the next channel.</li>
+<li>If a task is still open 3 days before its due date and has no owner, every member is alerted.</li>
+</ol>
+<p>WhatsApp templates contain no sensitive values, only the task name and a deep link, for example: "Dad's life certificate is due 30 Nov. Open the walkthrough."</p>
+<h2>Document scanning and extraction</h2>
+<p>A scan becomes a filed document and, where it carries a date, a task, with a person confirming every field.</p>
+<ol>
+<li>The app captures the image, crops and de-skews it on the device, and uploads it over TLS to object storage in India.</li>
+<li>An OCR step extracts the text; a classifier predicts the document type (policy, FD receipt, tax notice, bank letter).</li>
+<li>A field extractor pulls type-specific fields: provider, holder, reference (masked), dates, amounts.</li>
+<li>Identifiers such as Aadhaar or PAN numbers are masked before the extracted text is stored.</li>
+<li>The member reviews the pre-filled form; nothing is saved until they confirm.</li>
+<li>On confirm, the Document row is written and the rules engine runs for that parent, creating any new tasks.</li>
+</ol>
+<p>Extraction confidence is stored per field. Low-confidence fields are highlighted in the review form.</p>
+<h2>Benefits eligibility engine</h2>
+<p>Schemes use the same condition language as rules, evaluated per parent. The engine only suggests a status; a family member confirms whether a benefit is actually in use.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Set by</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Not eligible</td>
+<td>Engine</td>
+<td>Conditions fail (for example, a BPL-only scheme)</td>
+</tr>
+<tr>
+<td>Suspended</td>
+<td>Content team</td>
+<td>Scheme paused nationally (for example, rail fare concession)</td>
+</tr>
+<tr>
+<td>Automatic</td>
+<td>Engine</td>
+<td>Applies without action (for example, no advance tax for seniors)</td>
+</tr>
+<tr>
+<td>Check</td>
+<td>Engine</td>
+<td>Eligible, but the system cannot tell if it is being received (for example, additional pension at 80+)</td>
+</tr>
+<tr>
+<td>Not claimed / Available</td>
+<td>Engine</td>
+<td>Eligible and needs an action, or optional</td>
+</tr>
+<tr>
+<td>In use</td>
+<td>Member</td>
+<td>Confirmed by the family</td>
+</tr>
+</tbody>
+</table></div>
+<p>State schemes are scoped by <code>parent.state_of_residence</code>; v1 launches with central schemes plus Maharashtra. When a parent crosses an age threshold (70, 75, 80), the engine re-evaluates and notifies the family of newly eligible benefits. "Mark in use" by a member is never overwritten by the engine; a conflict is shown as "Check".</p>
+<h2>Security, privacy and compliance</h2>
+<p>The design minimises what is stored, and treats each parent as a data principal under India's Digital Personal Data Protection Act, 2023.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Credentials</td>
+<td>Never store passwords or OTPs; never log in to any portal as a parent</td>
+</tr>
+<tr>
+<td>Identifiers</td>
+<td>Aadhaar and PAN stored masked; full numbers only inside encrypted document images</td>
+</tr>
+<tr>
+<td>Encryption</td>
+<td>TLS 1.2+ in transit; AES-256 at rest; per-family keys in a managed KMS for document storage</td>
+</tr>
+<tr>
+<td>Residency</td>
+<td>All personal data and backups in Indian cloud regions</td>
+</tr>
+<tr>
+<td>Consent</td>
+<td>Each parent gives recorded consent, with a plain-language notice, before their data is added; consent can be withdrawn</td>
+</tr>
+<tr>
+<td>Access</td>
+<td>Role-based: admin, member, view-only; every read of a document is logged to AuditEvent</td>
+</tr>
+<tr>
+<td>Deletion</td>
+<td>A family can export and delete all data; deletion completes within 30 days, including backups</td>
+</tr>
+<tr>
+<td>Regulation</td>
+<td>No investment advice, no money handling; partner hand-offs only after explicit family approval</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>Phone OTP sign-in plus device binding; optional biometric lock on the app</td>
+</tr>
+</tbody>
+</table></div>
+<h2>API, stack and rollout</h2>
+<p><strong>API surface (REST over HTTPS, JSON)</strong></p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /families/{id}/today</code></td>
+<td>Hero task, 60-day list, counts</td>
+</tr>
+<tr>
+<td><code>GET /families/{id}/timeline?year=2026-27&amp;category=</code></td>
+<td>Tasks by month plus long-cycle items</td>
+</tr>
+<tr>
+<td><code>PATCH /tasks/{id}</code></td>
+<td>Owner, status; <code>PUT /tasks/{id}/steps/{n}</code> for step progress</td>
+</tr>
+<tr>
+<td><code>GET/POST /parents/{id}/documents</code></td>
+<td>Vault list and uploads (pre-signed URLs)</td>
+</tr>
+<tr>
+<td><code>POST /scans</code></td>
+<td>Start extraction; returns fields for review</td>
+</tr>
+<tr>
+<td><code>GET /parents/{id}/benefits</code> and <code>PATCH .../benefits/{scheme}</code></td>
+<td>Benefit statuses and member confirmation</td>
+</tr>
+<tr>
+<td><code>GET /families/{id}/trackers/{kind}</code></td>
+<td>Deposits, insurance, pension, nominees</td>
+</tr>
+<tr>
+<td><code>GET /families/{id}/emergency-card.pdf</code></td>
+<td>Export</td>
+</tr>
+</tbody>
+</table></div>
+<p>Changes made by one member reach others through a WebSocket channel per family.</p>
+<p><strong>Suggested stack</strong></p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App</td>
+<td>React Native (Android first)</td>
+<td>Most parents and many children use Android; one codebase</td>
+</tr>
+<tr>
+<td>API</td>
+<td>Node.js (TypeScript) or Go</td>
+<td>Small team, strong typing</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>PostgreSQL with JSONB for rule conditions</td>
+<td>Relational core plus flexible rules</td>
+</tr>
+<tr>
+<td>Jobs</td>
+<td>Queue (for example, SQS or a Postgres-backed queue) plus workers</td>
+<td>Reminders, regeneration, extraction</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Object storage in an Indian region, KMS-encrypted</td>
+<td>Document images</td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td>Push (FCM), WhatsApp Business API, email</td>
+<td>Reach where families already are</td>
+</tr>
+<tr>
+<td>Admin</td>
+<td>Internal rules console with review workflow</td>
+<td>The moat needs its own tooling</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Scaling.</strong> Load is light and predictable: most work is nightly regeneration and reminder sends, with known peaks in November (life certificates), April (tax declarations) and July (returns). Workers scale out ahead of those months.</p>
+<p><strong>Rollout</strong></p>
+<ol>
+<li>Pilot (Oct 2026 to Apr 2027): WhatsApp plus a spreadsheet, rules applied by hand. Proves demand and the rule set.</li>
+<li>v1 alpha: app for pilot families, central rules plus Maharashtra benefits, manual scan review.</li>
+<li>v1 public: automated extraction, paid plans, partner hand-offs.</li>
+<li>Later: more states, Hindi and regional languages, B2B employer channel.</li>
+</ol>
+<p><strong>Open questions</strong></p>
+<ul>
+<li>Which OCR and extraction service meets the India data-residency requirement at acceptable cost?</li>
+<li>How is consent captured from a parent who does not use the app themselves?</li>
+<li>What review turnaround can the rules team commit to when a rule changes mid-season?</li>
+</ul></main>
+<footer>Concept project by Deep, October 2026. Sample family, names and figures are illustrative; rules reflect research done in October 2026.</footer>
+<div class="cur-main" id="cMain"></div><div class="cur-ring" id="cRing"></div>
+<script>
+(function(){
+  var cMain=document.getElementById('cMain'),cRing=document.getElementById('cRing');
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain&&cRing&&fine){
+    var mx=-100,my=-100,rx=-100,ry=-100,last=0;
+    window.addEventListener('mousemove',function(e){
+      mx=e.clientX;my=e.clientY;
+      cMain.style.transform='translate('+mx+'px,'+my+'px)';
+      var now=performance.now();
+      if(now-last>22){last=now;var t=document.createElement('div');t.className='cur-trail';t.style.left=mx+'px';t.style.top=my+'px';document.body.appendChild(t);setTimeout(function(){t.remove()},600);}
+    });
+    (function loop(){rx+=(mx-rx)*.45;ry+=(my-ry)*.45;cRing.style.transform='translate('+rx+'px,'+ry+'px)';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){cRing.classList.add('hover')});
+      el.addEventListener('mouseleave',function(){cRing.classList.remove('hover')});
+    });
+  }
+})();
+</script>
+</body></html>

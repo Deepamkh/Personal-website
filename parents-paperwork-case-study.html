@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parents' Paperwork: Case Study</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#e2711d;--accent-dk:#c85f16;--ink:#f5efe6;--paper:#0f0d0c;--panel:#1c1815;--muted:#b9ada0;--line:#33291f;--body:#d8d4cc}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Raleway',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;cursor:none}
+a,button{cursor:none}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-color:var(--accent)}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.bar{max-width:760px;margin:0 auto;padding:16px 24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:15px}
+.bar a{color:var(--muted);text-decoration:none}
+.bar a:hover{color:var(--ink)}
+.bar a[aria-current]{color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent)}
+.bar a.logo-badge{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:#000;color:var(--accent);font-family:'Merriweather',serif;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .3s ease;margin-right:6px}
+.bar a.logo-badge:hover{transform:scale(1.12);color:var(--accent)}
+.bar a.home{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:.86rem;padding:6px 10px;border-radius:4px;border:1px solid transparent;transition:transform .2s ease,color .2s ease,background .2s ease,border-color .2s ease}
+.bar a.home:hover{transform:scale(1.06);background:#000;border-color:#000;color:var(--accent)}
+.hero{max-width:760px;margin:0 auto;padding:40px 24px 48px}
+.hero h1{font-family:'Merriweather',Georgia,serif;font-size:clamp(32px,6vw,48px);line-height:1.14;letter-spacing:-0.01em;margin:0 0 14px;color:#fff}
+.hero p{margin:0;color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:16px 24px 72px}
+h2{font-family:'Merriweather',Georgia,serif;font-size:26px;line-height:1.25;color:#fff;margin:48px 0 12px;padding-top:12px;border-top:3px solid var(--accent);display:inline-block}
+p,li{max-width:68ch;color:var(--body)}
+strong{color:#fff}
+li::marker{color:var(--accent)}
+.table{overflow-x:auto;margin:16px 0 20px;border:2px solid #000;border-radius:10px;background:var(--panel);box-shadow:5px 5px 0 #000}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--body)}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:rgba(226,113,29,.05)}
+th{background:var(--accent);color:#0f0d0c;font-weight:700}
+th:empty{display:none}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85em;background:#2b2a28;color:var(--accent);padding:1px 5px;border-radius:4px}
+pre{background:#000;color:#e6e0d6;padding:16px;border-radius:10px;border:2px solid #000;box-shadow:5px 5px 0 var(--line);overflow-x:auto;font-size:13.5px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit}
+.fig{background:#fff;border:2px solid #000;border-radius:10px;padding:12px;margin:16px 0;overflow-x:auto;box-shadow:5px 5px 0 #000}
+.fig svg{display:block;width:100%;min-width:560px;height:auto}
+footer{max-width:760px;margin:0 auto;padding:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.cur-main{position:fixed;top:0;left:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;transform:translate(-100px,-100px)}
+.cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--accent);pointer-events:none;z-index:9998;transform:translate(-100px,-100px);transition:width .2s ease,height .2s ease,margin .2s ease}
+.cur-ring.hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(226,113,29,.14)}
+.cur-trail{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9990;opacity:.5;animation:trail-fade .55s ease-out forwards}
+@keyframes trail-fade{to{opacity:0;transform:scale(.15)}}
+@media (hover:none){.cur-main,.cur-ring{display:none}body,a,button{cursor:auto}}
+</style></head>
+<body><header><nav class="bar" aria-label="Project"><a class="logo-badge" href="index.html" aria-label="Back to home">DK</a><a href='parents-paperwork-prototype.html'>Prototype</a><a href='parents-paperwork-case-study.html' aria-current="page">Case study</a><a href='parents-paperwork-system-design.html'>System design</a><a class="home" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Back to home</a></nav>
+<div class="hero"><h1>Parents' Paperwork: Case Study</h1><p>How I designed a shared app for adult children to run their retired parents' yearly paperwork in India.</p></div></header>
+<main><h2>Overview</h2>
+<p>Parents' Paperwork is a mobile app that helps adult children, often living in another city or abroad, run their retired parents' yearly paperwork in India. It turns pension, tax, bank, insurance, property and benefit rules into one shared family calendar with step-by-step guides.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Role</td>
+<td>Product designer and founder: research, product strategy, interaction design, prototyping</td>
+</tr>
+<tr>
+<td>Timeline</td>
+<td>Concept and clickable prototype, October 2026</td>
+</tr>
+<tr>
+<td>Platform</td>
+<td>Mobile-first app (prototype built as an interactive HTML page)</td>
+</tr>
+<tr>
+<td>Deliverables</td>
+<td>Market and rules research, product spec, clickable prototype, system design document</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Pre-validation: prototype ready for a WhatsApp pilot with 30 to 50 families</td>
+</tr>
+</tbody>
+</table></div>
+<h2>The problem</h2>
+<p>Retired parents in India face a fixed yearly cycle of deadlines, and missing one costs real money. Children usually find out after the damage is done.</p>
+<ul>
+<li><strong>Pension stops if a form is missed.</strong> Every pensioner must submit a life certificate by 30 November. Pensioners aged 80+ can submit from 1 October, everyone else from 1 November. If it is missed, pension is paused from December until it is submitted.</li>
+<li><strong>Tax is deducted that did not need to be.</strong> A declaration must reach every bank holding deposits at the start of each tax year, or TDS is cut from the interest.</li>
+<li><strong>Deadlines are spread across many institutions.</strong> Deposit maturities at several banks, insurance renewals, property tax, re-KYC, return filing, licence and passport renewals all run on different clocks.</li>
+<li><strong>Benefits go unclaimed.</strong> Seniors qualify for health cover, extra pension at 80, tax relief and concessions, but nobody tracks which ones the family is actually using.</li>
+<li><strong>Emergencies expose the gaps.</strong> In a hospital, nobody knows where the policy, the doctor's number or the will is.</li>
+</ul>
+<p>For children living away, and especially NRIs, the burden is coordination: knowing what is due, who among the siblings is handling it, and how to guide a parent through a phone-based process from thousands of kilometres away.</p>
+<h2>Research and landscape</h2>
+<p>No existing product is software-first, affordable, shared across siblings and covers the full India-specific calendar. That gap is the opportunity.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Player</th>
+<th>Type</th>
+<th>What it covers</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://care.samarth.community/long-distance-care-giving/elder-care-services-pune-nri-guide/">Samarth</a>, Anvayaa, Care247, Madatnis</td>
+<td>Human concierge</td>
+<td>Bills, pension paperwork, insurance, tax, care</td>
+<td>Rs 6,000 to 18,000 a month; human-run, hard to scale</td>
+</tr>
+<tr>
+<td><a href="https://www.aap.com.au/aapreleases/cision20250108ae91750">Policybazaar NRI Care</a></td>
+<td>Concierge</td>
+<td>Documentation around insurance and claims</td>
+<td>Insurance only</td>
+</tr>
+<tr>
+<td><a href="https://apps.apple.com/vu/app/id6764399979">FD Vault</a></td>
+<td>Single-purpose app</td>
+<td>Deposit maturities and TDS forms</td>
+<td>One category, no family sharing</td>
+</tr>
+<tr>
+<td>Banks' own reminders</td>
+<td>Institution</td>
+<td>Their own products</td>
+<td>Nothing across other banks</td>
+</tr>
+<tr>
+<td>An early WhatsApp pilot (<a href="https://tally.so/r/LZqWJy">survey</a>)</td>
+<td>Service in research</td>
+<td>Family renewals and an emergency card</td>
+<td>Pre-launch</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Rules move, which is both the risk and the moat.</strong> During research, two rules turned out to have changed recently:</p>
+<ol>
+<li>From 1 April 2026, <a href="https://www.bajajamc.com/knowledge-centre/form-121">Form 121 replaced Forms 15G and 15H</a> under the Income-tax Act, 2025. A checklist written a year earlier would already be wrong.</li>
+<li>A pensioner aged 75+ whose only income is pension and interest from the same bank can <a href="https://www.caclubindia.com/articles/pensioner-itr-for-ay-202627-who-qualifies-for-exemption-55103.asp">skip filing a return</a> by giving that bank a declaration. Few families know this applies to their parent.</li>
+</ol>
+<p>A product that keeps these rules current, and applies them to each family's facts, delivers value that a static checklist or a generic reminder app cannot.</p>
+<h2>Users and jobs to be done</h2>
+<p>The buyer is the adult child; the parent is a participant, not the main user. Design decisions follow from that split.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>User</th>
+<th>Context</th>
+<th>Job to be done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Priya, 38, NRI in Toronto</td>
+<td>Lead coordinator; her parents are 9.5 to 10.5 hours ahead</td>
+<td>Know what is due before it is urgent, and guide Dad through it on a video call</td>
+</tr>
+<tr>
+<td>Arjun, 41, in Bengaluru</td>
+<td>Can reach Pune in a day; handles in-person tasks</td>
+<td>See what is his, without a long WhatsApp thread</td>
+</tr>
+<tr>
+<td>Ramesh, 81, Dad</td>
+<td>Central govt pensioner, Android phone, comfortable with calls</td>
+<td>Complete the face-scan life certificate without travelling to a bank</td>
+</tr>
+<tr>
+<td>Sunita, 76, Mom</td>
+<td>State govt pensioner, deposits at two institutions</td>
+<td>Keep her pension, deposits and policies in order without being overwhelmed</td>
+</tr>
+</tbody>
+</table></div>
+<p>The core job, in the family's words: "Tell us what is due, who is doing it, and exactly how to do it, before anything costs us money."</p>
+<h2>Design principles</h2>
+<ol>
+<li><strong>Deadlines first, documents second.</strong> People open the app because something is due. The home screen leads with the next deadline and the walkthrough to clear it.</li>
+<li><strong>Every task explains why.</strong> Each deadline states the consequence of missing it in one or two sentences, so families can prioritise without research.</li>
+<li><strong>Built for a shared family.</strong> Every task has one owner. Unowned tasks are flagged in orange, because "someone will do it" is how deadlines slip.</li>
+<li><strong>Parents stay in control.</strong> The app never stores passwords or OTPs and never logs in as a parent. Parents enter their own OTPs on their own phones.</li>
+<li><strong>Inform, never advise.</strong> The app explains what a deposit maturity or a scheme means, but never recommends where to invest. This keeps it clear of financial-advice regulation.</li>
+<li><strong>Rules carry a date.</strong> Every rule is shown as current to a date, with the agency that owns it, because rules change.</li>
+</ol>
+<h2>Solution walkthrough</h2>
+<p>The prototype has five tabs and four supporting screens, all sharing one family's live state. It is built around a sample family: Dad (81) and Mom (76) in Pune, Priya in Toronto and Arjun in Bengaluru, dated 3 October 2026.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>What it does</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Today</td>
+<td>Headline counts, the most urgent task as a hero card, everything due in 60 days, filters for My tasks, Dad and Mom</td>
+<td>Answers "what needs me now?" in one glance</td>
+</tr>
+<tr>
+<td>Timeline</td>
+<td>Every deadline in tax year 2026-27, April to March, with category filters and an "Every few years" section</td>
+<td>Shows the whole year, including long-cycle items like licence and Aadhaar updates</td>
+</tr>
+<tr>
+<td>Task walkthrough</td>
+<td>Why it matters, owner picker, numbered steps to tick off, documents needed, help options, mark done</td>
+<td>Turns a rule into a guided action a parent can follow on a video call</td>
+</tr>
+<tr>
+<td>Documents</td>
+<td>33 documents in 8 groups with status: On file, Missing, Renew soon or Check</td>
+<td>Makes gaps visible: the sample family is missing 5 key documents</td>
+</tr>
+<tr>
+<td>Document detail</td>
+<td>Use, validity, where the original is kept, linked tasks, scan to file</td>
+<td>Connects each paper to the deadlines that need it</td>
+</tr>
+<tr>
+<td>Trackers</td>
+<td>Deposits across banks, insurance, pension status, nominees per account</td>
+<td>Answers questions no single bank can</td>
+</tr>
+<tr>
+<td>Government benefits</td>
+<td>20 schemes with a status per parent, claiming steps, and "Not eligible" shown openly</td>
+<td>Surfaces money the family is owed, such as additional pension at 80</td>
+</tr>
+<tr>
+<td>Family</td>
+<td>Parents' profiles, open tasks per sibling, unowned tasks, activity feed</td>
+<td>Makes the division of work explicit</td>
+</tr>
+<tr>
+<td>Emergency card and Add</td>
+<td>One-page hospital card; scan a document to create a deadline</td>
+<td>Covers the crisis moment and makes setup fast</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Key design decisions and trade-offs</h2>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Chosen</th>
+<th>Rejected</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home screen</td>
+<td>Next 60 days, grouped by month</td>
+<td>Full calendar grid</td>
+<td>A grid of mostly empty days hides urgency; a list ranks it</td>
+</tr>
+<tr>
+<td>Year boundary</td>
+<td>Indian tax year, April to March</td>
+<td>Calendar year</td>
+<td>Tax and deposit declarations reset in April, so the family's year does too</td>
+</tr>
+<tr>
+<td>Ownership</td>
+<td>One owner per task, unowned flagged</td>
+<td>Shared "family" tasks</td>
+<td>Shared ownership is how deadlines slip between siblings</td>
+</tr>
+<tr>
+<td>Parent's role</td>
+<td>Guided on a call; enters own OTPs</td>
+<td>App logs in for the parent</td>
+<td>Trust and data protection; never holding credentials removes the biggest risk</td>
+</tr>
+<tr>
+<td>Ineligible benefits</td>
+<td>Shown as "Not eligible"</td>
+<td>Hidden</td>
+<td>Shows the engine checked, and stops families searching for schemes that do not apply</td>
+</tr>
+<tr>
+<td>Help</td>
+<td>Optional hand-off to doorstep or partner services, approved by the family</td>
+<td>Built-in concierge</td>
+<td>Keeps the product software-first and affordable</td>
+</tr>
+<tr>
+<td>Documents vs tasks</td>
+<td>Linked both ways</td>
+<td>Separate vault</td>
+<td>A document matters because a deadline needs it</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Business model</h2>
+<p>The plan is a low-cost family subscription, priced far below human concierge services.</p>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Free tier</td>
+<td>Basic reminders for one parent</td>
+</tr>
+<tr>
+<td>Family plan</td>
+<td>Rs 149 to 299 a month, or a discounted annual plan: both parents, siblings, documents, trackers, benefits</td>
+</tr>
+<tr>
+<td>Referral fees</td>
+<td>From concierge partners, insurers and tax filers, only when the family chooses a hand-off</td>
+</tr>
+<tr>
+<td>Later: B2B</td>
+<td>Sold to banks or employers as an employee benefit for staff with ageing parents</td>
+</tr>
+</tbody>
+</table></div>
+<p>At Rs 299 a month the plan costs about 2 to 5% of a human concierge service at Rs 6,000 to 18,000 a month.</p>
+<h2>Validation plan and success metrics</h2>
+<p>Before building the app, run a two-month WhatsApp pilot with 30 to 50 families, timed to cover the November life-certificate window and the April tax declarations.</p>
+<ol>
+<li>Collect each family's details through a form.</li>
+<li>Build each family's calendar by hand, using the same rules the app will automate.</li>
+<li>Send reminders and step-by-step guides on WhatsApp; show the prototype to the first families for feedback.</li>
+<li>Build the app only if families stay and are willing to pay.</li>
+</ol>
+<div class='table'><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Life certificates submitted on time</td>
+<td>100% of pilot pensioners</td>
+<td>The core promise</td>
+</tr>
+<tr>
+<td>Families still active after 2 months</td>
+<td>70% or more</td>
+<td>Shows the need recurs</td>
+</tr>
+<tr>
+<td>Families willing to pay Rs 149+ a month</td>
+<td>30% or more</td>
+<td>Business viability</td>
+</tr>
+<tr>
+<td>Tasks with an owner</td>
+<td>90% or more</td>
+<td>Tests the sibling-sharing idea</td>
+</tr>
+<tr>
+<td>Benefits newly claimed or corrected</td>
+<td>At least 1 per 5 families</td>
+<td>Tests the benefits tracker's value</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Risks, learnings and next steps</h2>
+<p><strong>Risks</strong></p>
+<ul>
+<li><strong>Trust and privacy.</strong> Families share sensitive financial data, covered by India's DPDP Act. Mitigation: no passwords or OTPs, encryption, consent per family member.</li>
+<li><strong>Rules go stale.</strong> Mitigation: every rule has an owner, a source and a review date.</li>
+<li><strong>Regulation.</strong> Mitigation: no investment advice, no handling of money.</li>
+<li><strong>Banks improve their own reminders.</strong> Mitigation: the value is across banks, insurers and government, which no single institution covers.</li>
+</ul>
+<p><strong>What I learned</strong></p>
+<ul>
+<li>Research changed the product: finding the Form 121 change turned "rules engine" from a feature into the core moat.</li>
+<li>Showing what a family does not qualify for builds as much trust as showing what they do.</li>
+<li>The parent is a participant, not the user. Designing for a guided video call shaped the walkthroughs.</li>
+</ul>
+<p><strong>Next steps</strong></p>
+<ul>
+<li>Verify every rule in the prototype against official sources</li>
+<li>Recruit 30 to 50 pilot families before 1 November</li>
+<li>Start state benefit rules with Maharashtra only</li>
+<li>Usability-test the life-certificate walkthrough with three parent and child pairs</li>
+</ul></main>
+<footer>Concept project by Deep, October 2026. Sample family, names and figures are illustrative; rules reflect research done in October 2026.</footer>
+<div class="cur-main" id="cMain"></div><div class="cur-ring" id="cRing"></div>
+<script>
+(function(){
+  var cMain=document.getElementById('cMain'),cRing=document.getElementById('cRing');
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(cMain&&cRing&&fine){
+    var mx=-100,my=-100,rx=-100,ry=-100,last=0;
+    window.addEventListener('mousemove',function(e){
+      mx=e.clientX;my=e.clientY;
+      cMain.style.transform='translate('+mx+'px,'+my+'px)';
+      var now=performance.now();
+      if(now-last>22){last=now;var t=document.createElement('div');t.className='cur-trail';t.style.left=mx+'px';t.style.top=my+'px';document.body.appendChild(t);setTimeout(function(){t.remove()},600);}
+    });
+    (function loop(){rx+=(mx-rx)*.45;ry+=(my-ry)*.45;cRing.style.transform='translate('+rx+'px,'+ry+'px)';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){cRing.classList.add('hover')});
+      el.addEventListener('mouseleave',function(){cRing.classList.remove('hover')});
+    });
+  }
+})();
+</script>
+</body></html>
